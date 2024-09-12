@@ -1,7 +1,7 @@
-import { useSession } from "@hono/auth-js/react";
+import { useSession } from '@hono/auth-js/react'
 
 export const useCurrentUser = () => {
-  const session = useSession();
+  const session = useSession()
 
-  return session.data?.user;
-};
+  return session?.data?.user
+}

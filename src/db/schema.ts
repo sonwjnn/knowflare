@@ -1,6 +1,8 @@
+import { relations } from 'drizzle-orm'
 import {
   boolean,
   integer,
+  numeric,
   pgTable,
   primaryKey,
   text,
@@ -85,3 +87,181 @@ export const authenticators = pgTable(
     }),
   })
 )
+
+export const courses = pgTable('course', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text('userId')
+    .notNull()
+    .references(() => users.id, {
+      onDelete: 'cascade',
+    }),
+  categoryId: text('category_id'),
+  title: text('title').notNull(),
+  description: text('description'),
+  imageUrl: text('image_url'),
+  price: numeric('price', { precision: 10, scale: 2 }),
+  isPublished: boolean('is_published').default(false).notNull(),
+  createdAt: timestamp('created_at', { mode: 'date' }).notNull(),
+  updatedAt: timestamp('updated_at', { mode: 'date' }).notNull(),
+})
+
+export const coursesRelations = relations(courses, ({ many, one }) => ({
+  category: one(categories, {
+    fields: [courses.categoryId],
+    references: [categories.id],
+  }),
+  chapters: many(chapters),
+  attachments: many(attachments),
+  purchases: many(purchases),
+}))
+
+export const categories = pgTable('category', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: text('name').notNull(),
+})
+
+export const attachments = pgTable('attachment', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  courseId: text('course_id')
+    .notNull()
+    .references(() => courses.id, {
+      onDelete: 'cascade',
+    }),
+  name: text('name').notNull(),
+  url: text('url').notNull(),
+  createdAt: timestamp('created_at', { mode: 'date' }).notNull(),
+  updatedAt: timestamp('updated_at', { mode: 'date' }).notNull(),
+})
+
+export const attachmentsRelations = relations(attachments, ({ one }) => ({
+  course: one(courses, {
+    fields: [attachments.courseId],
+    references: [courses.id],
+  }),
+}))
+
+export const chapters = pgTable('chapter', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  courseId: text('course_id')
+    .notNull()
+    .references(() => courses.id, {
+      onDelete: 'cascade',
+    }),
+  title: text('title').notNull(),
+  description: text('description'),
+  videoUrl: text('video_url'),
+  position: integer('position').notNull(),
+  isPublished: boolean('is_published').default(false).notNull(),
+  isFree: boolean('is_free').default(false).notNull(),
+  createdAt: timestamp('created_at', { mode: 'date' }).notNull(),
+  updatedAt: timestamp('updated_at', { mode: 'date' }).notNull(),
+})
+
+export const chaptersRelations = relations(chapters, ({ one, many }) => ({
+  course: one(courses, {
+    fields: [chapters.courseId],
+    references: [courses.id],
+  }),
+  muxData: one(muxData, {
+    fields: [chapters.id],
+    references: [muxData.chapterId],
+  }),
+  userProgress: many(userProgress),
+}))
+
+export const muxData = pgTable('mux_data', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  chapterId: text('chapter_id')
+    .notNull()
+    .references(() => chapters.id, {
+      onDelete: 'cascade',
+    }),
+  assetId: text('asset_id').notNull(),
+  playbackId: text('playback_id'),
+})
+
+export const muxDataRelations = relations(muxData, ({ one }) => ({
+  chapter: one(chapters, {
+    fields: [muxData.chapterId],
+    references: [chapters.id],
+  }),
+}))
+
+export const userProgress = pgTable('user_progress', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text('userId')
+    .notNull()
+    .references(() => users.id, {
+      onDelete: 'cascade',
+    }),
+  chapterId: text('chapter_id')
+    .notNull()
+    .references(() => chapters.id, {
+      onDelete: 'cascade',
+    }),
+  isCompleted: boolean('is_completed').default(false).notNull(),
+  createdAt: timestamp('created_at', { mode: 'date' }).notNull(),
+  updatedAt: timestamp('updated_at', { mode: 'date' }).notNull(),
+})
+
+export const userProgressRelations = relations(userProgress, ({ one }) => ({
+  chapter: one(chapters, {
+    fields: [userProgress.chapterId],
+    references: [chapters.id],
+  }),
+}))
+
+export const purchases = pgTable('purchases', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text('userId')
+    .notNull()
+    .references(() => users.id, {
+      onDelete: 'cascade',
+    }),
+  courseId: text('course_id')
+    .notNull()
+    .references(() => courses.id, {
+      onDelete: 'cascade',
+    }),
+  createdAt: timestamp('created_at', { mode: 'date' }).notNull(),
+  updatedAt: timestamp('updated_at', { mode: 'date' }).notNull(),
+})
+
+export const purchasesRelations = relations(purchases, ({ one }) => ({
+  course: one(courses, {
+    fields: [purchases.courseId],
+    references: [courses.id],
+  }),
+}))
+
+export const subscriptions = pgTable('subscription', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text('userId')
+    .notNull()
+    .references(() => users.id, {
+      onDelete: 'cascade',
+    }),
+  subscriptionId: text('subscriptionId').notNull(),
+  customerId: text('customerId').notNull(),
+  priceId: text('priceId').notNull(),
+  status: text('status').notNull(),
+  currentPeriodEnd: timestamp('currentPeriodEnd', { mode: 'date' }),
+  createdAt: timestamp('createdAt', { mode: 'date' }).notNull(),
+  updatedAt: timestamp('updatedAt', { mode: 'date' }).notNull(),
+})
