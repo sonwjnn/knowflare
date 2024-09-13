@@ -1,5 +1,6 @@
 import { auth } from '@/auth'
-import { Providers } from '@/providers'
+import { Modals } from '@/components/modals'
+import { Providers } from '@/components/providers'
 import type { Metadata } from 'next'
 import { SessionProvider } from 'next-auth/react'
 import { ThemeProvider } from 'next-themes'
@@ -26,15 +27,12 @@ export default async function RootLayout({
     <SessionProvider session={session}>
       <html lang="en">
         <body className={inter.className}>
-          <Toaster />
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="light"
-            enableSystem={false}
-            storageKey="app-theme"
-          >
-            <Providers>{children}</Providers>
-          </ThemeProvider>
+          <Providers>
+            <Toaster />
+            <Modals />
+
+            {children}
+          </Providers>
         </body>
       </html>
     </SessionProvider>

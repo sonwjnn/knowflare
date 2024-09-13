@@ -10,7 +10,7 @@ import Link from 'next/link'
 interface CourseCardProps {
   id: string
   title: string
-  imgUrl: string
+  imageUrl: string
   chaptersLength: number
   price: number
   progress: number | null
@@ -19,7 +19,7 @@ interface CourseCardProps {
 const CourseCard = ({
   id,
   title,
-  imgUrl,
+  imageUrl,
   chaptersLength,
   price,
   progress,
@@ -29,7 +29,7 @@ const CourseCard = ({
     <Link href={`/courses/${id}`}>
       <div className="group h-full overflow-hidden rounded-lg border p-3 transition hover:shadow-sm">
         <div className="relative aspect-video w-full overflow-hidden rounded-md">
-          <Image fill className="object-cover" src={imgUrl} alt={title} />
+          <Image fill className="object-cover" src={imageUrl} alt={title} />
         </div>
         <div className="flex flex-col pt-2">
           <div className="line-clamp-2 text-lg font-medium transition group-hover:text-sky-700 md:text-base">

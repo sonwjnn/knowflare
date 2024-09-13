@@ -18,7 +18,7 @@ const CoursesList = ({ items }: CoursesListProps) => {
             key={item.id}
             id={item.id}
             title={item.title}
-            imgUrl={item.imgUrl!}
+            imageUrl={item.imageUrl!}
             chaptersLength={item.chapters.length}
             price={item.price!}
             progress={item.progress}

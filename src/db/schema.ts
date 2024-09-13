@@ -8,6 +8,7 @@ import {
   text,
   timestamp,
 } from 'drizzle-orm/pg-core'
+import { createInsertSchema } from 'drizzle-zod'
 import type { AdapterAccountType } from 'next-auth/adapters'
 
 export const users = pgTable('user', {
@@ -116,6 +117,8 @@ export const coursesRelations = relations(courses, ({ many, one }) => ({
   attachments: many(attachments),
   purchases: many(purchases),
 }))
+
+export const coursesInsertSchema = createInsertSchema(courses)
 
 export const categories = pgTable('category', {
   id: text('id')

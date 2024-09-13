@@ -1,40 +1,134 @@
 import { db } from '@/db/drizzle'
-import { users } from '@/db/schema'
+import { courses, coursesInsertSchema } from '@/db/schema'
+import { verifyAuth } from '@hono/auth-js'
 import { zValidator } from '@hono/zod-validator'
-import bcrypt from 'bcryptjs'
-import { eq } from 'drizzle-orm'
+import { and, desc, eq } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { z } from 'zod'
 
-const app = new Hono().post(
-  '/',
-  zValidator(
-    'json',
-    z.object({
-      name: z.string(),
-      email: z.string().email(),
-      password: z.string().min(3).max(20),
-    })
-  ),
-  async c => {
-    const { name, email, password } = c.req.valid('json')
+const app = new Hono()
+  .get(
+    '/',
+    verifyAuth(),
 
-    const hashedPassword = await bcrypt.hash(password, 12)
+    async c => {
+      const auth = c.get('authUser')
 
-    const query = await db.select().from(users).where(eq(users.email, email))
+      if (!auth.token?.id) {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
 
-    if (query[0]) {
-      return c.json({ error: 'Email already in use' }, 400)
+      const data = await db
+        .select()
+        .from(courses)
+        .where(eq(courses.userId, auth.token.id))
+        .orderBy(desc(courses.updatedAt))
+
+      return c.json({
+        data,
+      })
     }
+  )
+  .get(
+    '/:id',
+    verifyAuth(),
+    zValidator('param', z.object({ id: z.string() })),
+    async c => {
+      const auth = c.get('authUser')
+      const { id } = c.req.valid('param')
 
-    await db.insert(users).values({
-      email,
-      name,
-      password: hashedPassword,
-    })
+      if (!auth.token?.id) {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
 
-    return c.json(null, 200)
-  }
-)
+      const data = await db
+        .select()
+        .from(courses)
+        .where(and(eq(courses.id, id), eq(courses.userId, auth.token.id)))
+
+      if (data.length === 0) {
+        return c.json({ error: 'Not found' }, 404)
+      }
+
+      return c.json({ data: data[0] })
+    }
+  )
+  .post(
+    '/',
+    verifyAuth(),
+    zValidator(
+      'json',
+      coursesInsertSchema.pick({
+        title: true,
+      })
+    ),
+    async c => {
+      const auth = c.get('authUser')
+
+      if (!auth.token?.id) {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
+      const { title } = c.req.valid('json')
+
+      console.log(title)
+
+      const [data] = await db
+        .insert(courses)
+        .values({
+          title,
+          userId: auth.token.id,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })
+        .returning()
+
+      console.log(data)
+
+      if (!data) {
+        return c.json({ error: 'Something went wrong' }, 400)
+      }
+
+      return c.json({
+        data,
+      })
+    }
+  )
+  .delete(
+    '/:id',
+    verifyAuth(),
+    zValidator(
+      'param',
+      z.object({
+        id: z.string().optional(),
+      })
+    ),
+    async c => {
+      const auth = c.get('authUser')
+
+      if (!auth.token?.id) {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
+      const { id } = c.req.valid('param')
+
+      if (!id) {
+        return c.json({ error: 'Missing id' }, 400)
+      }
+
+      const [data] = await db
+        .delete(courses)
+        .where(and(eq(courses.userId, auth.token.id), eq(courses.id, id)))
+        .returning({
+          id: courses.id,
+        })
+
+      if (!data) {
+        return c.json({ error: 'Not found' }, 404)
+      }
+
+      return c.json({ data })
+    }
+  )
 
 export default app
