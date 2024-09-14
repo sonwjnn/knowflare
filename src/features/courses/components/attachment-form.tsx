@@ -11,16 +11,19 @@ import { toast } from 'sonner'
 import * as z from 'zod'
 
 interface AttachmentFormProps {
-  initialData: typeof courses.$inferSelect & {
-    attachments: (typeof attachments.$inferSelect)[]
-  }
+  initialData: (typeof attachments.$inferSelect)[]
   courseId: string
+  courseImageUrl?: string | null
 }
 const formSchema = z.object({
   url: z.string().min(1),
 })
 
-const AttachmentForm = ({ initialData, courseId }: AttachmentFormProps) => {
+const AttachmentForm = ({
+  initialData,
+  courseId,
+  courseImageUrl,
+}: AttachmentFormProps) => {
   const [isEditing, setIsEditing] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const router = useRouter()
@@ -57,13 +60,13 @@ const AttachmentForm = ({ initialData, courseId }: AttachmentFormProps) => {
         Course Attachment
         <Button onClick={toggleEdit} variant="ghost">
           {isEditing && <>Cancel</>}
-          {!isEditing && !initialData?.imageUrl && (
+          {!isEditing && !courseImageUrl && (
             <>
               <PlusCircle className="mr-2 h-4 w-4" />
               Add an attachment
             </>
           )}
-          {!isEditing && initialData?.imageUrl && (
+          {!isEditing && courseImageUrl && (
             <>
               <Pencil className="mr-2 h-4 w-4" />
               Edit attachment
@@ -73,14 +76,14 @@ const AttachmentForm = ({ initialData, courseId }: AttachmentFormProps) => {
       </div>
       {!isEditing && (
         <>
-          {initialData?.attachments?.length === 0 && (
+          {initialData?.length === 0 && (
             <p className="mt-2 text-sm italic text-slate-500">
               No attachments yet
             </p>
           )}
-          {initialData?.attachments?.length >= 0 && (
+          {initialData?.length >= 0 && (
             <div className="space-y-2">
-              {initialData?.attachments?.map(attachment => (
+              {initialData?.map(attachment => (
                 <div
                   key={attachment?.id}
                   className="flex w-full items-center rounded-md border border-sky-200 bg-sky-100 p-3 text-sky-700"

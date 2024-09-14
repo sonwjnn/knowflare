@@ -9,7 +9,8 @@
     "lint": "next lint",
     "db:studio": "bunx drizzle-kit studio",
     "db:push": "bunx drizzle-kit push",
-    "db:generate": "bunx drizzle-kit generate"
+    "db:generate": "bunx drizzle-kit generate",
+    "db:seed": "bun ./src/scripts/seed.ts"
   },
   "dependencies": {
     "@auth/core": "^0.34.1",
@@ -64,6 +65,7 @@
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
     "uploadthing": "^6.13.3",
+    "uuid": "^10.0.0",
     "zod": "^3.23.8",
     "zustand": "^4.5.5"
   },
@@ -73,6 +75,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/uuid": "^10.0.0",
     "eslint": "^8",
     "eslint-config-next": "14.2.4",
     "postcss": "^8",

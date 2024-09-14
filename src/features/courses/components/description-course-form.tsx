@@ -1,56 +1,58 @@
-'use client'
-
 import { Button } from '@/components/ui/button'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from '@/components/ui/form'
-import { Textarea } from '@/components/ui/textarea'
-import { courses } from '@/db/schema'
-import { cn } from '@/lib/utils'
+import { Form, FormControl, FormField, FormItem } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { insertCoursesSchema } from '@/db/schema'
 import { zodResolver } from '@hookform/resolvers/zod'
-import axios from 'axios'
 import { Pencil } from 'lucide-react'
-import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import * as z from 'zod'
+import { z } from 'zod'
 
-const formSchema = z.object({
-  description: z.string().min(1, 'Description is required'),
+import { useEditCourse } from '../api/use-edit-course'
+
+const formSchema = insertCoursesSchema.pick({
+  description: true,
 })
 
-interface DescriptionFormProps {
-  initialData: typeof courses.$inferSelect
+type FormValues = z.input<typeof formSchema>
+
+type CourseFormProps = {
+  initialData: {
+    description: string | null
+  }
   courseId: string
 }
 
-const DescriptionForm = ({ initialData, courseId }: DescriptionFormProps) => {
+export const DescriptionCourseForm = ({
+  initialData,
+  courseId,
+}: CourseFormProps) => {
+  const { mutate: editMutation, isPending } = useEditCourse(courseId)
+
   const [isEditing, setIsEditing] = useState(false)
-  const router = useRouter()
 
   const toggleEdit = () => {
     setIsEditing(current => !current)
   }
-  const form = useForm<z.infer<typeof formSchema>>({
+
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { description: initialData?.description || '' },
+    defaultValues: initialData,
   })
-  const { isSubmitting, isValid } = form.formState
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      await axios.patch(`/api/courses/${courseId}`, values)
-      toast.success('Course updated')
-      toggleEdit()
-      router.refresh()
-    } catch {
-      toast.error('Something went wrong')
-    }
+    editMutation(values, {
+      onSuccess: () => {
+        toast.success('Course updated')
+        toggleEdit()
+      },
+      onError: () => {
+        toast.error('Something went wrong')
+      },
+    })
   }
+
   return (
     <div className="mt-6 rounded-md border bg-slate-100 p-4">
       <div className="flex items-center justify-between font-medium">
@@ -66,16 +68,7 @@ const DescriptionForm = ({ initialData, courseId }: DescriptionFormProps) => {
           )}
         </Button>
       </div>
-      {!isEditing && (
-        <p
-          className={cn(
-            'mt-2 text-sm',
-            !initialData?.description && 'italic text-slate-500'
-          )}
-        >
-          {initialData?.description || 'No description'}
-        </p>
-      )}
+      {!isEditing && <p className="mt-2 text-sm">{initialData?.description}</p>}
       {isEditing && (
         <Form {...form}>
           <form
@@ -88,18 +81,18 @@ const DescriptionForm = ({ initialData, courseId }: DescriptionFormProps) => {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Textarea
-                      disabled={isSubmitting}
+                    <Input
+                      disabled={isPending}
                       {...field}
-                      placeholder="e.g. 'This course is about...'"
+                      value={field.value ?? ''}
+                      placeholder="e.g. 'Advanced Web Development'"
                     />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
             <div className="flex items-center gap-x-2">
-              <Button disabled={!isValid || isSubmitting} type="submit">
+              <Button disabled={isPending} type="submit">
                 Save
               </Button>
             </div>
@@ -109,5 +102,3 @@ const DescriptionForm = ({ initialData, courseId }: DescriptionFormProps) => {
     </div>
   )
 }
-
-export default DescriptionForm

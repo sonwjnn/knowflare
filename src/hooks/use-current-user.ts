@@ -1,4 +1,4 @@
-import { useSession } from '@hono/auth-js/react'
+import { useSession } from 'next-auth/react'
 
 export const useCurrentUser = () => {
   const session = useSession()

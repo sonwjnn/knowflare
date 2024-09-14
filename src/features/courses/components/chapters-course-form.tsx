@@ -1,5 +1,4 @@
-'use client'
-
+import ChaptersList from '@/app/(dashboard)/teacher/courses/[courseId]/chapters-list'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -9,53 +8,59 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { chapters, courses } from '@/db/schema'
+import { courses, insertCoursesSchema } from '@/db/schema'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
-import axios from 'axios'
-import { Loader2, PlusCircle } from 'lucide-react'
+import { Loader2, Pencil, PlusCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import * as z from 'zod'
+import { z } from 'zod'
 
-import ChaptersList from './chapters-list'
+import { useEditCourse } from '../api/use-edit-course'
 
-const formSchema = z.object({
-  title: z.string().min(1),
+const formSchema = insertCoursesSchema.pick({
+  title: true,
 })
 
-interface ChaptersFormProps {
-  initialData: typeof courses.$inferSelect & {
-    chapters: (typeof chapters.$inferSelect)[]
-  }
+type FormValues = z.input<typeof formSchema>
 
+type ChaptersCourseFormProps = {
+  initialData: (typeof courses.$inferSelect)[]
   courseId: string
 }
 
-const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
+export const ChaptersCourseForm = ({
+  initialData,
+  courseId,
+}: ChaptersCourseFormProps) => {
+  const { mutate: editMutation, isPending } = useEditCourse(courseId)
+
+  const router = useRouter()
+
   const [isCreating, setIsCreating] = useState(false)
   const [isUpdating, setIsUpdating] = useState(false)
-  const router = useRouter()
 
   const toggleCreating = () => {
     setIsCreating(current => !current)
   }
-  const form = useForm<z.infer<typeof formSchema>>({
+
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: { title: '' },
   })
-  const { isSubmitting, isValid } = form.formState
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      await axios.post(`/api/courses/${courseId}/chapters`, values)
-      toast.success('Course updated')
-      toggleCreating()
-      router.refresh()
-    } catch {
-      toast.error('Something went wrong')
-    }
+    editMutation(values, {
+      onSuccess: () => {
+        toast.success('Course updated')
+        toggleCreating()
+      },
+      onError: () => {
+        toast.error('Something went wrong')
+      },
+    })
   }
 
   const onReorder = async (updateData: { id: string; position: number }[]) => {
@@ -72,9 +77,11 @@ const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
       setIsUpdating(false)
     }
   }
+
   const onEdit = async (id: string) => {
     router.push(`/teacher/courses/${courseId}/chapters/${id}`)
   }
+
   return (
     <div className="relative mt-6 rounded-md border bg-slate-100 p-4">
       {isUpdating && (
@@ -129,14 +136,14 @@ const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
         <div
           className={cn(
             'mt-2 text-sm',
-            !initialData?.chapters?.length && 'italic text-slate-500'
+            !initialData?.length && 'italic text-slate-500'
           )}
         >
-          {!initialData?.chapters?.length && 'No chapters'}
+          {!initialData?.length && 'No chapters'}
           <ChaptersList
             onEdit={onEdit}
             onReorder={onReorder}
-            items={initialData?.chapters || []}
+            items={initialData ?? []}
           />
         </div>
       )}
@@ -148,5 +155,3 @@ const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
     </div>
   )
 }
-
-export default ChaptersForm

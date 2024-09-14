@@ -1,6 +1,5 @@
-'use client'
-
 import { Button } from '@/components/ui/button'
+import { Combobox } from '@/components/ui/combobox'
 import {
   Form,
   FormControl,
@@ -8,64 +7,76 @@ import {
   FormItem,
   FormMessage,
 } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { courses } from '@/db/schema'
+import { insertCoursesSchema } from '@/db/schema'
 import { cn } from '@/lib/utils'
-import { formatPrice } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
-import axios from 'axios'
 import { Pencil } from 'lucide-react'
-import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import * as z from 'zod'
+import { z } from 'zod'
 
-const formSchema = z.object({
-  price: z.coerce.number(),
+import { useEditCourse } from '../api/use-edit-course'
+
+const formSchema = insertCoursesSchema.pick({
+  categoryId: true,
 })
 
-interface PriceFormProps {
-  initialData: typeof courses.$inferSelect
+type FormValues = z.input<typeof formSchema>
+
+type CategoryCourseFormProps = {
+  initialData: {
+    categoryId: string | null
+  }
   courseId: string
+  options: { label: string; value: string }[]
 }
 
-const PriceForm = ({ initialData, courseId }: PriceFormProps) => {
-  const [isEditing, setIsEditing] = useState(false)
-  const router = useRouter()
+export const CategoryCourseForm = ({
+  initialData,
+  courseId,
+  options,
+}: CategoryCourseFormProps) => {
+  const { mutate: editMutation, isPending } = useEditCourse(courseId)
 
-  const price = (initialData?.price && +initialData.price) || 0
+  const [isEditing, setIsEditing] = useState(false)
 
   const toggleEdit = () => {
     setIsEditing(current => !current)
   }
-  const form = useForm<z.infer<typeof formSchema>>({
+
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { price: price },
+    defaultValues: initialData,
   })
-  const { isSubmitting, isValid } = form.formState
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      await axios.patch(`/api/courses/${courseId}`, values)
-      toast.success('Course updated')
-      toggleEdit()
-      router.refresh()
-    } catch {
-      toast.error('Something went wrong')
-    }
+    editMutation(values, {
+      onSuccess: () => {
+        toast.success('Course updated')
+        toggleEdit()
+      },
+      onError: () => {
+        toast.error('Something went wrong')
+      },
+    })
   }
+
+  const selectedOption = options.find(
+    option => option.value === initialData?.categoryId
+  )?.label
+
   return (
     <div className="mt-6 rounded-md border bg-slate-100 p-4">
       <div className="flex items-center justify-between font-medium">
-        Course Price
+        Course category
         <Button onClick={toggleEdit} variant="ghost">
           {isEditing ? (
             <>Cancel</>
           ) : (
             <>
               <Pencil className="mr-2 h-4 w-4" />
-              Edit price
+              Edit category
             </>
           )}
         </Button>
@@ -74,10 +85,10 @@ const PriceForm = ({ initialData, courseId }: PriceFormProps) => {
         <p
           className={cn(
             'mt-2 text-sm',
-            !initialData?.price && 'italic text-slate-500'
+            !initialData?.categoryId && 'italic text-slate-500'
           )}
         >
-          {initialData?.price ? formatPrice(+initialData.price) : 'No price'}
+          {selectedOption || 'No category'}
         </p>
       )}
       {isEditing && (
@@ -88,16 +99,14 @@ const PriceForm = ({ initialData, courseId }: PriceFormProps) => {
           >
             <FormField
               control={form.control}
-              name="price"
+              name="categoryId"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      disabled={isSubmitting}
-                      placeholder="Set a price for your course"
-                      {...field}
+                    <Combobox
+                      options={options}
+                      onChange={field.onChange}
+                      value={field.value}
                     />
                   </FormControl>
                   <FormMessage />
@@ -105,7 +114,7 @@ const PriceForm = ({ initialData, courseId }: PriceFormProps) => {
               )}
             />
             <div className="flex items-center gap-x-2">
-              <Button disabled={!isValid || isSubmitting} type="submit">
+              <Button disabled={isPending} type="submit">
                 Save
               </Button>
             </div>
@@ -115,5 +124,3 @@ const PriceForm = ({ initialData, courseId }: PriceFormProps) => {
     </div>
   )
 }
-
-export default PriceForm

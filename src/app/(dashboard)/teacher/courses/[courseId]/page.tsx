@@ -2,7 +2,16 @@
 
 import { Banner } from '@/components/banner'
 import { IconBadge } from '@/components/icon-badge'
+import { useGetCategories } from '@/features/categories/api/use-get-categories'
 import { useGetCourse } from '@/features/courses/api/use-get-course'
+import AttachmentForm from '@/features/courses/components/attachment-form'
+import { CategoryCourseForm } from '@/features/courses/components/category-course-form'
+import ChaptersForm from '@/features/courses/components/chapters-form'
+import { DescriptionCourseForm } from '@/features/courses/components/description-course-form'
+import { ImageCourseForm } from '@/features/courses/components/image-course-form'
+import ImageForm from '@/features/courses/components/image-form'
+import { PriceCourseForm } from '@/features/courses/components/price-course-form'
+import { TitleCourseForm } from '@/features/courses/components/title-course-form'
 import { useCourseId } from '@/hooks/use-course-id'
 import {
   CircleDollarSign,
@@ -10,31 +19,17 @@ import {
   LayoutDashboard,
   ListChecks,
 } from 'lucide-react'
-import { redirect } from 'next/navigation'
 
 import Actions from './actions'
-import AttachmentForm from './attachment-form'
-import CategoryForm from './category-form'
-import ChaptersForm from './chapters-form'
-import DescriptionForm from './description-form'
-import ImageForm from './image-form'
-import PriceForm from './price-form'
-import TitleForm from './title-form'
 
 const CourseIdPage = () => {
   const courseId = useCourseId()
 
   const { data: course } = useGetCourse(courseId)
 
-  // const course = await db.course.findUnique({
-  //   where: { id: params.courseId, userId },
-  //   include: {
-  //     chapters: { orderBy: { position: 'asc' } },
-  //     attachments: { orderBy: { createdAt: 'desc' } },
-  //   },
-  // })
-  // const categories = await db.category.findMany({ orderBy: { name: 'asc' } })
-  if (!course) return null
+  const { data: categories } = useGetCategories()
+
+  if (!course || !categories) return null
 
   const requiredFields = [
     course.title,
@@ -42,13 +37,30 @@ const CourseIdPage = () => {
     course.imageUrl,
     course.price,
     course.categoryId,
-    // course.chapters.some((chapter: any) => chapter.isPublished),
+    course.chapters.some((chapter: any) => chapter.isPublished),
   ]
 
   const totalFields = requiredFields.length
   const completedFields = requiredFields.filter(Boolean).length
   const completionText = `(${completedFields}/${totalFields})`
   const isCompleted = requiredFields.every(Boolean)
+
+  const normalizedCourse = {
+    ...course,
+    createdAt: new Date(course.createdAt),
+    updatedAt: new Date(course.updatedAt),
+    chapters: course.chapters.map(item => ({
+      ...item,
+      isPublished: item.isPublished,
+      createdAt: new Date(item.createdAt),
+      updatedAt: new Date(item.updatedAt),
+    })),
+    attachments: course.attachments.map(item => ({
+      ...item,
+      createdAt: new Date(item.createdAt),
+      updatedAt: new Date(item.updatedAt),
+    })),
+  }
 
   return (
     <>
@@ -75,23 +87,26 @@ const CourseIdPage = () => {
               <IconBadge icon={LayoutDashboard} />
               <h2 className="text-xl">Customize your course</h2>
             </div>
-            {/* <TitleForm initialData={course} courseId={course.id} />
-            <DescriptionForm initialData={course} courseId={course.id} />
-            <ImageForm initialData={course} courseId={course.id} />
-            <CategoryForm
-              initialData={course}
-              courseId={course.id}
-              options={[
-                { label: 'Web Development', value: '1' },
-                { label: 'Mobile Development', value: '2' },
-                { label: 'Design', value: '3' },
-                { label: 'Marketing', value: '4' },
-              ]}
-              // options={categories.map(category => ({
-              //   label: category.name,
-              //   value: category.id,
-              // }))}
-            /> */}
+            <TitleCourseForm
+              initialData={normalizedCourse}
+              courseId={courseId}
+            />
+            <DescriptionCourseForm
+              initialData={normalizedCourse}
+              courseId={courseId}
+            />
+            <ImageCourseForm
+              initialData={normalizedCourse}
+              courseId={courseId}
+            />
+            <CategoryCourseForm
+              initialData={normalizedCourse}
+              courseId={courseId}
+              options={categories.map(category => ({
+                label: category.name,
+                value: category.id,
+              }))}
+            />
           </div>
           <div className="space-y-6">
             <div>
@@ -99,21 +114,31 @@ const CourseIdPage = () => {
                 <IconBadge icon={ListChecks} />
                 <h2 className="text-xl">Course Chapter</h2>
               </div>
-              {/* <ChaptersForm initialData={course} courseId={course.id} /> */}
+              <ChaptersForm
+                initialData={normalizedCourse.chapters}
+                courseId={courseId}
+              />
             </div>
             <div>
               <div className="flex items-center gap-x-2">
                 <IconBadge icon={CircleDollarSign} />
                 <h2 className="text-xl">Sell your course</h2>
               </div>
-              {/* <PriceForm initialData={course} courseId={course.id} /> */}
+              <PriceCourseForm
+                initialData={normalizedCourse}
+                courseId={courseId}
+              />
             </div>
             <div>
               <div className="flex items-center gap-x-2">
                 <IconBadge icon={File} />
                 <h2 className="text-xl">Resources & Attachments</h2>
               </div>
-              {/* <AttachmentForm initialData={course} courseId={course.id} /> */}
+              <AttachmentForm
+                initialData={normalizedCourse.attachments}
+                courseId={courseId}
+                courseImageUrl={course.imageUrl}
+              />
             </div>
           </div>
         </div>

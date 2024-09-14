@@ -1,5 +1,3 @@
-'use client'
-
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -9,64 +7,79 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { courses, insertCoursesSchema } from '@/db/schema'
+import { cn, formatPrice } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
-import axios from 'axios'
 import { Pencil } from 'lucide-react'
-import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import * as z from 'zod'
+import { z } from 'zod'
 
-const formSchema = z.object({
-  title: z.string().min(1, 'Title is required'),
+import { useEditCourse } from '../api/use-edit-course'
+
+const formSchema = insertCoursesSchema.pick({
+  price: true,
 })
 
-interface TitleFormProps {
-  initialData: {
-    title: string
-  }
+type FormValues = z.input<typeof formSchema>
+
+type CourseFormProps = {
+  initialData: typeof courses.$inferSelect
   courseId: string
 }
 
-const TitleForm = ({ initialData, courseId }: TitleFormProps) => {
+export const PriceCourseForm = ({ initialData, courseId }: CourseFormProps) => {
+  const { mutate: editMutation, isPending } = useEditCourse(courseId)
+
   const [isEditing, setIsEditing] = useState(false)
-  const router = useRouter()
 
   const toggleEdit = () => {
     setIsEditing(current => !current)
   }
-  const form = useForm<z.infer<typeof formSchema>>({
+
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: initialData,
+    defaultValues: { price: initialData?.price || undefined },
   })
-  const { isSubmitting, isValid } = form.formState
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      await axios.patch(`/api/courses/${courseId}`, values)
-      toast.success('Course updated')
-      toggleEdit()
-      router.refresh()
-    } catch {
-      toast.error('Something went wrong')
-    }
+    editMutation(values, {
+      onSuccess: () => {
+        toast.success('Course updated')
+        toggleEdit()
+      },
+      onError: () => {
+        toast.error('Something went wrong')
+      },
+    })
   }
+
   return (
     <div className="mt-6 rounded-md border bg-slate-100 p-4">
       <div className="flex items-center justify-between font-medium">
-        Course Title
+        Course Price
         <Button onClick={toggleEdit} variant="ghost">
           {isEditing ? (
             <>Cancel</>
           ) : (
             <>
               <Pencil className="mr-2 h-4 w-4" />
-              Edit title
+              Edit price
             </>
           )}
         </Button>
       </div>
-      {!isEditing && <p className="mt-2 text-sm">{initialData?.title}</p>}
+      {!isEditing && (
+        <p
+          className={cn(
+            'mt-2 text-sm',
+            !initialData?.price && 'italic text-slate-500'
+          )}
+        >
+          {initialData?.price ? formatPrice(initialData.price) : 'No price'}
+        </p>
+      )}
       {isEditing && (
         <Form {...form}>
           <form
@@ -75,21 +88,25 @@ const TitleForm = ({ initialData, courseId }: TitleFormProps) => {
           >
             <FormField
               control={form.control}
-              name="title"
+              name="price"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
                     <Input
-                      disabled={isSubmitting}
+                      type="number"
+                      step="0.01"
+                      disabled={isPending}
+                      placeholder="Set a price for your course"
                       {...field}
-                      placeholder="e.g. 'Advanced Web Development'"
+                      onChange={e => field.onChange(+e.target.value)}
                     />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
             <div className="flex items-center gap-x-2">
-              <Button disabled={!isValid || isSubmitting} type="submit">
+              <Button disabled={isPending} type="submit">
                 Save
               </Button>
             </div>
@@ -99,5 +116,3 @@ const TitleForm = ({ initialData, courseId }: TitleFormProps) => {
     </div>
   )
 }
-
-export default TitleForm

@@ -3,7 +3,6 @@ import { Modals } from '@/components/modals'
 import { Providers } from '@/components/providers'
 import type { Metadata } from 'next'
 import { SessionProvider } from 'next-auth/react'
-import { ThemeProvider } from 'next-themes'
 import { Inter } from 'next/font/google'
 import { Toaster } from 'sonner'
 
@@ -25,7 +24,7 @@ export default async function RootLayout({
 
   return (
     <SessionProvider session={session}>
-      <html lang="en">
+      <html lang="en" suppressHydrationWarning>
         <body className={inter.className}>
           <Providers>
             <Toaster />

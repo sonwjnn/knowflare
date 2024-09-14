@@ -63,7 +63,12 @@ const Actions = ({ disabled, courseId, isPublished }: ActionsProps) => {
       >
         {isPublished ? 'Unpublish' : 'Publish'}
       </Button>
-      <Button onClick={handleDelete} size="sm" disabled={isLoading}>
+      <Button
+        onClick={handleDelete}
+        className="bg-rose-600 hover:bg-rose-500/90"
+        size="sm"
+        disabled={isLoading}
+      >
         <Trash className="h-4 w-4" />
       </Button>
     </div>

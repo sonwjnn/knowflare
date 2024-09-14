@@ -3,6 +3,7 @@ import { AuthConfig, initAuthConfig } from '@hono/auth-js'
 import { Context, Hono } from 'hono'
 import { handle } from 'hono/vercel'
 
+import categories from './categories'
 import courses from './courses'
 import users from './users'
 
@@ -19,7 +20,10 @@ const app = new Hono().basePath('/api')
 
 app.use('*', initAuthConfig(getAuthConfig))
 
-const routes = app.route('/users', users).route('/courses', courses)
+const routes = app
+  .route('/users', users)
+  .route('/courses', courses)
+  .route('/categories', categories)
 
 export const GET = handle(app)
 export const POST = handle(app)

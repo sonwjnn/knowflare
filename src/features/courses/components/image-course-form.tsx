@@ -1,43 +1,51 @@
-'use client'
-
 import FileUpload from '@/components/file-upload'
 import { Button } from '@/components/ui/button'
-import { courses } from '@/db/schema'
-import axios from 'axios'
+import { insertCoursesSchema } from '@/db/schema'
 import { ImageIcon, Pencil, PlusCircle } from 'lucide-react'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import * as z from 'zod'
+import { z } from 'zod'
 
-const formSchema = z.object({
-  imageUrl: z.string().min(1, 'ImageUrl is required'),
+import { useEditCourse } from '../api/use-edit-course'
+
+const formSchema = insertCoursesSchema.pick({
+  imageUrl: true,
 })
 
-interface ImageFormProps {
-  initialData: typeof courses.$inferSelect
+type FormValues = z.input<typeof formSchema>
+
+type ImageCourseFormProps = {
+  initialData: {
+    imageUrl: string | null
+  }
   courseId: string
 }
 
-const ImageForm = ({ initialData, courseId }: ImageFormProps) => {
+export const ImageCourseForm = ({
+  initialData,
+  courseId,
+}: ImageCourseFormProps) => {
+  const { mutate: editMutation } = useEditCourse(courseId)
+
   const [isEditing, setIsEditing] = useState(false)
-  const router = useRouter()
 
   const toggleEdit = () => {
     setIsEditing(current => !current)
   }
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      await axios.patch(`/api/courses/${courseId}`, values)
-      toast.success('Course updated')
-      toggleEdit()
-      router.refresh()
-    } catch {
-      toast.error('Something went wrong')
-    }
+    editMutation(values, {
+      onSuccess: () => {
+        toast.success('Course updated')
+        toggleEdit()
+      },
+      onError: () => {
+        toast.error('Something went wrong')
+      },
+    })
   }
+
   return (
     <div className="mt-6 rounded-md border bg-slate-100 p-4">
       <div className="flex items-center justify-between font-medium">
@@ -89,5 +97,3 @@ const ImageForm = ({ initialData, courseId }: ImageFormProps) => {
     </div>
   )
 }
-
-export default ImageForm

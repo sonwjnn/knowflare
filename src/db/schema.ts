@@ -102,7 +102,7 @@ export const courses = pgTable('course', {
   title: text('title').notNull(),
   description: text('description'),
   imageUrl: text('image_url'),
-  price: numeric('price', { precision: 10, scale: 2 }),
+  price: integer('price').notNull(),
   isPublished: boolean('is_published').default(false).notNull(),
   createdAt: timestamp('created_at', { mode: 'date' }).notNull(),
   updatedAt: timestamp('updated_at', { mode: 'date' }).notNull(),
@@ -118,7 +118,7 @@ export const coursesRelations = relations(courses, ({ many, one }) => ({
   purchases: many(purchases),
 }))
 
-export const coursesInsertSchema = createInsertSchema(courses)
+export const insertCoursesSchema = createInsertSchema(courses)
 
 export const categories = pgTable('category', {
   id: text('id')
@@ -162,8 +162,8 @@ export const chapters = pgTable('chapter', {
   description: text('description'),
   videoUrl: text('video_url'),
   position: integer('position').notNull(),
-  isPublished: boolean('is_published').default(false).notNull(),
-  isFree: boolean('is_free').default(false).notNull(),
+  isPublished: boolean('is_published').default(false),
+  isFree: boolean('is_free').default(false),
   createdAt: timestamp('created_at', { mode: 'date' }).notNull(),
   updatedAt: timestamp('updated_at', { mode: 'date' }).notNull(),
 })
@@ -214,7 +214,7 @@ export const userProgress = pgTable('user_progress', {
     .references(() => chapters.id, {
       onDelete: 'cascade',
     }),
-  isCompleted: boolean('is_completed').default(false).notNull(),
+  isCompleted: boolean('is_completed').default(false),
   createdAt: timestamp('created_at', { mode: 'date' }).notNull(),
   updatedAt: timestamp('updated_at', { mode: 'date' }).notNull(),
 })

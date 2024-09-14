@@ -20,7 +20,7 @@ import * as React from 'react'
 
 interface ComboboxProps {
   options: { label: string; value: string }[]
-  value?: string
+  value?: string | null
   onChange: (value: string) => void
 }
 export function Combobox({ options, value, onChange }: ComboboxProps) {
