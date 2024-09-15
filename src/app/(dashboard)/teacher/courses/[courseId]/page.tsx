@@ -3,13 +3,14 @@
 import { Banner } from '@/components/banner'
 import { IconBadge } from '@/components/icon-badge'
 import { useGetCategories } from '@/features/categories/api/use-get-categories'
+import { useGetAttachments } from '@/features/courses/api/use-get-attachments'
+import { useGetChapters } from '@/features/courses/api/use-get-chapters'
 import { useGetCourse } from '@/features/courses/api/use-get-course'
 import AttachmentForm from '@/features/courses/components/attachment-form'
 import { CategoryCourseForm } from '@/features/courses/components/category-course-form'
-import ChaptersForm from '@/features/courses/components/chapters-form'
+import { ChaptersCourseForm } from '@/features/courses/components/chapters-course-form'
 import { DescriptionCourseForm } from '@/features/courses/components/description-course-form'
 import { ImageCourseForm } from '@/features/courses/components/image-course-form'
-import ImageForm from '@/features/courses/components/image-form'
 import { PriceCourseForm } from '@/features/courses/components/price-course-form'
 import { TitleCourseForm } from '@/features/courses/components/title-course-form'
 import { useCourseId } from '@/hooks/use-course-id'
@@ -18,6 +19,7 @@ import {
   File,
   LayoutDashboard,
   ListChecks,
+  Loader,
 } from 'lucide-react'
 
 import Actions from './actions'
@@ -25,11 +27,35 @@ import Actions from './actions'
 const CourseIdPage = () => {
   const courseId = useCourseId()
 
-  const { data: course } = useGetCourse(courseId)
-
-  const { data: categories } = useGetCategories()
+  const { data: course, isPending: coursesLoading } = useGetCourse(courseId)
+  const { data: chapters, isPending: chaptersLoading } = useGetChapters(
+    course?.id
+  )
+  const { data: attachments, isPending: attachmentsLoading } =
+    useGetAttachments(course?.id)
+  const { data: categories, isPending: categoriesLoading } = useGetCategories()
 
   if (!course || !categories) return null
+
+  const normalizedCourse = {
+    ...course,
+    createdAt: new Date(course.createdAt),
+    updatedAt: new Date(course.updatedAt),
+  }
+
+  const normalizedChapters =
+    chapters?.map(chapter => ({
+      ...chapter,
+      createdAt: new Date(chapter.createdAt),
+      updatedAt: new Date(chapter.updatedAt),
+    })) ?? []
+
+  const normalizedAttachments =
+    attachments?.map(item => ({
+      ...item,
+      createdAt: new Date(item.createdAt),
+      updatedAt: new Date(item.updatedAt),
+    })) ?? []
 
   const requiredFields = [
     course.title,
@@ -37,29 +63,22 @@ const CourseIdPage = () => {
     course.imageUrl,
     course.price,
     course.categoryId,
-    course.chapters.some((chapter: any) => chapter.isPublished),
+    normalizedChapters.some(chapter => chapter.isPublished),
   ]
 
   const totalFields = requiredFields.length
   const completedFields = requiredFields.filter(Boolean).length
   const completionText = `(${completedFields}/${totalFields})`
   const isCompleted = requiredFields.every(Boolean)
+  const isLoading =
+    coursesLoading || chaptersLoading || categoriesLoading || attachmentsLoading
 
-  const normalizedCourse = {
-    ...course,
-    createdAt: new Date(course.createdAt),
-    updatedAt: new Date(course.updatedAt),
-    chapters: course.chapters.map(item => ({
-      ...item,
-      isPublished: item.isPublished,
-      createdAt: new Date(item.createdAt),
-      updatedAt: new Date(item.updatedAt),
-    })),
-    attachments: course.attachments.map(item => ({
-      ...item,
-      createdAt: new Date(item.createdAt),
-      updatedAt: new Date(item.updatedAt),
-    })),
+  if (isLoading) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <Loader className="size-6 animate-spin text-muted-foreground" />
+      </div>
+    )
   }
 
   return (
@@ -114,8 +133,8 @@ const CourseIdPage = () => {
                 <IconBadge icon={ListChecks} />
                 <h2 className="text-xl">Course Chapter</h2>
               </div>
-              <ChaptersForm
-                initialData={normalizedCourse.chapters}
+              <ChaptersCourseForm
+                initialData={normalizedChapters}
                 courseId={courseId}
               />
             </div>
@@ -135,7 +154,7 @@ const CourseIdPage = () => {
                 <h2 className="text-xl">Resources & Attachments</h2>
               </div>
               <AttachmentForm
-                initialData={normalizedCourse.attachments}
+                initialData={normalizedAttachments}
                 courseId={courseId}
                 courseImageUrl={course.imageUrl}
               />

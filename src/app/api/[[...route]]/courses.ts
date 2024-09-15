@@ -7,7 +7,7 @@ import {
 } from '@/db/schema'
 import { verifyAuth } from '@hono/auth-js'
 import { zValidator } from '@hono/zod-validator'
-import { and, desc, eq } from 'drizzle-orm'
+import { and, asc, desc, eq } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { z } from 'zod'
 
@@ -46,33 +46,17 @@ const app = new Hono()
         return c.json({ error: 'Unauthorized' }, 401)
       }
 
-      const [course] = await db
+      const [data] = await db
         .select()
         .from(courses)
         .where(and(eq(courses.id, id), eq(courses.userId, auth.token.id)))
 
-      if (!course) {
+      if (!data) {
         return c.json({ error: 'Not found' }, 404)
       }
 
-      const attachmentsData = await db
-        .select()
-        .from(attachments)
-        .where(eq(attachments.courseId, course.id))
-        .orderBy(desc(attachments.createdAt))
-
-      const chaptersData = await db
-        .select()
-        .from(chapters)
-        .where(eq(chapters.courseId, course.id))
-        .orderBy(desc(chapters.position))
-
       return c.json({
-        data: {
-          ...course,
-          attachments: attachmentsData,
-          chapters: chaptersData,
-        },
+        data,
       })
     }
   )
@@ -199,6 +183,50 @@ const app = new Hono()
       return c.json({ data })
     }
   )
+  .get(
+    '/:id/chapters',
+    verifyAuth(),
+    zValidator(
+      'param',
+      z.object({
+        id: z.string().optional(),
+      })
+    ),
+    async c => {
+      const auth = c.get('authUser')
+
+      if (!auth.token?.id) {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
+      const { id } = c.req.valid('param')
+
+      if (!id) {
+        return c.json({ error: 'Missing id' }, 400)
+      }
+
+      const [courseOwner] = await db
+        .select({
+          id: courses.id,
+        })
+        .from(courses)
+        .where(and(eq(courses.userId, auth.token.id), eq(courses.id, id)))
+
+      if (!courseOwner) {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
+      const data = await db
+        .select()
+        .from(chapters)
+        .where(eq(chapters.courseId, courseOwner.id))
+        .orderBy(asc(chapters.position))
+
+      return c.json({
+        data,
+      })
+    }
+  )
   .post(
     '/:id/chapters',
     verifyAuth(),
@@ -270,7 +298,7 @@ const app = new Hono()
       })
     }
   )
-  .put(
+  .post(
     '/:id/chapters/reorder',
     verifyAuth(),
     zValidator(
@@ -282,12 +310,12 @@ const app = new Hono()
     zValidator(
       'json',
       z.object({
-        categoryId: z.string().optional().nullable(),
-        title: z.string().optional(),
-        description: z.string().optional().nullable(),
-        imageUrl: z.string().optional().nullable(),
-        price: z.number().optional(),
-        isPublished: z.boolean().optional(),
+        list: z.array(
+          z.object({
+            id: z.string(),
+            position: z.number(),
+          })
+        ),
       })
     ),
     async c => {
@@ -298,23 +326,85 @@ const app = new Hono()
       }
 
       const { id } = c.req.valid('param')
-      const values = c.req.valid('json')
+      const { list } = c.req.valid('json')
 
       if (!id) {
         return c.json({ error: 'Missing id' }, 400)
       }
 
-      const [data] = await db
-        .update(courses)
-        .set(values)
-        .where(and(eq(courses.userId, auth.token.id), eq(courses.id, id)))
-        .returning()
+      console.log(list)
 
-      if (!data) {
-        return c.json({ error: 'Not found' }, 404)
+      const [courseOwner] = await db
+        .select({
+          id: courses.id,
+        })
+        .from(courses)
+        .where(and(eq(courses.userId, auth.token.id), eq(courses.id, id)))
+
+      if (!courseOwner) {
+        return c.json({ error: 'Unauthorized' }, 401)
       }
 
-      return c.json({ data })
+      const data = []
+
+      for (let item of list) {
+        const [updatedChapter] = await db
+          .update(chapters)
+          .set({ position: item.position })
+          .where(eq(chapters.id, item.id))
+          .returning()
+
+        data.push(updatedChapter)
+      }
+
+      const dataOrder = data.sort((a, b) => a.position - b.position)
+
+      return c.json({ dataOrder })
+    }
+  )
+
+  .get(
+    '/:id/attachments',
+    verifyAuth(),
+    zValidator(
+      'param',
+      z.object({
+        id: z.string().optional(),
+      })
+    ),
+    async c => {
+      const auth = c.get('authUser')
+
+      if (!auth.token?.id) {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
+      const { id } = c.req.valid('param')
+
+      if (!id) {
+        return c.json({ error: 'Missing id' }, 400)
+      }
+
+      const [courseOwner] = await db
+        .select({
+          id: courses.id,
+        })
+        .from(courses)
+        .where(and(eq(courses.userId, auth.token.id), eq(courses.id, id)))
+
+      if (!courseOwner) {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
+      const data = await db
+        .select()
+        .from(attachments)
+        .where(eq(attachments.courseId, courseOwner.id))
+        .orderBy(desc(attachments.createdAt))
+
+      return c.json({
+        data,
+      })
     }
   )
 

@@ -4,39 +4,35 @@ import { InferRequestType, InferResponseType } from 'hono'
 import { toast } from 'sonner'
 
 type ResponseType = InferResponseType<
-  (typeof client.api.courses)[':id']['chapters']['$post'],
-  200
+  (typeof client.api.courses)[':id']['chapters']['reorder']['$post']
 >
 type RequestType = InferRequestType<
-  (typeof client.api.courses)[':id']['chapters']['$post']
+  (typeof client.api.courses)[':id']['chapters']['reorder']['$post']
 >['json']
 
-export const useCreateChapter = (courseId: string) => {
+export const useReorderChapters = (courseId?: string) => {
   const queryClient = useQueryClient()
 
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async json => {
-      const response = await client.api.courses[':id']['chapters'].$post({
+      const response = await client.api.courses[':id']['chapters']['reorder'][
+        '$post'
+      ]({
         json,
         param: { id: courseId },
       })
 
-      if (!response.ok) {
-        throw new Error('Something went wrong')
-      }
-
       return await response.json()
     },
     onSuccess: () => {
-      toast.success('Chapter created.')
+      toast.success('Chapters updated')
+
       queryClient.invalidateQueries({
         queryKey: ['courses', courseId, 'chapters'],
       })
     },
     onError: () => {
-      toast.error(
-        'Failed to create chapter. The session token may have expired, logout and login again, and everything will work fine.'
-      )
+      toast.error('Failed to edit chapters')
     },
   })
 

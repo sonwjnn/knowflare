@@ -1,5 +1,3 @@
-'use client'
-
 import { Badge } from '@/components/ui/badge'
 import { chapters } from '@/db/schema'
 import { cn } from '@/lib/utils'
@@ -18,23 +16,22 @@ interface ChaptersListProps {
   onEdit: (id: string) => void
 }
 const ChaptersList = ({ items, onReorder, onEdit }: ChaptersListProps) => {
-  const [isMounted, setIsMounted] = useState(false)
   const [chapters, setChapters] = useState(items)
 
   useEffect(() => {
-    setIsMounted(true)
-  }, [])
-  useEffect(() => {
     setChapters(items)
   }, [items])
+
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return
+
     const items = Array.from(chapters)
     const [reorderedItem] = items.splice(result.source.index, 1)
     items.splice(result.destination.index, 0, reorderedItem)
 
     const startIndex = Math.min(result.source.index, result.destination.index)
     const endIndex = Math.max(result.source.index, result.destination.index)
+
     const updatedChapters = items.slice(startIndex, endIndex + 1)
 
     setChapters(items)
@@ -46,7 +43,6 @@ const ChaptersList = ({ items, onReorder, onEdit }: ChaptersListProps) => {
 
     onReorder(bulkUpdateData)
   }
-  if (!isMounted) return null
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId="chapters">

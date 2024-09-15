@@ -8,17 +8,16 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { courses, insertCoursesSchema } from '@/db/schema'
+import { chapters, insertCoursesSchema } from '@/db/schema'
+import { useCreateChapter } from '@/features/courses/api/use-create-chapter'
+import { useReorderChapters } from '@/features/courses/api/use-reorder-chapters'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader2, Pencil, PlusCircle } from 'lucide-react'
+import { Loader2, PlusCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
 import { z } from 'zod'
-
-import { useEditCourse } from '../api/use-edit-course'
 
 const formSchema = insertCoursesSchema.pick({
   title: true,
@@ -27,7 +26,7 @@ const formSchema = insertCoursesSchema.pick({
 type FormValues = z.input<typeof formSchema>
 
 type ChaptersCourseFormProps = {
-  initialData: (typeof courses.$inferSelect)[]
+  initialData: (typeof chapters.$inferSelect)[]
   courseId: string
 }
 
@@ -35,16 +34,16 @@ export const ChaptersCourseForm = ({
   initialData,
   courseId,
 }: ChaptersCourseFormProps) => {
-  const { mutate: editMutation, isPending } = useEditCourse(courseId)
+  const { mutate: createChapter, isPending: createChapterLoading } =
+    useCreateChapter(courseId)
+  const { mutate: reorderChapters, isPending: reorderChaptersLoading } =
+    useReorderChapters(courseId)
 
   const router = useRouter()
 
   const [isCreating, setIsCreating] = useState(false)
-  const [isUpdating, setIsUpdating] = useState(false)
 
-  const toggleCreating = () => {
-    setIsCreating(current => !current)
-  }
+  const isLoading = createChapterLoading || reorderChaptersLoading
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -52,30 +51,21 @@ export const ChaptersCourseForm = ({
   })
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    editMutation(values, {
+    createChapter(values, {
       onSuccess: () => {
-        toast.success('Course updated')
         toggleCreating()
-      },
-      onError: () => {
-        toast.error('Something went wrong')
       },
     })
   }
 
+  const toggleCreating = () => {
+    setIsCreating(current => !current)
+  }
+
   const onReorder = async (updateData: { id: string; position: number }[]) => {
-    try {
-      setIsUpdating(true)
-      await axios.put(`/api/courses/${courseId}/chapters/reorder`, {
-        list: updateData,
-      })
-      toast.success('Chapters reordered')
-      router.refresh()
-    } catch {
-      toast.error('Something went wrong')
-    } finally {
-      setIsUpdating(false)
-    }
+    reorderChapters({
+      list: updateData,
+    })
   }
 
   const onEdit = async (id: string) => {
@@ -84,7 +74,7 @@ export const ChaptersCourseForm = ({
 
   return (
     <div className="relative mt-6 rounded-md border bg-slate-100 p-4">
-      {isUpdating && (
+      {isLoading && (
         <div className="absolute right-0 top-0 flex h-full w-full items-center justify-center rounded-md bg-slate-500/20">
           <Loader2 className="h-6 w-6 animate-spin text-sky-700" />
         </div>
@@ -116,7 +106,7 @@ export const ChaptersCourseForm = ({
                 <FormItem>
                   <FormControl>
                     <Input
-                      disabled={isSubmitting}
+                      disabled={isLoading}
                       {...field}
                       placeholder="e.g. 'Introduction to the course'"
                     />
@@ -126,7 +116,7 @@ export const ChaptersCourseForm = ({
               )}
             />
 
-            <Button disabled={!isValid || isSubmitting} type="submit">
+            <Button disabled={isLoading} type="submit">
               Create
             </Button>
           </form>
