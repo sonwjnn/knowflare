@@ -1,8 +1,11 @@
+'use client'
+
 import { Banner } from '@/components/banner'
 import { IconBadge } from '@/components/icon-badge'
-import { db } from '@/lib/db'
-import { auth } from '@clerk/nextjs'
-import { ArrowLeft, Eye, LayoutDashboard, Video } from 'lucide-react'
+import { useGetChapter } from '@/features/courses/api/use-get-chapter'
+import { useChapterId } from '@/hooks/use-chapter-id'
+import { useCourseId } from '@/hooks/use-course-id'
+import { ArrowLeft, Eye, LayoutDashboard, Loader, Video } from 'lucide-react'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -12,23 +15,20 @@ import ChapterDescriptionForm from './chapter-description-form'
 import ChapterTitleForm from './chapter-title-form'
 import ChapterVideoForm from './chapter-video-form'
 
-const ChapterIdPage = async ({
+const ChapterIdPage = ({
   params,
 }: {
   params: { chapterId: string; courseId: string }
 }) => {
-  const { courseId, chapterId } = params
-  const { userId } = auth()
+  const chapterId = useChapterId()
+  const courseId = useCourseId()
 
-  if (!userId) return redirect('/')
-
-  const chapter = await db.chapter.findUnique({
-    where: { id: chapterId, courseId },
-    include: {
-      muxData: true,
-    },
+  const { data: chapter, isPending: chapterLoading } = useGetChapter({
+    chapterId,
+    courseId,
   })
-  if (!chapter) return redirect('/')
+
+  if (!chapter) return null
 
   const requiredFields = [chapter.title, chapter.description, chapter.videoUrl]
 
@@ -37,6 +37,19 @@ const ChapterIdPage = async ({
   const completionText = `${completedFields}/${totalFields}`
 
   const isComplete = requiredFields.every(Boolean)
+
+  const normalizedChapter = {
+    ...chapter,
+    isPublished: !!chapter.isPublished,
+    createdAt: new Date(chapter.createdAt),
+    updatedAt: new Date(chapter.updatedAt),
+  }
+
+  if (chapterLoading) {
+    ;<div className="flex h-full items-center justify-center">
+      <Loader className="size-6 animate-spin text-muted-foreground" />
+    </div>
+  }
 
   return (
     <>
@@ -67,7 +80,7 @@ const ChapterIdPage = async ({
                 disabled={!isComplete}
                 courseId={courseId}
                 chapterId={chapterId}
-                isPublished={chapter?.isPublished}
+                isPublished={normalizedChapter?.isPublished}
               />
             </div>
           </div>
@@ -85,7 +98,7 @@ const ChapterIdPage = async ({
                 chapterId={chapterId}
               />
               <ChapterDescriptionForm
-                initialData={chapter}
+                initialData={normalizedChapter}
                 courseId={courseId}
                 chapterId={chapterId}
               />
@@ -96,7 +109,7 @@ const ChapterIdPage = async ({
                 <h2 className="text-xl">Access Settings</h2>
               </div>
               <ChapterAccessForm
-                initialData={chapter}
+                initialData={normalizedChapter}
                 courseId={courseId}
                 chapterId={chapterId}
               />
@@ -108,7 +121,7 @@ const ChapterIdPage = async ({
               <h2 className="text-xl">Add a video</h2>
             </div>
             <ChapterVideoForm
-              initialData={chapter}
+              initialData={normalizedChapter}
               chapterId={chapterId}
               courseId={courseId}
             />

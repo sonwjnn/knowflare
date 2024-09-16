@@ -7,11 +7,13 @@
 <br>
 
 ## Features
+
 - 🌜 Dark/Light mode
-- 🛒 Payment 
+- 🛒 Payment
 - ✉️ Login/Register with Credentials, OAuth
 
 ## Tech Stack
+
 - 🛠️ Built in Next.js 14
 - 💻 HonoJS to handle backend
 - 🖥️ Drizzle for type ORM
@@ -30,7 +32,7 @@ git clone https://github.com/sonwjnn/knowflare.git
 bun install
 ```
 
-## Setup .env file
+## Setup .env.local file
 
 ```sh
 AUTH_SECRET=
@@ -55,7 +57,7 @@ STRIPE_API_KEY=
 
 ```sh
 # Run project
-bun dev 
+bun dev
 
 # Alias commands for drizzle-kit
 bun db:generate

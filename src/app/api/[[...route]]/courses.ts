@@ -4,6 +4,7 @@ import {
   chapters,
   courses,
   insertCoursesSchema,
+  muxData,
 } from '@/db/schema'
 import { verifyAuth } from '@hono/auth-js'
 import { zValidator } from '@hono/zod-validator'
@@ -332,8 +333,6 @@ const app = new Hono()
         return c.json({ error: 'Missing id' }, 400)
       }
 
-      console.log(list)
-
       const [courseOwner] = await db
         .select({
           id: courses.id,
@@ -362,7 +361,64 @@ const app = new Hono()
       return c.json({ dataOrder })
     }
   )
+  .get(
+    '/:courseId/chapters/:chapterId',
+    verifyAuth(),
+    zValidator(
+      'param',
+      z.object({
+        courseId: z.string().optional(),
+        chapterId: z.string().optional(),
+      })
+    ),
+    async c => {
+      const auth = c.get('authUser')
 
+      if (!auth.token?.id) {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
+      const { courseId, chapterId } = c.req.valid('param')
+
+      if (!courseId || !chapterId) {
+        return c.json({ error: 'Missing id' }, 400)
+      }
+
+      const [courseOwner] = await db
+        .select({
+          id: courses.id,
+        })
+        .from(courses)
+        .where(and(eq(courses.userId, auth.token.id), eq(courses.id, courseId)))
+
+      if (!courseOwner) {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
+      const [chapter] = await db
+        .select()
+        .from(chapters)
+        .where(
+          and(eq(chapters.id, chapterId), eq(chapters.courseId, courseOwner.id))
+        )
+
+      if (!chapter) {
+        return c.json({ error: 'Chapter not found' }, 404)
+      }
+
+      const [muxDataResponse] = await db
+        .select()
+        .from(muxData)
+        .where(eq(muxData.chapterId, chapter.id))
+
+      return c.json({
+        data: {
+          ...chapter,
+          muxData: muxDataResponse,
+        },
+      })
+    }
+  )
   .get(
     '/:id/attachments',
     verifyAuth(),

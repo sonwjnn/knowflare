@@ -4,7 +4,7 @@ import { config } from 'dotenv'
 import { drizzle } from 'drizzle-orm/neon-http'
 import { v4 as uuidv4 } from 'uuid'
 
-config({ path: '.env' })
+config({ path: '.env.local' })
 
 const sql = neon(process.env.DATABASE_URL!)
 const db = drizzle(sql)
