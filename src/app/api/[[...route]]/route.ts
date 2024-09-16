@@ -3,7 +3,9 @@ import { AuthConfig, initAuthConfig } from '@hono/auth-js'
 import { Context, Hono } from 'hono'
 import { handle } from 'hono/vercel'
 
+import attachments from './attachments'
 import categories from './categories'
+import chapters from './chapters'
 import courses from './courses'
 import users from './users'
 
@@ -24,6 +26,8 @@ const routes = app
   .route('/users', users)
   .route('/courses', courses)
   .route('/categories', categories)
+  .route('/chapters', chapters)
+  .route('/attachments', attachments)
 
 export const GET = handle(app)
 export const POST = handle(app)

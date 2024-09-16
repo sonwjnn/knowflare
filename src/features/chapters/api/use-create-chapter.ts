@@ -3,17 +3,25 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { InferRequestType, InferResponseType } from 'hono'
 import { toast } from 'sonner'
 
-type ResponseType = InferResponseType<(typeof client.api.courses)['$post'], 200>
+type ResponseType = InferResponseType<
+  (typeof client.api.chapters)['$post'],
+  200
+>
 type RequestType = InferRequestType<
-  (typeof client.api.courses)['$post']
+  (typeof client.api.chapters)['$post']
 >['json']
 
-export const useCreateChapter = () => {
+export const useCreateChapter = (courseId: string) => {
   const queryClient = useQueryClient()
 
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async json => {
-      const response = await client.api.courses.$post({ json })
+      const response = await client.api.chapters.$post({
+        json: {
+          ...json,
+          courseId,
+        },
+      })
 
       if (!response.ok) {
         throw new Error('Something went wrong')
@@ -22,13 +30,14 @@ export const useCreateChapter = () => {
       return await response.json()
     },
     onSuccess: () => {
-      toast.success('Course created.')
-
-      queryClient.invalidateQueries({ queryKey: ['courses'] })
+      toast.success('Chapter created.')
+      queryClient.invalidateQueries({
+        queryKey: ['chapters', { courseId }],
+      })
     },
     onError: () => {
       toast.error(
-        'Failed to create course. The session token may have expired, logout and login again, and everything will work fine.'
+        'Failed to create chapter. The session token may have expired, logout and login again, and everything will work fine.'
       )
     },
   })

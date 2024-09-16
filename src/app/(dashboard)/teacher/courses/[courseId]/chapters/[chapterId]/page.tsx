@@ -2,12 +2,11 @@
 
 import { Banner } from '@/components/banner'
 import { IconBadge } from '@/components/icon-badge'
-import { useGetChapter } from '@/features/courses/api/use-get-chapter'
+import { useGetChapter } from '@/features/chapters/api/use-get-chapter'
 import { useChapterId } from '@/hooks/use-chapter-id'
 import { useCourseId } from '@/hooks/use-course-id'
 import { ArrowLeft, Eye, LayoutDashboard, Loader, Video } from 'lucide-react'
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
 
 import ChapterAccessForm from './chapter-access-form'
 import ChapterActions from './chapter-actions'
@@ -23,10 +22,7 @@ const ChapterIdPage = ({
   const chapterId = useChapterId()
   const courseId = useCourseId()
 
-  const { data: chapter, isPending: chapterLoading } = useGetChapter({
-    chapterId,
-    courseId,
-  })
+  const { data: chapter, isPending: chapterLoading } = useGetChapter(chapterId)
 
   if (!chapter) return null
 
@@ -37,13 +33,6 @@ const ChapterIdPage = ({
   const completionText = `${completedFields}/${totalFields}`
 
   const isComplete = requiredFields.every(Boolean)
-
-  const normalizedChapter = {
-    ...chapter,
-    isPublished: !!chapter.isPublished,
-    createdAt: new Date(chapter.createdAt),
-    updatedAt: new Date(chapter.updatedAt),
-  }
 
   if (chapterLoading) {
     ;<div className="flex h-full items-center justify-center">
@@ -80,7 +69,7 @@ const ChapterIdPage = ({
                 disabled={!isComplete}
                 courseId={courseId}
                 chapterId={chapterId}
-                isPublished={normalizedChapter?.isPublished}
+                isPublished={!!chapter?.isPublished}
               />
             </div>
           </div>
@@ -98,7 +87,7 @@ const ChapterIdPage = ({
                 chapterId={chapterId}
               />
               <ChapterDescriptionForm
-                initialData={normalizedChapter}
+                initialData={chapter}
                 courseId={courseId}
                 chapterId={chapterId}
               />
@@ -109,7 +98,7 @@ const ChapterIdPage = ({
                 <h2 className="text-xl">Access Settings</h2>
               </div>
               <ChapterAccessForm
-                initialData={normalizedChapter}
+                initialData={chapter}
                 courseId={courseId}
                 chapterId={chapterId}
               />
@@ -121,7 +110,7 @@ const ChapterIdPage = ({
               <h2 className="text-xl">Add a video</h2>
             </div>
             <ChapterVideoForm
-              initialData={normalizedChapter}
+              initialData={chapter}
               chapterId={chapterId}
               courseId={courseId}
             />

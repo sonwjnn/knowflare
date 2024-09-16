@@ -9,8 +9,8 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { chapters, insertCoursesSchema } from '@/db/schema'
-import { useCreateChapter } from '@/features/courses/api/use-create-chapter'
-import { useReorderChapters } from '@/features/courses/api/use-reorder-chapters'
+import { useCreateChapter } from '@/features/chapters/api/use-create-chapter'
+import { useReorderChapters } from '@/features/chapters/api/use-reorder-chapters'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2, PlusCircle } from 'lucide-react'
@@ -51,11 +51,17 @@ export const ChaptersCourseForm = ({
   })
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    createChapter(values, {
-      onSuccess: () => {
-        toggleCreating()
+    createChapter(
+      {
+        ...values,
+        courseId,
       },
-    })
+      {
+        onSuccess: () => {
+          toggleCreating()
+        },
+      }
+    )
   }
 
   const toggleCreating = () => {

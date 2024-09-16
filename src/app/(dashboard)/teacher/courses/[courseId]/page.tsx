@@ -2,9 +2,9 @@
 
 import { Banner } from '@/components/banner'
 import { IconBadge } from '@/components/icon-badge'
+import { useGetAttachments } from '@/features/attachments/api/use-get-attachments'
 import { useGetCategories } from '@/features/categories/api/use-get-categories'
-import { useGetAttachments } from '@/features/courses/api/use-get-attachments'
-import { useGetChapters } from '@/features/courses/api/use-get-chapters'
+import { useGetChapters } from '@/features/chapters/api/use-get-chapters'
 import { useGetCourse } from '@/features/courses/api/use-get-course'
 import AttachmentForm from '@/features/courses/components/attachment-form'
 import { CategoryCourseForm } from '@/features/courses/components/category-course-form'
@@ -39,23 +39,15 @@ const CourseIdPage = () => {
 
   const normalizedCourse = {
     ...course,
-    createdAt: new Date(course.createdAt),
-    updatedAt: new Date(course.updatedAt),
+    date: new Date(course.date),
   }
 
-  const normalizedChapters =
-    chapters?.map(chapter => ({
-      ...chapter,
-      createdAt: new Date(chapter.createdAt),
-      updatedAt: new Date(chapter.updatedAt),
-    })) ?? []
+  const chaptersData = chapters ?? []
 
-  const normalizedAttachments =
-    attachments?.map(item => ({
-      ...item,
-      createdAt: new Date(item.createdAt),
-      updatedAt: new Date(item.updatedAt),
-    })) ?? []
+  const normalizedAttachments = (attachments ?? []).map(item => ({
+    ...item,
+    date: new Date(item.date),
+  }))
 
   const requiredFields = [
     course.title,
@@ -63,7 +55,7 @@ const CourseIdPage = () => {
     course.imageUrl,
     course.price,
     course.categoryId,
-    normalizedChapters.some(chapter => chapter.isPublished),
+    chaptersData.some(chapter => chapter.isPublished),
   ]
 
   const totalFields = requiredFields.length
@@ -134,7 +126,7 @@ const CourseIdPage = () => {
                 <h2 className="text-xl">Course Chapter</h2>
               </div>
               <ChaptersCourseForm
-                initialData={normalizedChapters}
+                initialData={chaptersData}
                 courseId={courseId}
               />
             </div>

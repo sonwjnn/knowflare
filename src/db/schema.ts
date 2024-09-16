@@ -2,7 +2,6 @@ import { relations } from 'drizzle-orm'
 import {
   boolean,
   integer,
-  numeric,
   pgTable,
   primaryKey,
   text,
@@ -10,6 +9,7 @@ import {
 } from 'drizzle-orm/pg-core'
 import { createInsertSchema } from 'drizzle-zod'
 import type { AdapterAccountType } from 'next-auth/adapters'
+import { z } from 'zod'
 
 export const users = pgTable('user', {
   id: text('id')
@@ -98,14 +98,15 @@ export const courses = pgTable('course', {
     .references(() => users.id, {
       onDelete: 'cascade',
     }),
-  categoryId: text('category_id'),
+  categoryId: text('category_id').references(() => categories.id, {
+    onDelete: 'set null',
+  }),
   title: text('title').notNull(),
   description: text('description'),
   imageUrl: text('image_url'),
-  price: integer('price').notNull(),
+  price: integer('price').default(0).notNull(),
   isPublished: boolean('is_published').default(false).notNull(),
-  createdAt: timestamp('created_at', { mode: 'date' }).notNull(),
-  updatedAt: timestamp('updated_at', { mode: 'date' }).notNull(),
+  date: timestamp('date', { mode: 'date' }).notNull(),
 })
 
 export const coursesRelations = relations(courses, ({ many, one }) => ({
@@ -118,7 +119,9 @@ export const coursesRelations = relations(courses, ({ many, one }) => ({
   purchases: many(purchases),
 }))
 
-export const insertCoursesSchema = createInsertSchema(courses)
+export const insertCoursesSchema = createInsertSchema(courses, {
+  date: z.coerce.date(),
+})
 
 export const categories = pgTable('category', {
   id: text('id')
@@ -138,8 +141,11 @@ export const attachments = pgTable('attachment', {
     }),
   name: text('name').notNull(),
   url: text('url').notNull(),
-  createdAt: timestamp('created_at', { mode: 'date' }).notNull(),
-  updatedAt: timestamp('updated_at', { mode: 'date' }).notNull(),
+  date: timestamp('date', { mode: 'date' }).notNull(),
+})
+
+export const attachmentsInsertSchema = createInsertSchema(attachments, {
+  date: z.coerce.date(),
 })
 
 export const attachmentsRelations = relations(attachments, ({ one }) => ({
@@ -164,9 +170,9 @@ export const chapters = pgTable('chapter', {
   position: integer('position').notNull(),
   isPublished: boolean('is_published').default(false),
   isFree: boolean('is_free').default(false),
-  createdAt: timestamp('created_at', { mode: 'date' }).notNull(),
-  updatedAt: timestamp('updated_at', { mode: 'date' }).notNull(),
 })
+
+export const insertChaptersSchema = createInsertSchema(chapters)
 
 export const chaptersRelations = relations(chapters, ({ one, many }) => ({
   course: one(courses, {
@@ -215,8 +221,6 @@ export const userProgress = pgTable('user_progress', {
       onDelete: 'cascade',
     }),
   isCompleted: boolean('is_completed').default(false),
-  createdAt: timestamp('created_at', { mode: 'date' }).notNull(),
-  updatedAt: timestamp('updated_at', { mode: 'date' }).notNull(),
 })
 
 export const userProgressRelations = relations(userProgress, ({ one }) => ({
@@ -240,8 +244,6 @@ export const purchases = pgTable('purchases', {
     .references(() => courses.id, {
       onDelete: 'cascade',
     }),
-  createdAt: timestamp('created_at', { mode: 'date' }).notNull(),
-  updatedAt: timestamp('updated_at', { mode: 'date' }).notNull(),
 })
 
 export const purchasesRelations = relations(purchases, ({ one }) => ({

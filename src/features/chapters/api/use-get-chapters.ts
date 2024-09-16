@@ -3,17 +3,17 @@ import { useQuery } from '@tanstack/react-query'
 import { InferResponseType } from 'hono'
 
 export type ResponseType = InferResponseType<
-  (typeof client.api.courses)[':id']['chapters']['$get'],
+  (typeof client.api.chapters)['$get'],
   200
 >
 
 export const useGetChapters = (courseId?: string) => {
   const query = useQuery({
     enabled: !!courseId,
-    queryKey: ['courses', courseId, 'chapters'],
+    queryKey: ['chapters', { courseId }],
     queryFn: async () => {
-      const response = await client.api.courses[':id']['chapters'].$get({
-        param: { id: courseId },
+      const response = await client.api.chapters.$get({
+        query: { courseId },
       })
 
       if (!response.ok) {
