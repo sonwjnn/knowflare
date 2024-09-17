@@ -3,12 +3,10 @@
 import FileUpload from '@/components/file-upload'
 import { Button } from '@/components/ui/button'
 import { chapters, muxData } from '@/db/schema'
+import { useEditChapter } from '@/features/chapters/api/use-edit-chapter'
 import MuxPlayer from '@mux/mux-player-react'
-import axios from 'axios'
 import { Pencil, PlusCircle, Video } from 'lucide-react'
-import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { toast } from 'sonner'
 import * as z from 'zod'
 
 const formSchema = z.object({
@@ -28,25 +26,20 @@ const ChapterVideoForm = ({
   courseId,
   chapterId,
 }: ChapterVideoFormProps) => {
+  const { mutate: editMutation, isPending } = useEditChapter(chapterId)
+
   const [isEditing, setIsEditing] = useState(false)
-  const router = useRouter()
 
   const toggleEdit = () => {
     setIsEditing(current => !current)
   }
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      await axios.patch(
-        `/api/courses/${courseId}/chapters/${chapterId}`,
-        values
-      )
-      toast.success('Chapter updated')
-      toggleEdit()
-      router.refresh()
-    } catch {
-      toast.error('Something went wrong')
-    }
+    editMutation(values, {
+      onSuccess: () => {
+        toggleEdit()
+      },
+    })
   }
   return (
     <div className="mt-6 rounded-md border bg-slate-100 p-4">

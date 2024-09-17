@@ -4,26 +4,22 @@ import { InferRequestType, InferResponseType } from 'hono'
 import { toast } from 'sonner'
 
 type ResponseType = InferResponseType<
-  (typeof client.api.courses)[':id']['$patch']
+  (typeof client.api.courses)[':id']['publish']['$patch']
 >
-type RequestType = InferRequestType<
-  (typeof client.api.courses)[':id']['$patch']
->['json']
 
-export const useEditCourse = (id?: string) => {
+export const usePublishCourse = (id?: string) => {
   const queryClient = useQueryClient()
 
-  const mutation = useMutation<ResponseType, Error, RequestType>({
-    mutationFn: async json => {
-      const response = await client.api.courses[':id']['$patch']({
-        json,
+  const mutation = useMutation<ResponseType, Error>({
+    mutationFn: async () => {
+      const response = await client.api.courses[':id']['publish']['$patch']({
         param: { id },
       })
 
       return await response.json()
     },
     onSuccess: () => {
-      toast.success('Course updated')
+      toast.success('Course published')
       queryClient.invalidateQueries({ queryKey: ['course', { id }] })
       queryClient.invalidateQueries({ queryKey: ['courses'] })
     },

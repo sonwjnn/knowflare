@@ -1,5 +1,11 @@
 import { db } from '@/db/drizzle'
-import { attachments, courses, insertCoursesSchema, muxData } from '@/db/schema'
+import {
+  attachments,
+  chapters,
+  courses,
+  insertCoursesSchema,
+  muxData,
+} from '@/db/schema'
 import { verifyAuth } from '@hono/auth-js'
 import { zValidator } from '@hono/zod-validator'
 import { and, desc, eq } from 'drizzle-orm'
@@ -216,6 +222,114 @@ const app = new Hono()
       return c.json({
         data,
       })
+    }
+  )
+  .patch(
+    '/:id/publish',
+    verifyAuth(),
+    zValidator(
+      'param',
+      z.object({
+        id: z.string().optional(),
+      })
+    ),
+    async c => {
+      const auth = c.get('authUser')
+
+      if (!auth.token?.id) {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
+      const { id } = c.req.valid('param')
+
+      if (!id) {
+        return c.json({ error: 'Missing id' }, 400)
+      }
+
+      const [course] = await db
+        .select()
+        .from(courses)
+        .where(and(eq(courses.userId, auth.token.id), eq(courses.id, id)))
+
+      if (!course) {
+        return c.json({ error: 'Not found' }, 404)
+      }
+
+      const courseChapters = await db
+        .select()
+        .from(chapters)
+        .where(eq(chapters.courseId, course.id))
+
+      const hasPublishedChapter = courseChapters.some(
+        chapter => chapter.isPublished
+      )
+
+      if (
+        !course.title ||
+        !course.description ||
+        !course.imageUrl ||
+        !course.categoryId ||
+        !hasPublishedChapter
+      ) {
+        return c.json({ error: 'Missing required fields!' }, 400)
+      }
+
+      const [data] = await db
+        .update(courses)
+        .set({ isPublished: true })
+        .where(and(eq(courses.userId, auth.token.id), eq(courses.id, id)))
+        .returning()
+
+      if (!data) {
+        return c.json({ error: 'Not found' }, 404)
+      }
+
+      return c.json({ data })
+    }
+  )
+
+  .patch(
+    '/:id/unpublish',
+    verifyAuth(),
+    zValidator(
+      'param',
+      z.object({
+        id: z.string().optional(),
+      })
+    ),
+    async c => {
+      const auth = c.get('authUser')
+
+      if (!auth.token?.id) {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
+      const { id } = c.req.valid('param')
+
+      if (!id) {
+        return c.json({ error: 'Missing id' }, 400)
+      }
+
+      const [course] = await db
+        .select()
+        .from(courses)
+        .where(and(eq(courses.userId, auth.token.id), eq(courses.id, id)))
+
+      if (!course) {
+        return c.json({ error: 'Not found' }, 404)
+      }
+
+      const [data] = await db
+        .update(courses)
+        .set({ isPublished: false })
+        .where(and(eq(courses.userId, auth.token.id), eq(courses.id, id)))
+        .returning()
+
+      if (!data) {
+        return c.json({ error: 'Not found' }, 404)
+      }
+
+      return c.json({ data })
     }
   )
 

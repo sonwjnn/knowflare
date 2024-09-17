@@ -1,6 +1,9 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import { useDeleteChapter } from '@/features/chapters/api/use-delete-chapter'
+import { usePublishChapter } from '@/features/chapters/api/use-publish-chapter'
+import { useUnpublishChapter } from '@/features/chapters/api/use-unpublish-chapter'
 import { useConfirm } from '@/hooks/use-confirm'
 import axios from 'axios'
 import { Trash } from 'lucide-react'
@@ -24,46 +27,30 @@ const ChapterActions = ({
     'Are you sure you want to delete this chapter?',
     'This action cannot be undone.'
   )
-  const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
 
-  const onPublish = async () => {
-    try {
-      setIsLoading(true)
-      if (isPublished) {
-        await axios.patch(
-          `/api/courses/${courseId}/chapters/${chapterId}/unpublish`
-        )
-        toast.success('Chapter unpublished')
-      } else {
-        await axios.patch(
-          `/api/courses/${courseId}/chapters/${chapterId}/publish`
-        )
-        toast.success('Chapter published')
-      }
-      router.refresh()
-    } catch (error) {
-      toast.error('Something went wrong')
-    } finally {
-      setIsLoading(false)
+  const { mutate: publishChapter, isPending: publishChapterLoading } =
+    usePublishChapter(chapterId)
+
+  const { mutate: unpublishChapter, isPending: unpublishChapterLoading } =
+    useUnpublishChapter(chapterId)
+  const { mutate: deleteChapter, isPending: deleteChapterLoading } =
+    useDeleteChapter(chapterId)
+
+  const isLoading = publishChapterLoading || unpublishChapterLoading
+
+  const onPublish = () => {
+    if (isPublished) {
+      unpublishChapter()
+    } else {
+      publishChapter()
     }
   }
   const onDelete = async () => {
-    try {
-      const ok = await confirm()
+    const ok = await confirm()
 
-      if (!ok) return
+    if (!ok) return
 
-      setIsLoading(true)
-      await axios.delete(`/api/courses/${courseId}/chapters/${chapterId}`)
-      toast.success('Chapter deleted')
-      router.push(`/teacher/courses/${courseId}`)
-      router.refresh()
-    } catch (error) {
-      toast.error('Something went wrong')
-    } finally {
-      setIsLoading(false)
-    }
+    deleteChapter()
   }
   return (
     <div className="flex items-center gap-x-2">

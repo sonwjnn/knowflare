@@ -1,5 +1,6 @@
 'use client'
 
+import ChaptersList from '@/app/(dashboard)/teacher/courses/[courseId]/chapters-list'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -9,7 +10,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { chapters, courses } from '@/db/schema'
+import { chapters } from '@/db/schema'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import axios from 'axios'
@@ -19,8 +20,6 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import * as z from 'zod'
-
-import ChaptersList from '../../../app/(dashboard)/teacher/courses/[courseId]/chapters-list'
 
 const formSchema = z.object({
   title: z.string().min(1),
