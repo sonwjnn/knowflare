@@ -180,50 +180,6 @@ const app = new Hono()
       return c.json({ data })
     }
   )
-  .get(
-    '/:id/attachments',
-    verifyAuth(),
-    zValidator(
-      'param',
-      z.object({
-        id: z.string().optional(),
-      })
-    ),
-    async c => {
-      const auth = c.get('authUser')
-
-      if (!auth.token?.id) {
-        return c.json({ error: 'Unauthorized' }, 401)
-      }
-
-      const { id } = c.req.valid('param')
-
-      if (!id) {
-        return c.json({ error: 'Missing id' }, 400)
-      }
-
-      const [courseOwner] = await db
-        .select({
-          id: courses.id,
-        })
-        .from(courses)
-        .where(and(eq(courses.userId, auth.token.id), eq(courses.id, id)))
-
-      if (!courseOwner) {
-        return c.json({ error: 'Unauthorized' }, 401)
-      }
-
-      const data = await db
-        .select()
-        .from(attachments)
-        .where(eq(attachments.courseId, courseOwner.id))
-        .orderBy(desc(attachments.date))
-
-      return c.json({
-        data,
-      })
-    }
-  )
   .patch(
     '/:id/publish',
     verifyAuth(),
