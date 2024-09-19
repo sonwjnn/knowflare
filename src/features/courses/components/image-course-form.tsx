@@ -38,11 +38,7 @@ export const ImageCourseForm = ({
     console.log(values)
     editMutation(values, {
       onSuccess: () => {
-        toast.success('Course updated')
         toggleEdit()
-      },
-      onError: () => {
-        toast.error('Something went wrong')
       },
     })
   }

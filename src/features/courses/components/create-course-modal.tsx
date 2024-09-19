@@ -9,14 +9,15 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
+import { useTeacherId } from '@/hooks/use-teacher-id'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { toast } from 'sonner'
 
 import { useCreateCourse } from '../api/use-create-course'
 import { useCreateCourseModal } from '../store/use-create-course-modal'
 
 export const CreateCourseModal = () => {
+  const teacherId = useTeacherId()
   const router = useRouter()
   const [open, setOpen] = useCreateCourseModal()
   const [title, setTitle] = useState('')
@@ -40,12 +41,8 @@ export const CreateCourseModal = () => {
       { title },
       {
         onSuccess: ({ data }) => {
-          toast.success('Course created')
-          router.push(`/teacher/courses/${data.id}`)
+          router.push(`/teacher/${teacherId}/courses/${data.id}`)
           handleClose()
-        },
-        onError: () => {
-          toast.error('Failed to create course')
         },
       }
     )

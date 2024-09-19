@@ -1,4 +1,4 @@
-import ChaptersList from '@/app/(dashboard)/teacher/courses/[courseId]/chapters-list'
+import ChaptersList from '@/app/(dashboard)/teacher/[teacherId]/courses/[courseId]/chapters-list'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input'
 import { chapters, insertCoursesSchema } from '@/db/schema'
 import { useCreateChapter } from '@/features/chapters/api/use-create-chapter'
 import { useReorderChapters } from '@/features/chapters/api/use-reorder-chapters'
+import { useTeacherId } from '@/hooks/use-teacher-id'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2, PlusCircle } from 'lucide-react'
@@ -34,6 +35,8 @@ export const ChaptersCourseForm = ({
   initialData,
   courseId,
 }: ChaptersCourseFormProps) => {
+  const teacherId = useTeacherId()
+
   const { mutate: createChapter, isPending: createChapterLoading } =
     useCreateChapter(courseId)
   const { mutate: reorderChapters, isPending: reorderChaptersLoading } =
@@ -75,7 +78,7 @@ export const ChaptersCourseForm = ({
   }
 
   const onEdit = async (id: string) => {
-    router.push(`/teacher/courses/${courseId}/chapters/${id}`)
+    router.push(`/teacher/${teacherId}/courses/${courseId}/chapters/${id}`)
   }
 
   return (

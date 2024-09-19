@@ -5,6 +5,7 @@ import { IconBadge } from '@/components/icon-badge'
 import { useGetChapter } from '@/features/chapters/api/use-get-chapter'
 import { useChapterId } from '@/hooks/use-chapter-id'
 import { useCourseId } from '@/hooks/use-course-id'
+import { useTeacherId } from '@/hooks/use-teacher-id'
 import { ArrowLeft, Eye, LayoutDashboard, Loader, Video } from 'lucide-react'
 import Link from 'next/link'
 
@@ -20,6 +21,7 @@ const ChapterIdPage = ({
   params: { chapterId: string; courseId: string }
 }) => {
   const chapterId = useChapterId()
+  const teacherId = useTeacherId()
   const courseId = useCourseId()
 
   const { data: chapter, isPending: chapterLoading } = useGetChapter(chapterId)
@@ -52,7 +54,7 @@ const ChapterIdPage = ({
         <div className="flex items-center justify-between">
           <div className="w-full">
             <Link
-              href={`/teacher/courses/${courseId}`}
+              href={`/teacher/${teacherId}/courses/${courseId}`}
               className="mb-6 flex items-center text-sm transition hover:opacity-75"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />

@@ -7,6 +7,8 @@ import attachments from './attachments'
 import categories from './categories'
 import chapters from './chapters'
 import courses from './courses'
+import purchases from './purchases'
+import teachers from './teachers'
 import users from './users'
 
 const runtime = 'nodejs'
@@ -28,6 +30,8 @@ const routes = app
   .route('/categories', categories)
   .route('/chapters', chapters)
   .route('/attachments', attachments)
+  .route('/purchases', purchases)
+  .route('/teachers', teachers)
 
 export const GET = handle(app)
 export const POST = handle(app)

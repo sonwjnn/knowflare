@@ -1,5 +1,11 @@
 import { db } from '@/db/drizzle'
-import { chapters, courses, insertChaptersSchema, muxData } from '@/db/schema'
+import {
+  chapters,
+  courses,
+  insertChaptersSchema,
+  muxData,
+  teachers,
+} from '@/db/schema'
 import { verifyAuth } from '@hono/auth-js'
 import { zValidator } from '@hono/zod-validator'
 import Mux from '@mux/mux-node'
@@ -26,6 +32,15 @@ const app = new Hono()
       const auth = c.get('authUser')
 
       if (!auth.token?.id) {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
+      const [currentTeacher] = await db
+        .select({ id: teachers.id })
+        .from(teachers)
+        .where(eq(teachers.userId, auth.token.id))
+
+      if (!currentTeacher) {
         return c.json({ error: 'Unauthorized' }, 401)
       }
 
@@ -246,6 +261,15 @@ const app = new Hono()
         return c.json({ error: 'Unauthorized' }, 401)
       }
 
+      const [currentTeacher] = await db
+        .select({ id: teachers.id })
+        .from(teachers)
+        .where(eq(teachers.userId, auth.token.id))
+
+      if (!currentTeacher) {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
       const { id } = c.req.valid('param')
       const { courseId } = c.req.valid('query')
 
@@ -256,7 +280,12 @@ const app = new Hono()
       const [course] = await db
         .select()
         .from(courses)
-        .where(and(eq(courses.userId, auth.token.id), eq(courses.id, courseId)))
+        .where(
+          and(
+            eq(courses.teacherId, currentTeacher.id),
+            eq(courses.id, courseId)
+          )
+        )
 
       if (!course) {
         return c.json({ error: 'Not found' }, 404)
@@ -318,6 +347,15 @@ const app = new Hono()
         return c.json({ error: 'Unauthorized' }, 401)
       }
 
+      const [currentTeacher] = await db
+        .select({ id: teachers.id })
+        .from(teachers)
+        .where(eq(teachers.userId, auth.token.id))
+
+      if (!currentTeacher) {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
       const { id } = c.req.valid('param')
 
       const { courseId } = c.req.valid('query')
@@ -329,7 +367,12 @@ const app = new Hono()
       const [course] = await db
         .select()
         .from(courses)
-        .where(and(eq(courses.userId, auth.token.id), eq(courses.id, courseId)))
+        .where(
+          and(
+            eq(courses.teacherId, currentTeacher.id),
+            eq(courses.id, courseId)
+          )
+        )
 
       if (!course) {
         return c.json({ error: 'Not found' }, 404)

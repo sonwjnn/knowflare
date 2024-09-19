@@ -22,6 +22,7 @@ export const usePublishCourse = (id?: string) => {
       toast.success('Course published')
       queryClient.invalidateQueries({ queryKey: ['course', { id }] })
       queryClient.invalidateQueries({ queryKey: ['courses'] })
+      queryClient.invalidateQueries({ queryKey: ['purchases', 'courses'] })
     },
     onError: () => {
       toast.error('Failed to edit course')

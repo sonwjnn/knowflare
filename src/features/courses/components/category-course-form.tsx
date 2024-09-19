@@ -53,11 +53,7 @@ export const CategoryCourseForm = ({
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     editMutation(values, {
       onSuccess: () => {
-        toast.success('Course updated')
         toggleEdit()
-      },
-      onError: () => {
-        toast.error('Something went wrong')
       },
     })
   }

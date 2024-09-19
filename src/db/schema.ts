@@ -89,13 +89,24 @@ export const authenticators = pgTable(
   })
 )
 
-export const courses = pgTable('course', {
+export const teachers = pgTable('teacher', {
   id: text('id')
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   userId: text('userId')
     .notNull()
     .references(() => users.id, {
+      onDelete: 'cascade',
+    }),
+})
+
+export const courses = pgTable('course', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  teacherId: text('teacher_id')
+    .notNull()
+    .references(() => teachers.id, {
       onDelete: 'cascade',
     }),
   categoryId: text('category_id').references(() => categories.id, {
@@ -113,6 +124,10 @@ export const coursesRelations = relations(courses, ({ many, one }) => ({
   category: one(categories, {
     fields: [courses.categoryId],
     references: [categories.id],
+  }),
+  teacher: one(teachers, {
+    fields: [courses.teacherId],
+    references: [teachers.id],
   }),
   chapters: many(chapters),
   attachments: many(attachments),

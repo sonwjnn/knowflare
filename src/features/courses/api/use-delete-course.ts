@@ -1,3 +1,4 @@
+import { useTeacherId } from '@/hooks/use-teacher-id'
 import { client } from '@/lib/hono'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { InferRequestType, InferResponseType } from 'hono'
@@ -11,6 +12,7 @@ type ResponseType = InferResponseType<
 export const useDeleteCourse = (id?: string) => {
   const router = useRouter()
   const queryClient = useQueryClient()
+  const teacherId = useTeacherId()
 
   const mutation = useMutation<ResponseType, Error>({
     mutationFn: async json => {
@@ -22,9 +24,10 @@ export const useDeleteCourse = (id?: string) => {
     },
     onSuccess: () => {
       toast.success('Course deleted')
-      router.replace('/teacher/courses')
+      router.replace(`/teacher/${teacherId}/courses`)
       queryClient.invalidateQueries({ queryKey: ['course', { id }] })
       queryClient.invalidateQueries({ queryKey: ['courses'] })
+      queryClient.invalidateQueries({ queryKey: ['purchases', 'courses'] })
     },
     onError: () => {
       toast.error('Failed to delete course')

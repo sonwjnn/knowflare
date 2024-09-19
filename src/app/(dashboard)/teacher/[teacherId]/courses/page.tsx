@@ -1,13 +1,15 @@
 'use client'
 
-import { useGetCourses } from '@/features/courses/api/use-get-courses'
+import { useGetTeacherCourses } from '@/features/courses/api/use-get-teacher-courses'
+import { useTeacherId } from '@/hooks/use-teacher-id'
 import { Loader } from 'lucide-react'
 
 import { columns } from './columns'
 import { DataTable } from './data-table'
 
 const CoursesPage = () => {
-  const { data } = useGetCourses()
+  const teacherId = useTeacherId()
+  const { data } = useGetTeacherCourses(teacherId)
 
   if (!data)
     return (
@@ -19,8 +21,7 @@ const CoursesPage = () => {
   const normalizedData = data.map(course => {
     return {
       ...course,
-      updatedAt: new Date(course.updatedAt),
-      createdAt: new Date(course.createdAt),
+      date: new Date(course.date),
     }
   })
 

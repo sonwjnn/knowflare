@@ -76,7 +76,7 @@ export const columns: ColumnDef<typeof courses.$inferSelect>[] = [
   {
     id: 'actions',
     cell: ({ row }) => {
-      const { id } = row.original
+      const { id, teacherId } = row.original
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -86,7 +86,7 @@ export const columns: ColumnDef<typeof courses.$inferSelect>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <Link href={`/teacher/courses/${id}`}>
+            <Link href={`/teacher/${teacherId}/courses/${id}`}>
               <DropdownMenuItem>
                 <Pencil className="mr-2 h-4 w-4" />
                 Edit

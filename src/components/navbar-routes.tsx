@@ -1,6 +1,7 @@
 'use client'
 
 import { UserButton } from '@/features/auth/components/user-button'
+import { useGetCurrentTeacher } from '@/features/teachers/use-get-current-teacher'
 import { useCurrentUser } from '@/hooks/use-current-user'
 import { isTeacher } from '@/lib/utils'
 import { LogOut } from 'lucide-react'
@@ -11,7 +12,7 @@ import SearchInput from './search-input'
 import { Button } from './ui/button'
 
 const NavbarRoutes = () => {
-  const currentUser = useCurrentUser()
+  const { data: teacher } = useGetCurrentTeacher()
   const pathname = usePathname()
 
   const isTeacherPage = pathname?.startsWith('/teacher')
@@ -33,8 +34,8 @@ const NavbarRoutes = () => {
               Exit
             </Button>
           </Link>
-        ) : isTeacher(currentUser?.id) ? (
-          <Link href="/teacher/courses">
+        ) : teacher ? (
+          <Link href={`/teacher/${teacher.id}/courses`}>
             <Button size="sm" variant="ghost">
               Teacher Mode
             </Button>
