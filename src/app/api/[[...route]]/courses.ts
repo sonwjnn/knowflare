@@ -1,38 +1,126 @@
 import { db } from '@/db/drizzle'
-import { chapters, courses, insertCoursesSchema, teachers } from '@/db/schema'
+import { getProgress } from '@/db/queries'
+import {
+  categories,
+  chapters,
+  courses,
+  insertCoursesSchema,
+  purchases,
+  teachers,
+} from '@/db/schema'
 import { verifyAuth } from '@hono/auth-js'
 import { zValidator } from '@hono/zod-validator'
-import { and, desc, eq } from 'drizzle-orm'
+import { and, desc, eq, like } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { z } from 'zod'
 
 const app = new Hono()
-  .get('/', verifyAuth(), async c => {
-    const auth = c.get('authUser')
+  .get(
+    '/',
+    verifyAuth(),
+    zValidator(
+      'query',
+      z.object({
+        categoryId: z.string().optional(),
+        title: z.string().optional(),
+      })
+    ),
+    async c => {
+      const auth = c.get('authUser')
 
-    if (!auth.token?.id) {
-      return c.json({ error: 'Unauthorized' }, 401)
+      if (!auth.token?.id) {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
+      const { title, categoryId } = c.req.valid('query')
+
+      const data = await db
+        .select({
+          id: courses.id,
+          title: courses.title,
+          description: courses.description,
+          imageUrl: courses.imageUrl,
+          price: courses.price,
+          isPublished: courses.isPublished,
+          category: {
+            id: categories.id,
+            name: categories.name,
+          },
+          purchase: {
+            id: purchases.id,
+          },
+        })
+        .from(courses)
+        .innerJoin(
+          purchases,
+          and(
+            eq(purchases.courseId, courses.id),
+            eq(purchases.userId, auth.token.id)
+          )
+        )
+        .innerJoin(categories, eq(categories.id, courses.categoryId))
+        .where(
+          and(
+            eq(courses.isPublished, true),
+            title ? like(courses.title, `%${title}%`) : undefined,
+            categoryId ? eq(courses.categoryId, categoryId) : undefined
+          )
+        )
+        .orderBy(desc(courses.date))
+
+      const coursesWithChapters = await Promise.all(
+        data.map(async course => {
+          const courseChapters = await db
+            .select({
+              id: chapters.id,
+            })
+            .from(chapters)
+            .where(
+              and(
+                eq(chapters.courseId, course.id),
+                eq(chapters.isPublished, true)
+              )
+            )
+
+          return {
+            ...course,
+            chapters: courseChapters,
+          }
+        })
+      )
+
+      const progresses: { courseId: string; progress: number }[] = []
+
+      for (let course of coursesWithChapters) {
+        const progress = await getProgress(auth.token?.id, course.id)
+        progresses.push({
+          courseId: course.id,
+          progress,
+        })
+      }
+
+      const finalCoursesData = coursesWithChapters.map(course => {
+        if (!course?.purchase) {
+          return {
+            ...course,
+            progress: 0,
+          }
+        }
+
+        const foundProgress = progresses.find(
+          progress => progress.courseId === course.id
+        )
+        return {
+          ...course,
+          progress: foundProgress ? foundProgress.progress : 0,
+        }
+      })
+
+      return c.json({
+        data: finalCoursesData,
+      })
     }
-
-    const [currentTeacher] = await db
-      .select({ id: teachers.id })
-      .from(teachers)
-      .where(eq(teachers.userId, auth.token.id))
-
-    if (!currentTeacher) {
-      return c.json({ error: 'Unauthorized' }, 401)
-    }
-
-    const data = await db
-      .select()
-      .from(courses)
-      .where(eq(courses.teacherId, currentTeacher.id))
-      .orderBy(desc(courses.date))
-
-    return c.json({
-      data,
-    })
-  })
+  )
   .get(
     '/:id',
     verifyAuth(),

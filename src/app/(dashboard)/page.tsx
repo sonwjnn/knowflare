@@ -7,7 +7,7 @@ import { CheckCircle, Clock, Loader } from 'lucide-react'
 import InfoCard from './info-card'
 
 export default function Home() {
-  const { data, isPending } = useGetPurchasedCourses({})
+  const { data, isPending } = useGetPurchasedCourses()
 
   const completedCourses = data?.completedCourses ?? []
   const coursesInProgress = data?.coursesInProgress ?? []

@@ -1,3 +1,4 @@
+import { useTeacherId } from '@/hooks/use-teacher-id'
 import { client } from '@/lib/hono'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { InferRequestType, InferResponseType } from 'hono'
@@ -10,6 +11,7 @@ type RequestType = InferRequestType<
 
 export const useCreateCourse = () => {
   const queryClient = useQueryClient()
+  const teacherId = useTeacherId()
 
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async json => {
@@ -25,6 +27,10 @@ export const useCreateCourse = () => {
       toast.success('Course created.')
 
       queryClient.invalidateQueries({ queryKey: ['courses'] })
+      queryClient.invalidateQueries({
+        queryKey: ['teachers', { teacherId }, 'courses'],
+      })
+      queryClient.invalidateQueries({ queryKey: ['purchases', 'courses'] })
     },
     onError: () => {
       toast.error(

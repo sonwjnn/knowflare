@@ -1,7 +1,11 @@
+import { protectServer } from '@/features/auth/utils'
+
 import Navbar from './navbar'
 import Sidebar from './sidebar'
 
-const DashboradLayout = ({ children }: { children: React.ReactNode }) => {
+const DashboradLayout = async ({ children }: { children: React.ReactNode }) => {
+  await protectServer()
+
   return (
     <div className="h-full">
       <div className="fixed inset-y-0 h-[80px] w-full md:pl-56">

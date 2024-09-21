@@ -3,15 +3,26 @@ import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import { InferResponseType } from 'hono'
 
 export type ResponseType = InferResponseType<
-  (typeof client.api.purchases)['courses']['$get'],
+  (typeof client.api.courses)['$get'],
   200
 >
 
-export const useGetPurchasedCourses = () => {
+export const useGetCourses = ({
+  categoryId,
+  title,
+}: {
+  categoryId?: string
+  title?: string
+}) => {
   const query = useQuery({
-    queryKey: ['purchases', 'courses'],
+    queryKey: ['courses', title, categoryId],
     queryFn: async () => {
-      const response = await client.api.purchases['courses'].$get()
+      const response = await client.api.courses.$get({
+        query: {
+          categoryId,
+          title,
+        },
+      })
 
       if (!response.ok) {
         throw new Error('Failed to fetch course')

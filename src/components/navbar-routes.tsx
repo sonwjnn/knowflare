@@ -34,12 +34,6 @@ const NavbarRoutes = () => {
               Exit
             </Button>
           </Link>
-        ) : teacher ? (
-          <Link href={`/teacher/${teacher.id}/courses`}>
-            <Button size="sm" variant="ghost">
-              Teacher Mode
-            </Button>
-          </Link>
         ) : null}
         <UserButton />
       </div>
