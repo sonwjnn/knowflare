@@ -61,6 +61,41 @@ const app = new Hono()
       })
     }
   )
+  .get(
+    '/published/list',
+    verifyAuth(),
+    zValidator(
+      'query',
+      z.object({
+        courseId: z.string().optional(),
+      })
+    ),
+    async c => {
+      const auth = c.get('authUser')
+
+      if (!auth.token?.id) {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
+      const { courseId } = c.req.valid('query')
+
+      if (!courseId) {
+        return c.json({ error: 'Missing id' }, 400)
+      }
+
+      const data = await db
+        .select()
+        .from(chapters)
+        .where(
+          and(eq(chapters.courseId, courseId), eq(chapters.isPublished, true))
+        )
+        .orderBy(asc(chapters.position))
+
+      return c.json({
+        data,
+      })
+    }
+  )
   .post(
     '/',
     verifyAuth(),
@@ -231,6 +266,30 @@ const app = new Hono()
         .set(values)
         .where(eq(chapters.id, id))
         .returning()
+
+      if (values?.videoUrl) {
+        const [existingMuxData] = await db
+          .select()
+          .from(muxData)
+          .where(eq(muxData.chapterId, id))
+
+        if (existingMuxData) {
+          await video.assets.delete(existingMuxData.assetId)
+          await db.delete(muxData).where(eq(muxData.id, existingMuxData.id))
+        }
+
+        const asset = await video.assets.create({
+          input: [{ url: values.videoUrl }],
+          playback_policy: ['public'],
+          test: false,
+        })
+
+        await db.insert(muxData).values({
+          assetId: asset.id,
+          chapterId: id,
+          playbackId: asset.playback_ids?.[0]?.id,
+        })
+      }
 
       if (!data) {
         return c.json({ error: 'Not found' }, 404)

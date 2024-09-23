@@ -133,21 +133,30 @@ const app = new Hono()
         return c.json({ error: 'Unauthorized' }, 401)
       }
 
-      const [currentTeacher] = await db
-        .select({ id: teachers.id })
-        .from(teachers)
-        .where(eq(teachers.userId, auth.token.id))
+      const [data] = await db.select().from(courses).where(eq(courses.id, id))
 
-      if (!currentTeacher) {
+      if (!data) {
+        return c.json({ error: 'Not found' }, 404)
+      }
+
+      return c.json({
+        data,
+      })
+    }
+  )
+  .get(
+    '/:id/redirect-to-first-chapter',
+    verifyAuth(),
+    zValidator('param', z.object({ id: z.string() })),
+    async c => {
+      const auth = c.get('authUser')
+      const { id } = c.req.valid('param')
+
+      if (!auth.token?.id) {
         return c.json({ error: 'Unauthorized' }, 401)
       }
 
-      const [data] = await db
-        .select()
-        .from(courses)
-        .where(
-          and(eq(courses.id, id), eq(courses.teacherId, currentTeacher.id))
-        )
+      const [data] = await db.select().from(courses).where(eq(courses.id, id))
 
       if (!data) {
         return c.json({ error: 'Not found' }, 404)
