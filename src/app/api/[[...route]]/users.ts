@@ -1,5 +1,6 @@
 import { db } from '@/db/drizzle'
-import { users } from '@/db/schema'
+import { getVerificationTokenByToken } from '@/db/queries'
+import { users, verificationTokens } from '@/db/schema'
 import { sendVerificationEmail } from '@/lib/mail'
 import { generateVerificationToken } from '@/lib/tokens'
 import { zValidator } from '@hono/zod-validator'
@@ -45,7 +46,7 @@ const app = new Hono()
         verificationToken.token
       )
 
-      return c.json({ success: 'Confirmation email sent!' })
+      return c.json(null, 200)
     }
   )
   .post(
@@ -84,26 +85,54 @@ const app = new Hono()
         return c.json({ success: 'Confirmation email sent!' }, 200)
       }
 
-      try {
-        await signIn('credentials', {
-          email,
-          password,
-          redirectTo: callbackUrl || '/',
-        })
-      } catch (error) {
-        if (error instanceof AuthError) {
-          switch (error.type) {
-            case 'CredentialsSignin':
-              return c.json({ error: 'Invalid credentials' }, 400)
-            default:
-              return c.json({ error: 'Something went wrong!' }, 400)
-          }
-        }
+      return c.json(null, 200)
+    }
+  )
+  .post(
+    '/new-verification',
+    zValidator(
+      'json',
+      z.object({
+        token: z.string(),
+      })
+    ),
+    async c => {
+      const { token } = c.req.valid('json')
 
-        throw error
+      const existingToken = await getVerificationTokenByToken(token)
+
+      if (!existingToken) {
+        return c.json({ error: 'Token does not exist!' }, 400)
       }
 
-      return c.json({ success: 'Email sent' })
+      const hasExpired = new Date(existingToken.expires) < new Date()
+
+      if (hasExpired) {
+        return c.json({ error: 'Token has expired!' }, 400)
+      }
+
+      const [existingUser] = await db
+        .select()
+        .from(users)
+        .where(eq(users.email, existingToken.email))
+
+      if (!existingUser) {
+        return c.json({ error: 'Email does not exist!' }, 400)
+      }
+
+      await db
+        .update(users)
+        .set({
+          emailVerified: new Date(),
+          email: existingToken.email,
+        })
+        .where(eq(users.id, existingUser.id))
+
+      await db
+        .delete(verificationTokens)
+        .where(eq(verificationTokens.token, existingToken.token))
+
+      return c.json(null, 200)
     }
   )
 

@@ -21,9 +21,6 @@ export const useSignUp = () => {
 
       return await response.json()
     },
-    onSuccess: () => {
-      toast.success('User created')
-    },
   })
 
   return mutation

@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS "chapter" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "course" (
 	"id" text PRIMARY KEY NOT NULL,
-	"userId" text NOT NULL,
+	"teacher_id" text NOT NULL,
 	"category_id" text,
 	"title" text NOT NULL,
 	"description" text,
@@ -67,6 +67,14 @@ CREATE TABLE IF NOT EXISTS "mux_data" (
 	"chapter_id" text NOT NULL,
 	"asset_id" text NOT NULL,
 	"playback_id" text
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "password_reset_token" (
+	"email" text NOT NULL,
+	"token" text NOT NULL,
+	"expires" timestamp NOT NULL,
+	CONSTRAINT "password_reset_token_email_token_pk" PRIMARY KEY("email","token"),
+	CONSTRAINT "password_reset_token_token_unique" UNIQUE("token")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "purchases" (
@@ -93,6 +101,11 @@ CREATE TABLE IF NOT EXISTS "subscription" (
 	"updatedAt" timestamp NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "teacher" (
+	"id" text PRIMARY KEY NOT NULL,
+	"userId" text NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "user_progress" (
 	"id" text PRIMARY KEY NOT NULL,
 	"userId" text NOT NULL,
@@ -109,11 +122,12 @@ CREATE TABLE IF NOT EXISTS "user" (
 	"password" text
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "verificationToken" (
-	"identifier" text NOT NULL,
+CREATE TABLE IF NOT EXISTS "verification_token" (
+	"email" text NOT NULL,
 	"token" text NOT NULL,
 	"expires" timestamp NOT NULL,
-	CONSTRAINT "verificationToken_identifier_token_pk" PRIMARY KEY("identifier","token")
+	CONSTRAINT "verification_token_email_token_pk" PRIMARY KEY("email","token"),
+	CONSTRAINT "verification_token_token_unique" UNIQUE("token")
 );
 --> statement-breakpoint
 DO $$ BEGIN
@@ -141,7 +155,7 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "course" ADD CONSTRAINT "course_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "course" ADD CONSTRAINT "course_teacher_id_teacher_id_fk" FOREIGN KEY ("teacher_id") REFERENCES "public"."teacher"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -178,6 +192,12 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "subscription" ADD CONSTRAINT "subscription_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "teacher" ADD CONSTRAINT "teacher_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

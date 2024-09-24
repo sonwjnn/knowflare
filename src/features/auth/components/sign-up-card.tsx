@@ -1,5 +1,7 @@
 'use client'
 
+import { FormError } from '@/components/form-error'
+import { FormSuccess } from '@/components/form-success'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -41,7 +43,12 @@ export const SignUpCard = () => {
         password,
       },
       {
-        onSuccess: data => {},
+        onSuccess: data => {
+          setSuccess('Confirmation email sent!')
+        },
+        onError: () => {
+          setError('Something went wrong!')
+        },
       }
     )
   }
@@ -95,6 +102,8 @@ export const SignUpCard = () => {
             minLength={3}
             maxLength={20}
           />
+          <FormError message={error} />
+          <FormSuccess message={success} />
           <Button
             className="w-full"
             type="submit"
