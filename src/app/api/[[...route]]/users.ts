@@ -1,40 +1,110 @@
-import { z } from "zod";
-import { Hono } from "hono";
-import bcrypt from "bcryptjs";
-import { zValidator } from "@hono/zod-validator";
-import { db } from "@/db/drizzle";
-import { users } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { db } from '@/db/drizzle'
+import { users } from '@/db/schema'
+import { sendVerificationEmail } from '@/lib/mail'
+import { generateVerificationToken } from '@/lib/tokens'
+import { zValidator } from '@hono/zod-validator'
+import bcrypt from 'bcryptjs'
+import { eq } from 'drizzle-orm'
+import { Hono } from 'hono'
+import { AuthError } from 'next-auth'
+import { signIn } from 'next-auth/react'
+import { z } from 'zod'
 
-const app = new Hono().post(
-  "/",
-  zValidator(
-    "json",
-    z.object({
-      name: z.string(),
-      email: z.string().email(),
-      password: z.string().min(3).max(20),
-    })
-  ),
-  async (c) => {
-    const { name, email, password } = c.req.valid("json");
+const app = new Hono()
+  .post(
+    '/register',
+    zValidator(
+      'json',
+      z.object({
+        name: z.string(),
+        email: z.string().email(),
+        password: z.string().min(3).max(20),
+      })
+    ),
+    async c => {
+      const { name, email, password } = c.req.valid('json')
 
-    const hashedPassword = await bcrypt.hash(password, 12);
+      const hashedPassword = await bcrypt.hash(password, 12)
 
-    const query = await db.select().from(users).where(eq(users.email, email));
+      const query = await db.select().from(users).where(eq(users.email, email))
 
-    if (query[0]) {
-      return c.json({ error: "Email already in use" }, 400);
+      if (query[0]) {
+        return c.json({ error: 'Email already in use' }, 400)
+      }
+
+      await db.insert(users).values({
+        email,
+        name,
+        password: hashedPassword,
+      })
+
+      const verificationToken = await generateVerificationToken(email)
+
+      await sendVerificationEmail(
+        verificationToken.email,
+        verificationToken.token
+      )
+
+      return c.json({ success: 'Confirmation email sent!' })
     }
+  )
+  .post(
+    '/login',
+    zValidator(
+      'json',
+      z.object({
+        email: z.string().email(),
+        password: z.string().min(3).max(20),
+        callbackUrl: z.string().optional(),
+        code: z.string().optional(),
+      })
+    ),
+    async c => {
+      const { email, password, callbackUrl, code } = c.req.valid('json')
 
-    await db.insert(users).values({
-      email,
-      name,
-      password: hashedPassword,
-    });
+      const [existingUser] = await db
+        .select()
+        .from(users)
+        .where(eq(users.email, email))
 
-    return c.json(null, 200);
-  }
-);
+      if (!existingUser || !existingUser.password || !existingUser.email) {
+        return c.json({ error: 'Email is not exist!' }, 400)
+      }
 
-export default app;
+      if (!existingUser.emailVerified) {
+        const verificationToken = await generateVerificationToken(
+          existingUser.email
+        )
+
+        await sendVerificationEmail(
+          verificationToken.email,
+          verificationToken.token
+        )
+
+        return c.json({ success: 'Confirmation email sent!' }, 200)
+      }
+
+      try {
+        await signIn('credentials', {
+          email,
+          password,
+          redirectTo: callbackUrl || '/',
+        })
+      } catch (error) {
+        if (error instanceof AuthError) {
+          switch (error.type) {
+            case 'CredentialsSignin':
+              return c.json({ error: 'Invalid credentials' }, 400)
+            default:
+              return c.json({ error: 'Something went wrong!' }, 400)
+          }
+        }
+
+        throw error
+      }
+
+      return c.json({ success: 'Email sent' })
+    }
+  )
+
+export default app

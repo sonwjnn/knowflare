@@ -55,15 +55,29 @@ export const sessions = pgTable('session', {
 })
 
 export const verificationTokens = pgTable(
-  'verificationToken',
+  'verification_token',
   {
-    identifier: text('identifier').notNull(),
-    token: text('token').notNull(),
+    email: text('email').notNull(),
+    token: text('token').notNull().unique(),
     expires: timestamp('expires', { mode: 'date' }).notNull(),
   },
   verificationToken => ({
     compositePk: primaryKey({
-      columns: [verificationToken.identifier, verificationToken.token],
+      columns: [verificationToken.email, verificationToken.token],
+    }),
+  })
+)
+
+export const passwordResetTokens = pgTable(
+  'password_reset_token',
+  {
+    email: text('email').notNull(),
+    token: text('token').notNull().unique(),
+    expires: timestamp('expires', { mode: 'date' }).notNull(),
+  },
+  passwordResetTokens => ({
+    compositePk: primaryKey({
+      columns: [passwordResetTokens.email, passwordResetTokens.token],
     }),
   })
 )

@@ -1,7 +1,12 @@
 import { and, count, eq, sql } from 'drizzle-orm'
 
 import { db } from './drizzle'
-import { chapters, userProgress } from './schema'
+import {
+  chapters,
+  passwordResetTokens,
+  userProgress,
+  verificationTokens,
+} from './schema'
 
 export const getProgress = async (
   userId: string | null,
@@ -36,5 +41,57 @@ export const getProgress = async (
   } catch (error) {
     console.log('GET_PROGRESS', error)
     return 0
+  }
+}
+
+export const getPasswordResetTokenByToken = async (token: string) => {
+  try {
+    const [data] = await db
+      .select()
+      .from(passwordResetTokens)
+      .where(eq(passwordResetTokens.token, token))
+
+    return data
+  } catch {
+    return null
+  }
+}
+
+export const getPasswordResetTokenByEmail = async (email: string) => {
+  try {
+    const [data] = await db
+      .select()
+      .from(passwordResetTokens)
+      .where(eq(passwordResetTokens.email, email))
+
+    return data
+  } catch {
+    return null
+  }
+}
+
+export const getVerificationTokenByToken = async (token: string) => {
+  try {
+    const [data] = await db
+      .select()
+      .from(verificationTokens)
+      .where(eq(verificationTokens.token, token))
+
+    return data
+  } catch {
+    return null
+  }
+}
+
+export const getVerificationTokenByEmail = async (email: string) => {
+  try {
+    const [data] = await db
+      .select()
+      .from(verificationTokens)
+      .where(eq(verificationTokens.email, email))
+
+    return data
+  } catch {
+    return null
   }
 }

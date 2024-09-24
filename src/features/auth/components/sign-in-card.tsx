@@ -18,12 +18,15 @@ import { useState } from 'react'
 import { FaGithub } from 'react-icons/fa'
 import { FcGoogle } from 'react-icons/fc'
 
+import { useSignIn } from '../hooks/use-sign-in'
+
 export const SignInCard = () => {
   // Loading
+  const { mutate: signInMutate, isPending: signInLoading } = useSignIn()
+
   const [loading, setLoading] = useState(false)
   const [loadingGithub, setLoadingGithub] = useState(false)
   const [loadingGoogle, setLoadingGoogle] = useState(false)
-  const [loadingLogin, setLoadingLogin] = useState(false)
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -34,14 +37,11 @@ export const SignInCard = () => {
   const onCredentialSignIn = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
-    setLoadingLogin(true)
 
-    signIn('credentials', {
+    signInMutate({
       email: email,
       password: password,
       callbackUrl: '/',
-    }).catch((e: any) => {
-      console.log(e)
     })
   }
 
@@ -83,7 +83,7 @@ export const SignInCard = () => {
             required
           />
           <Button className="w-full" type="submit" size="lg" disabled={loading}>
-            {loadingLogin ? (
+            {signInLoading ? (
               <Loader2 className="left-2.5 top-2.5 mr-2 size-5 animate-spin" />
             ) : (
               'Continue'

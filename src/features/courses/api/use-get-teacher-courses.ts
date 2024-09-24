@@ -10,7 +10,7 @@ export type ResponseType = InferResponseType<
 export const useGetTeacherCourses = (teacherId: string) => {
   const query = useQuery({
     enabled: !!teacherId,
-    queryKey: ['teachers', { teacherId }, 'courses'],
+    queryKey: ['courses'],
     queryFn: async () => {
       const response = await client.api.teachers[':id']['courses'].$get({
         param: {

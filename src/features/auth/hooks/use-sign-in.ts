@@ -4,16 +4,16 @@ import { InferRequestType, InferResponseType } from 'hono'
 import { toast } from 'sonner'
 
 type ResponseType = InferResponseType<
-  (typeof client.api.users)['register']['$post']
+  (typeof client.api.users)['login']['$post']
 >
 type RequestType = InferRequestType<
-  (typeof client.api.users)['register']['$post']
+  (typeof client.api.users)['login']['$post']
 >['json']
 
-export const useSignUp = () => {
+export const useSignIn = () => {
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async json => {
-      const response = await client.api.users['register'].$post({ json })
+      const response = await client.api.users['login'].$post({ json })
 
       if (!response.ok) {
         throw new Error('Something went wrong')
