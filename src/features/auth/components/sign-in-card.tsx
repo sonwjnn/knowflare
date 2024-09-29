@@ -90,6 +90,13 @@ export const SignInCard = () => {
             )}
           </Button>
         </form>
+        <p className="text-xs text-muted-foreground">
+          <Link href="/reset">
+            <span className="text-sky-700 hover:underline">
+              Forgot a password?
+            </span>
+          </Link>
+        </p>
         <Separator />
         <div className="flex flex-col gap-y-2.5">
           <Button

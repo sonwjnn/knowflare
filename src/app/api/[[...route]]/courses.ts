@@ -46,18 +46,8 @@ const app = new Hono()
             id: categories.id,
             name: categories.name,
           },
-          purchase: {
-            id: purchases.id,
-          },
         })
         .from(courses)
-        .innerJoin(
-          purchases,
-          and(
-            eq(purchases.courseId, courses.id),
-            eq(purchases.userId, auth.token.id)
-          )
-        )
         .innerJoin(categories, eq(categories.id, courses.categoryId))
         .where(
           and(
@@ -100,12 +90,12 @@ const app = new Hono()
       }
 
       const finalCoursesData = coursesWithChapters.map(course => {
-        if (!course?.purchase) {
-          return {
-            ...course,
-            progress: 0,
-          }
-        }
+        // if (!course?.purchase) {
+        //   return {
+        //     ...course,
+        //     progress: 0,
+        //   }
+        // }
 
         const foundProgress = progresses.find(
           progress => progress.courseId === course.id

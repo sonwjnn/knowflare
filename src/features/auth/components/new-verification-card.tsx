@@ -2,38 +2,23 @@
 
 import { FormError } from '@/components/form-error'
 import { FormSuccess } from '@/components/form-success'
-import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Separator } from '@/components/ui/separator'
-import { Loader, Loader2, TriangleAlert } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Loader } from 'lucide-react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
-import { FaGithub } from 'react-icons/fa'
-import { FcGoogle } from 'react-icons/fc'
 
 import { useNewVerification } from '../hooks/use-new-verification'
 
 export const NewVerificationCard = () => {
-  // Loading
   const { mutate: newVerification, isPending: newVerificationLoading } =
     useNewVerification()
   const [error, setError] = useState<string | undefined>()
   const [success, setSuccess] = useState<string | undefined>()
-  const [loading, setLoading] = useState(false)
 
   const searchParams = useSearchParams()
 
   const token = searchParams.get('token')
-
-  const params = useSearchParams()
 
   const onSubmit = useCallback(() => {
     if (success || error) return
@@ -67,7 +52,7 @@ export const NewVerificationCard = () => {
       </CardHeader>
       <CardContent className="space-y-5 px-0 pb-0">
         <div className="flex w-full items-center justify-center">
-          {!success && !error && (
+          {!success && !error && !newVerificationLoading && (
             <Loader className="size-4 animate-spin text-muted-foreground" />
           )}
           <FormSuccess message={success} />
@@ -76,7 +61,7 @@ export const NewVerificationCard = () => {
 
         <p className="text-xs text-muted-foreground">
           Already have an account?{' '}
-          <Link href="/sign-in" onClick={() => setLoading(true)}>
+          <Link href="/sign-in">
             <span className="text-sky-700 hover:underline">Sign In</span>
           </Link>
         </p>
