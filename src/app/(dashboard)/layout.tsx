@@ -1,20 +1,18 @@
 import { protectServer } from '@/features/auth/utils'
 
+import { Footer } from './footer'
 import Navbar from './navbar'
 import Sidebar from './sidebar'
 
 const DashboradLayout = async ({ children }: { children: React.ReactNode }) => {
-  await protectServer()
-
   return (
     <div className="h-full">
-      <div className="fixed inset-y-0 h-[80px] w-full md:pl-56">
-        <Navbar />
-      </div>
-      <div className="fixed inset-y-0 z-50 hidden h-full w-56 flex-col md:flex">
+      <Navbar />
+      {/* <div className="fixed inset-y-0 z-50 hidden h-full w-56 flex-col md:flex">
         <Sidebar />
-      </div>
-      <main className="h-full pt-[80px] md:pl-56">{children}</main>
+      </div>  */}
+      <main className="min-h-screen bg-white">{children}</main>
+      <Footer />
     </div>
   )
 }

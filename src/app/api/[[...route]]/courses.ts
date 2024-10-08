@@ -134,29 +134,7 @@ const app = new Hono()
       })
     }
   )
-  .get(
-    '/:id/redirect-to-first-chapter',
-    verifyAuth(),
-    zValidator('param', z.object({ id: z.string() })),
-    async c => {
-      const auth = c.get('authUser')
-      const { id } = c.req.valid('param')
 
-      if (!auth.token?.id) {
-        return c.json({ error: 'Unauthorized' }, 401)
-      }
-
-      const [data] = await db.select().from(courses).where(eq(courses.id, id))
-
-      if (!data) {
-        return c.json({ error: 'Not found' }, 404)
-      }
-
-      return c.json({
-        data,
-      })
-    }
-  )
   .post(
     '/',
     verifyAuth(),
@@ -439,6 +417,37 @@ const app = new Hono()
       }
 
       return c.json({ data })
+    }
+  )
+  .put(
+    '/:courseId/chapters/:chapterId/progress',
+    verifyAuth(),
+    zValidator(
+      'param',
+      z.object({
+        courseId: z.string(),
+        chapterId: z.string(),
+      })
+    ),
+    async c => {
+      const auth = c.get('authUser')
+
+      if (!auth.token?.id) {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
+      const { courseId, chapterId } = c.req.valid('param')
+
+      const [existingCourse] = await db
+        .select()
+        .from(courses)
+        .where(eq(courses.id, courseId))
+
+      if (!existingCourse) {
+        return c.json({ error: 'Not found' }, 404)
+      }
+
+      return c.json(null, 200)
     }
   )
 

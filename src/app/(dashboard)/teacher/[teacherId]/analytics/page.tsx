@@ -6,8 +6,6 @@ import Chart from './chart'
 import DataCard from './data-card'
 
 const AnalyticsPage = async () => {
-  await protectServer()
-
   // const { data, totalRevenue, totalSales } = await getAnalytics(userId)
   return (
     <div className="p-6">

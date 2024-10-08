@@ -1,12 +1,8 @@
-import { protectServer } from '@/features/auth/utils'
-
 interface AuthLayoutProps {
   children: React.ReactNode
 }
 
 const AuthLayout = async ({ children }: AuthLayoutProps) => {
-  await protectServer()
-
   return (
     <div className="flex h-full flex-col bg-[url(/bg.jpg)] bg-cover bg-top">
       <div className="z-[4] flex h-full w-full flex-col items-center justify-center">

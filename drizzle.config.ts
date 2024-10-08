@@ -4,7 +4,7 @@ import { defineConfig } from 'drizzle-kit'
 config({ path: '.env.local' })
 
 export default defineConfig({
-  dialect: 'postgresql', // "mysql" | "sqlite" | "postgresql"
+  dialect: 'mysql', // "mysql" | "sqlite" | "postgresql",
   schema: './src/db/schema.ts',
   out: './drizzle',
   dbCredentials: {

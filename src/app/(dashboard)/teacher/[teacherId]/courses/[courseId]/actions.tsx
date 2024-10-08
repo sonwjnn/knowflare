@@ -2,8 +2,8 @@ import { Button } from '@/components/ui/button'
 import { useDeleteCourse } from '@/features/courses/api/use-delete-course'
 import { usePublishCourse } from '@/features/courses/api/use-publish-course'
 import { useUnpublishCourse } from '@/features/courses/api/use-unpublish-course'
-import { UseConfettiStore } from '@/hooks/use-confetti-store'
 import { useConfirm } from '@/hooks/use-confirm'
+import { useConfettiStore } from '@/store/use-confetti-store'
 import { Trash } from 'lucide-react'
 
 interface ActionsProps {
@@ -23,7 +23,7 @@ const Actions = ({ disabled, courseId, isPublished }: ActionsProps) => {
     useUnpublishCourse(courseId)
   const { mutate: deleteCourse } = useDeleteCourse(courseId)
 
-  const confetti = UseConfettiStore()
+  const [_open, setOpen] = useConfettiStore()
 
   const isLoading = publishCourseLoading || unpublishCourseLoading
 
@@ -32,7 +32,7 @@ const Actions = ({ disabled, courseId, isPublished }: ActionsProps) => {
       unpublishCourse()
     } else {
       publishCourse()
-      confetti.onOpen()
+      setOpen(true)
     }
   }
   const handleDelete = async () => {

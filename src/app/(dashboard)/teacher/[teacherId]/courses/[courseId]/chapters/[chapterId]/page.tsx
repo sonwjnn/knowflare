@@ -9,11 +9,11 @@ import { useTeacherId } from '@/hooks/use-teacher-id'
 import { ArrowLeft, Eye, LayoutDashboard, Loader, Video } from 'lucide-react'
 import Link from 'next/link'
 
-import ChapterAccessForm from './chapter-access-form'
-import ChapterActions from './chapter-actions'
-import ChapterDescriptionForm from './chapter-description-form'
-import ChapterTitleForm from './chapter-title-form'
-import ChapterVideoForm from './chapter-video-form'
+import ChapterAccessForm from './access-form'
+import ChapterActions from './actions'
+import ChapterDescriptionForm from './description-form'
+import ChapterTitleForm from './title-form'
+import ChapterVideoForm from './video-form'
 
 const ChapterIdPage = ({
   params,

@@ -5,6 +5,7 @@ import {
   insertChaptersSchema,
   muxData,
   teachers,
+  userProgress,
 } from '@/db/schema'
 import { verifyAuth } from '@hono/auth-js'
 import { zValidator } from '@hono/zod-validator'
@@ -215,7 +216,7 @@ const app = new Hono()
         return c.json({ error: 'Chapter not found' }, 404)
       }
 
-      const [muxDateResponse] = await db
+      const [muxDataResponse] = await db
         .select()
         .from(muxData)
         .where(eq(muxData.chapterId, id))
@@ -223,11 +224,65 @@ const app = new Hono()
       return c.json({
         data: {
           ...chapter,
-          muxData: muxDateResponse,
+          muxData: muxDataResponse,
         },
       })
     }
   )
+  .get(
+    '/:id/next',
+    verifyAuth(),
+    zValidator(
+      'param',
+      z.object({
+        id: z.string().optional(),
+      })
+    ),
+    zValidator(
+      'query',
+      z.object({
+        courseId: z.string().optional(),
+      })
+    ),
+    async c => {
+      const auth = c.get('authUser')
+
+      if (!auth.token?.id) {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
+      const { id } = c.req.valid('param')
+      const { courseId } = c.req.valid('query')
+
+      if (!id || !courseId) {
+        return c.json({ error: 'Missing id' }, 400)
+      }
+
+      const [chapter] = await db
+        .select()
+        .from(chapters)
+        .where(eq(chapters.id, id))
+
+      if (!chapter) {
+        return c.json({ error: 'Chapter not found' }, 404)
+      }
+
+      // const [] = await db.select().from(chapters).where()
+
+      const [muxDataResponse] = await db
+        .select()
+        .from(muxData)
+        .where(eq(muxData.chapterId, id))
+
+      return c.json({
+        data: {
+          ...chapter,
+          muxData: muxDataResponse,
+        },
+      })
+    }
+  )
+
   .patch(
     '/:id',
     verifyAuth(),
@@ -458,6 +513,62 @@ const app = new Hono()
       }
 
       return c.json({ data })
+    }
+  )
+  .put(
+    '/:id/progress',
+    verifyAuth(),
+    zValidator(
+      'param',
+      z.object({
+        id: z.string().optional(),
+      })
+    ),
+    zValidator(
+      'json',
+      z.object({
+        isCompleted: z.boolean(),
+      })
+    ),
+    async c => {
+      const auth = c.get('authUser')
+
+      if (!auth.token?.id) {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
+      const { id } = c.req.valid('param')
+      const { isCompleted } = c.req.valid('json')
+
+      if (!id) {
+        return c.json({ error: 'Missing id' }, 400)
+      }
+
+      let data
+
+      data = await db
+        .update(userProgress)
+        .set({ isCompleted: true })
+        .where(
+          and(
+            eq(userProgress.chapterId, id),
+            eq(userProgress.userId, auth.token.id)
+          )
+        )
+        .returning()
+
+      if (!data[0]) {
+        data = await db
+          .insert(userProgress)
+          .values({
+            userId: auth.token.id,
+            chapterId: id,
+            isCompleted,
+          })
+          .returning()
+      }
+
+      return c.json({ data: data[0] })
     }
   )
   .delete(

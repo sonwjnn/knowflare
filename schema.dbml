@@ -74,6 +74,22 @@ table mux_data {
   playback_id text
 }
 
+table order_detail {
+  id text [pk, not null]
+  order_id text [not null]
+  course_id text [not null]
+  quantity integer [not null]
+  price integer [not null]
+}
+
+table order {
+  id text [pk, not null]
+  userId text [not null]
+  total_amount integer [not null]
+  createdAt timestamp [not null]
+  updatedAt timestamp [not null]
+}
+
 table password_reset_token {
   email text [not null]
   token text [not null, unique]
@@ -88,6 +104,20 @@ table purchases {
   id text [pk, not null]
   userId text [not null]
   course_id text [not null]
+}
+
+table review {
+  id text [pk, not null]
+  userId text [not null]
+  course_id text [not null]
+  rating integer [not null]
+  comment text
+  createdAt timestamp [not null]
+}
+
+table role {
+  id text [pk, not null]
+  name text [not null, unique]
 }
 
 table session {
@@ -148,6 +178,10 @@ ref: mux_data.chapter_id - chapter.id
 ref: course.category_id - category.id
 
 ref: course.teacher_id - teacher.id
+
+ref: order_detail.order_id > order.id
+
+ref: order_detail.course_id - course.id
 
 ref: purchases.course_id > course.id
 

@@ -2,6 +2,7 @@
 
 import { ThemeProvider } from 'next-themes'
 
+import { ConfettiProvider } from './conffeti-provider'
 import { JotaiProvider } from './jotai-provider'
 import { QueryProvider } from './query-provider'
 
@@ -19,6 +20,7 @@ export const Providers = ({ children }: ProvidersProps) => {
           enableSystem={false}
           storageKey="app-theme"
         >
+          <ConfettiProvider />
           {children}
         </ThemeProvider>
       </QueryProvider>

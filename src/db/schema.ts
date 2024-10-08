@@ -1,43 +1,63 @@
 import { relations } from 'drizzle-orm'
 import {
   boolean,
-  integer,
-  pgTable,
+  int,
+  mysqlEnum,
+  mysqlTable,
   primaryKey,
-  text,
   timestamp,
-} from 'drizzle-orm/pg-core'
+  varchar,
+} from 'drizzle-orm/mysql-core'
 import { createInsertSchema } from 'drizzle-zod'
 import type { AdapterAccountType } from 'next-auth/adapters'
 import { z } from 'zod'
 
-export const users = pgTable('user', {
-  id: text('id')
+export enum UserRole {
+  ADMIN = 'admin',
+  USER = 'user',
+}
+
+export function enumToPgEnum<T extends Record<string, any>>(
+  myEnum: T
+): [T[keyof T], ...T[keyof T][]] {
+  return Object.values(myEnum).map((value: any) => `${value}`) as any
+}
+
+export const roleEnum = mysqlEnum('role', enumToPgEnum(UserRole))
+
+export const users = mysqlTable('user', {
+  id: varchar('id', { length: 255 })
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  name: text('name'),
-  email: text('email').notNull(),
-  emailVerified: timestamp('emailVerified', { mode: 'date' }),
-  image: text('image'),
-  password: text('password'),
+  name: varchar('name', { length: 255 }),
+  email: varchar('email', { length: 255 }).unique(),
+  emailVerified: timestamp('emailVerified', {
+    mode: 'date',
+    fsp: 3,
+  }),
+  role: roleEnum.default(UserRole.USER).notNull(),
+  image: varchar('image', { length: 255 }),
+  password: varchar('password', { length: 255 }),
 })
 
-export const accounts = pgTable(
+export const accounts = mysqlTable(
   'account',
   {
-    userId: text('userId')
+    userId: varchar('userId', { length: 255 })
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
-    type: text('type').$type<AdapterAccountType>().notNull(),
-    provider: text('provider').notNull(),
-    providerAccountId: text('providerAccountId').notNull(),
-    refresh_token: text('refresh_token'),
-    access_token: text('access_token'),
-    expires_at: integer('expires_at'),
-    token_type: text('token_type'),
-    scope: text('scope'),
-    id_token: text('id_token'),
-    session_state: text('session_state'),
+    type: varchar('type', { length: 255 })
+      .$type<AdapterAccountType>()
+      .notNull(),
+    provider: varchar('provider', { length: 255 }).notNull(),
+    providerAccountId: varchar('providerAccountId', { length: 255 }).notNull(),
+    refresh_token: varchar('refresh_token', { length: 255 }),
+    access_token: varchar('access_token', { length: 255 }),
+    expires_at: int('expires_at'),
+    token_type: varchar('token_type', { length: 255 }),
+    scope: varchar('scope', { length: 255 }),
+    id_token: varchar('id_token', { length: 2048 }),
+    session_state: varchar('session_state', { length: 255 }),
   },
   account => ({
     compoundKey: primaryKey({
@@ -46,19 +66,19 @@ export const accounts = pgTable(
   })
 )
 
-export const sessions = pgTable('session', {
-  sessionToken: text('sessionToken').primaryKey(),
-  userId: text('userId')
+export const sessions = mysqlTable('session', {
+  sessionToken: varchar('sessionToken', { length: 255 }).primaryKey(),
+  userId: varchar('userId', { length: 255 })
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
   expires: timestamp('expires', { mode: 'date' }).notNull(),
 })
 
-export const verificationTokens = pgTable(
+export const verificationTokens = mysqlTable(
   'verification_token',
   {
-    email: text('email').notNull(),
-    token: text('token').notNull().unique(),
+    email: varchar('email', { length: 255 }).notNull(),
+    token: varchar('token', { length: 255 }).notNull(),
     expires: timestamp('expires', { mode: 'date' }).notNull(),
   },
   verificationToken => ({
@@ -68,11 +88,36 @@ export const verificationTokens = pgTable(
   })
 )
 
-export const passwordResetTokens = pgTable(
+export const authenticators = mysqlTable(
+  'authenticator',
+  {
+    credentialID: varchar('credentialID', { length: 255 }).notNull().unique(),
+    userId: varchar('userId', { length: 255 })
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    providerAccountId: varchar('providerAccountId', { length: 255 }).notNull(),
+    credentialPublicKey: varchar('credentialPublicKey', {
+      length: 255,
+    }).notNull(),
+    counter: int('counter').notNull(),
+    credentialDeviceType: varchar('credentialDeviceType', {
+      length: 255,
+    }).notNull(),
+    credentialBackedUp: boolean('credentialBackedUp').notNull(),
+    transports: varchar('transports', { length: 255 }),
+  },
+  authenticator => ({
+    compositePk: primaryKey({
+      columns: [authenticator.userId, authenticator.credentialID],
+    }),
+  })
+)
+
+export const passwordResetTokens = mysqlTable(
   'password_reset_token',
   {
-    email: text('email').notNull(),
-    token: text('token').notNull().unique(),
+    email: varchar('email', { length: 255 }).notNull(),
+    token: varchar('token', { length: 255 }).notNull().unique(),
     expires: timestamp('expires', { mode: 'date' }).notNull(),
   },
   passwordResetTokens => ({
@@ -82,54 +127,25 @@ export const passwordResetTokens = pgTable(
   })
 )
 
-export const authenticators = pgTable(
-  'authenticator',
-  {
-    credentialID: text('credentialID').notNull().unique(),
-    userId: text('userId')
-      .notNull()
-      .references(() => users.id, { onDelete: 'cascade' }),
-    providerAccountId: text('providerAccountId').notNull(),
-    credentialPublicKey: text('credentialPublicKey').notNull(),
-    counter: integer('counter').notNull(),
-    credentialDeviceType: text('credentialDeviceType').notNull(),
-    credentialBackedUp: boolean('credentialBackedUp').notNull(),
-    transports: text('transports'),
-  },
-  authenticator => ({
-    compositePK: primaryKey({
-      columns: [authenticator.userId, authenticator.credentialID],
-    }),
-  })
-)
-
-export const teachers = pgTable('teacher', {
-  id: text('id')
+export const courses = mysqlTable('course', {
+  id: varchar('id', { length: 255 })
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  userId: text('userId')
+  userId: varchar('user_id', { length: 255 })
     .notNull()
     .references(() => users.id, {
       onDelete: 'cascade',
     }),
-})
-
-export const courses = pgTable('course', {
-  id: text('id')
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  teacherId: text('teacher_id')
-    .notNull()
-    .references(() => teachers.id, {
-      onDelete: 'cascade',
-    }),
-  categoryId: text('category_id').references(() => categories.id, {
-    onDelete: 'set null',
-  }),
-  title: text('title').notNull(),
-  description: text('description'),
-  imageUrl: text('image_url'),
-  price: integer('price').default(0).notNull(),
+  categoryId: varchar('category_id', { length: 255 }).references(
+    () => categories.id,
+    {
+      onDelete: 'set null',
+    }
+  ),
+  title: varchar('title', { length: 255 }).notNull(),
+  description: varchar('description', { length: 255 }),
+  imageUrl: varchar('image_url', { length: 255 }),
+  price: int('price').default(0).notNull(),
   isPublished: boolean('is_published').default(false).notNull(),
   date: timestamp('date', { mode: 'date' }).notNull(),
 })
@@ -139,9 +155,9 @@ export const coursesRelations = relations(courses, ({ many, one }) => ({
     fields: [courses.categoryId],
     references: [categories.id],
   }),
-  teacher: one(teachers, {
-    fields: [courses.teacherId],
-    references: [teachers.id],
+  user: one(users, {
+    fields: [courses.userId],
+    references: [users.id],
   }),
   chapters: many(chapters),
   attachments: many(attachments),
@@ -152,24 +168,24 @@ export const insertCoursesSchema = createInsertSchema(courses, {
   date: z.coerce.date(),
 })
 
-export const categories = pgTable('category', {
-  id: text('id')
+export const categories = mysqlTable('category', {
+  id: varchar('id', { length: 255 })
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  name: text('name').notNull(),
+  name: varchar('name', { length: 255 }).notNull(),
 })
 
-export const attachments = pgTable('attachment', {
-  id: text('id')
+export const attachments = mysqlTable('attachment', {
+  id: varchar('id', { length: 255 })
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  courseId: text('course_id')
+  courseId: varchar('course_id', { length: 255 })
     .notNull()
     .references(() => courses.id, {
       onDelete: 'cascade',
     }),
-  name: text('name').notNull(),
-  url: text('url').notNull(),
+  name: varchar('name', { length: 255 }).notNull(),
+  url: varchar('url', { length: 255 }).notNull(),
   date: timestamp('date', { mode: 'date' }).notNull(),
 })
 
@@ -184,24 +200,24 @@ export const attachmentsRelations = relations(attachments, ({ one }) => ({
   }),
 }))
 
-export const chapters = pgTable('chapter', {
-  id: text('id')
+export const chapters = mysqlTable('chapter', {
+  id: varchar('id', { length: 255 })
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  courseId: text('course_id')
+  courseId: varchar('course_id', { length: 255 })
     .notNull()
     .references(() => courses.id, {
       onDelete: 'cascade',
     }),
-  title: text('title').notNull(),
-  description: text('description'),
-  videoUrl: text('video_url'),
-  position: integer('position').notNull(),
+  title: varchar('title', { length: 255 }).notNull(),
+  description: varchar('description', { length: 255 }),
+  videoUrl: varchar('video_url', { length: 255 }),
+  position: int('position').notNull(),
   isPublished: boolean('is_published').default(false),
   isFree: boolean('is_free').default(false),
 })
 
-export const insertChaptersSchema = createInsertSchema(chapters)
+export const insertchaptersSchema = createInsertSchema(chapters)
 
 export const chaptersRelations = relations(chapters, ({ one, many }) => ({
   course: one(courses, {
@@ -215,17 +231,17 @@ export const chaptersRelations = relations(chapters, ({ one, many }) => ({
   userProgress: many(userProgress),
 }))
 
-export const muxData = pgTable('mux_data', {
-  id: text('id')
+export const muxData = mysqlTable('mux_data', {
+  id: varchar('id', { length: 255 })
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  chapterId: text('chapter_id')
+  chapterId: varchar('chapter_id', { length: 255 })
     .notNull()
     .references(() => chapters.id, {
       onDelete: 'cascade',
     }),
-  assetId: text('asset_id').notNull(),
-  playbackId: text('playback_id'),
+  assetId: varchar('asset_id', { length: 255 }).notNull(),
+  playbackId: varchar('playback_id', { length: 255 }),
 })
 
 export const muxDataRelations = relations(muxData, ({ one }) => ({
@@ -235,16 +251,16 @@ export const muxDataRelations = relations(muxData, ({ one }) => ({
   }),
 }))
 
-export const userProgress = pgTable('user_progress', {
-  id: text('id')
+export const userProgress = mysqlTable('user_progress', {
+  id: varchar('id', { length: 255 })
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  userId: text('userId')
+  userId: varchar('user_id', { length: 255 })
     .notNull()
     .references(() => users.id, {
       onDelete: 'cascade',
     }),
-  chapterId: text('chapter_id')
+  chapterId: varchar('chapter_id', { length: 255 })
     .notNull()
     .references(() => chapters.id, {
       onDelete: 'cascade',
@@ -259,20 +275,23 @@ export const userProgressRelations = relations(userProgress, ({ one }) => ({
   }),
 }))
 
-export const purchases = pgTable('purchases', {
-  id: text('id')
+export const purchases = mysqlTable('purchases', {
+  id: varchar('id', { length: 255 })
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  userId: text('userId')
+  userId: varchar('user_id', { length: 255 })
     .notNull()
     .references(() => users.id, {
       onDelete: 'cascade',
     }),
-  courseId: text('course_id')
+  courseId: varchar('course_id', { length: 255 })
     .notNull()
     .references(() => courses.id, {
       onDelete: 'cascade',
     }),
+  couponId: varchar('coupon_id', { length: 255 }).references(() => coupons.id, {
+    onDelete: 'set null',
+  }),
 })
 
 export const purchasesRelations = relations(purchases, ({ one }) => ({
@@ -282,20 +301,78 @@ export const purchasesRelations = relations(purchases, ({ one }) => ({
   }),
 }))
 
-export const subscriptions = pgTable('subscription', {
-  id: text('id')
+export const subscriptions = mysqlTable('subscription', {
+  id: varchar('id', { length: 255 })
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  userId: text('userId')
+  userId: varchar('user_id', { length: 255 })
     .notNull()
     .references(() => users.id, {
       onDelete: 'cascade',
     }),
-  subscriptionId: text('subscriptionId').notNull(),
-  customerId: text('customerId').notNull(),
-  priceId: text('priceId').notNull(),
-  status: text('status').notNull(),
-  currentPeriodEnd: timestamp('currentPeriodEnd', { mode: 'date' }),
-  createdAt: timestamp('createdAt', { mode: 'date' }).notNull(),
-  updatedAt: timestamp('updatedAt', { mode: 'date' }).notNull(),
+  subscriptionId: varchar('subscription_id', { length: 255 }).notNull(),
+  customerId: varchar('customer_id', { length: 255 }).notNull(),
+  priceId: varchar('price_id', { length: 255 }).notNull(),
+  status: varchar('status', { length: 255 }).notNull(),
+  currentPeriodEnd: timestamp('current_period_end', { mode: 'date' }),
+})
+
+export const comments = mysqlTable('comment', {
+  id: varchar('id', { length: 255 })
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: varchar('user_id', { length: 255 })
+    .notNull()
+    .references(() => users.id, {
+      onDelete: 'cascade',
+    }),
+  courseId: varchar('course_id', { length: 255 })
+    .notNull()
+    .references(() => courses.id, {
+      onDelete: 'cascade',
+    }),
+  rating: int('rating').notNull(),
+  content: varchar('content', { length: 255 }),
+  createdAt: timestamp('created_at', { mode: 'date' }),
+})
+
+export const coupons = mysqlTable('coupon', {
+  id: varchar('id', { length: 255 })
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  code: varchar('code', { length: 255 }).notNull().unique(),
+  discountType: varchar('discount_type', { length: 255 }).notNull(), // Loại giảm giá (ví dụ: 'percentage' hoặc 'fixed')
+  discountValue: int('discount_value').notNull(),
+  expires: timestamp('expires', { mode: 'date' }),
+  isActive: boolean('is_active').default(true).notNull(),
+})
+
+export const orders = mysqlTable('order', {
+  id: varchar('id', { length: 255 })
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: varchar('user_id', { length: 255 })
+    .notNull()
+    .references(() => users.id, {
+      onDelete: 'cascade',
+    }),
+  totalAmount: int('total_amount').notNull(),
+  status: varchar('status', { length: 255 }).notNull(), // Ví dụ: 'pending', 'completed', 'canceled'
+  createdAt: timestamp('created_at', { mode: 'date' }),
+})
+
+export const orderItems = mysqlTable('order_item', {
+  id: varchar('id', { length: 255 })
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  orderId: varchar('order_id', { length: 255 })
+    .notNull()
+    .references(() => orders.id, {
+      onDelete: 'cascade',
+    }),
+  courseId: varchar('course_id', { length: 255 })
+    .notNull()
+    .references(() => courses.id, {
+      onDelete: 'cascade',
+    }),
 })
