@@ -217,7 +217,7 @@ export const chapters = mysqlTable('chapter', {
   isFree: boolean('is_free').default(false),
 })
 
-export const insertchaptersSchema = createInsertSchema(chapters)
+export const insertChaptersSchema = createInsertSchema(chapters)
 
 export const chaptersRelations = relations(chapters, ({ one, many }) => ({
   course: one(courses, {
@@ -376,3 +376,23 @@ export const orderItems = mysqlTable('order_item', {
       onDelete: 'cascade',
     }),
 })
+
+export const carts = mysqlTable('cart', {
+  id: varchar('id', { length: 255 })
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: varchar('user_id', { length: 255 })
+    .notNull()
+    .references(() => users.id, {
+      onDelete: 'cascade',
+    }),
+  courseId: varchar('course_id', { length: 255 })
+    .notNull()
+    .references(() => courses.id, {
+      onDelete: 'cascade',
+    }),
+  quantity: int('quantity').notNull(),
+  createdAt: timestamp('created_at', { mode: 'date' }),
+})
+
+export const insertCartsSchema = createInsertSchema(carts)

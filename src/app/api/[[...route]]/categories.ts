@@ -5,11 +5,11 @@ import { desc } from 'drizzle-orm'
 import { Hono } from 'hono'
 
 const app = new Hono().get('/', verifyAuth(), async c => {
-  const auth = c.get('authUser')
+  // const auth = c.get('authUser')
 
-  if (!auth.token?.id) {
-    return c.json({ error: 'Unauthorized' }, 401)
-  }
+  // if (!auth.token?.id) {
+  //   return c.json({ error: 'Unauthorized' }, 401)
+  // }
 
   const data = await db.select().from(categories).orderBy(desc(categories.name))
 

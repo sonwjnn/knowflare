@@ -4,6 +4,7 @@ import { Context, Hono } from 'hono'
 import { handle } from 'hono/vercel'
 
 import attachments from './attachments'
+import carts from './carts'
 import categories from './categories'
 import chapters from './chapters'
 import courses from './courses'
@@ -27,13 +28,14 @@ app.use('*', initAuthConfig(getAuthConfig))
 
 const routes = app
   .route('/users', users)
-  .route('/courses', courses)
   .route('/categories', categories)
-  .route('/chapters', chapters)
-  .route('/attachments', attachments)
-  .route('/purchases', purchases)
-  .route('/teachers', teachers)
-  .route('/userProgress', userProgress)
+  .route('/courses', courses)
+  // .route('/chapters', chapters)
+  // .route('/attachments', attachments)
+  // .route('/purchases', purchases)
+  // .route('/teachers', teachers)
+  // .route('/userProgress', userProgress)
+  .route('/carts', carts)
 
 export const GET = handle(app)
 export const POST = handle(app)

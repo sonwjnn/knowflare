@@ -36,6 +36,9 @@ export const SignUpCard = () => {
   const onCredentialSignUp = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
+    setError('')
+    setSuccess('')
+
     mutation.mutate(
       {
         name,
@@ -55,6 +58,8 @@ export const SignUpCard = () => {
 
   const onProviderSignUp = (provider: 'github' | 'google') => {
     setLoading(true)
+    setError('')
+    setSuccess('')
     setLoadingGithub(provider === 'github')
     setLoadingGoogle(provider === 'google')
     signIn(provider, { callbackUrl: '/' })
@@ -68,12 +73,7 @@ export const SignUpCard = () => {
           Use your email or another service to continue
         </CardDescription>
       </CardHeader>
-      {!!mutation.error && (
-        <div className="mb-6 flex items-center gap-x-2 rounded-md bg-destructive/15 p-3 text-sm text-destructive">
-          <TriangleAlert className="size-4" />
-          <p className="mx-2">Something went wrong</p>
-        </div>
-      )}
+
       <CardContent className="space-y-5 px-0 pb-0">
         <form onSubmit={onCredentialSignUp} className="space-y-2.5">
           <Input

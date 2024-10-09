@@ -1,13 +1,19 @@
 import { categories, chapters, courses } from '@/db/schema'
-import { neon } from '@neondatabase/serverless'
 import { config } from 'dotenv'
-import { drizzle } from 'drizzle-orm/neon-http'
+import { drizzle } from 'drizzle-orm/mysql2'
+import mysql from 'mysql2/promise'
 import { v4 as uuidv4 } from 'uuid'
 
 config({ path: '.env.local' })
 
-const sql = neon(process.env.DATABASE_URL!)
-const db = drizzle(sql)
+const connection = mysql.createPool({
+  host: process.env.DATABASE_HOST!,
+  user: process.env.DATABASE_USER!,
+  password: process.env.DATABASE_PASSWORD!,
+  database: process.env.DATABASE_NAME!,
+})
+
+const db = drizzle(connection)
 
 async function main() {
   try {
@@ -16,7 +22,7 @@ async function main() {
     await db.delete(courses).execute()
     await db.delete(categories).execute()
 
-    const userId = ''
+    const userId = 'fa0569b1-1954-43d5-a586-b5176523fde6'
 
     const categoryIds = Array.from({ length: 8 }, (_, i) => uuidv4())
 
@@ -31,13 +37,13 @@ async function main() {
     ]
 
     // Seed categories
-    await db.insert(categories).values(SEED_CATEGORIES).execute()
+    await db.insert(categories).values(SEED_CATEGORIES)
 
     // Create courses
-    const courseIds = Array.from({ length: 10 }, () => uuidv4())
+    const courseIds = Array.from({ length: 30 }, () => uuidv4())
     const SEED_COURSES = courseIds.map((id, index) => ({
       id,
-      userId: uuidv4(), // Replace with a valid user ID
+      userId, // Replace with a valid user ID
       categoryId: categoryIds[index % categoryIds.length], // Assign categories in a round-robin manner
       title: `Course Title ${index + 1}`,
       description: `Description for Course Title ${index + 1}`,
@@ -69,7 +75,10 @@ async function main() {
     }
   } catch (error) {
     console.log('Error during seed:', error)
+    await connection.end()
     process.exit(1)
+  } finally {
+    await connection.end()
   }
 }
 

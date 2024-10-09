@@ -17,6 +17,7 @@ import { useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 import { FaGithub } from 'react-icons/fa'
 import { FcGoogle } from 'react-icons/fc'
+import { setErrorMap } from 'zod'
 
 import { useSignIn } from '../hooks/use-sign-in'
 
@@ -36,6 +37,7 @@ export const SignInCard = () => {
 
   const onCredentialSignIn = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+
     setLoading(true)
 
     signInMutate({
