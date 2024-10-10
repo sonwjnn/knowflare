@@ -194,7 +194,7 @@ export default function CourseDetail() {
                 ${course.price.toFixed(2)}
               </div>
               <Button
-                className="mb-4 w-full"
+                className="mb-4 w-full rounded-md"
                 onClick={() => setIsInCart(!isInCart)}
               >
                 {isInCart ? 'Remove from Cart' : 'Add to Cart'}
@@ -219,7 +219,7 @@ export default function CourseDetail() {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button variant="outline" className="w-full">
+              <Button variant="outline" className="w-full rounded-md">
                 Buy Now
               </Button>
             </CardFooter>

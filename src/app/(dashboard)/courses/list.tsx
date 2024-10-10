@@ -67,7 +67,7 @@ export const List = () => {
                 <span className="text-lg font-bold text-gray-900">
                   ${course.price.toFixed(2)}
                 </span>
-                <Button>Add to cart</Button>
+                <Button className="rounded-md">Add to cart</Button>
               </div>
             </CardContent>
           </Card>

@@ -80,7 +80,7 @@ export const Cart = () => {
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className="w-80 border-gray-800 p-0"
+        className="w-80 border-0 p-0"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
@@ -122,7 +122,7 @@ export const Cart = () => {
               </p>
             </div>
             <Link href="/cart" onClick={() => setIsOpen(false)}>
-              <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+              <Button className="rounded-md bg-primary text-primary-foreground hover:bg-primary/90">
                 Go to cart
               </Button>
             </Link>
