@@ -6,7 +6,6 @@ import {
   courses,
   insertCoursesSchema,
   purchases,
-  teachers,
 } from '@/db/schema'
 import { verifyAuth } from '@hono/auth-js'
 import { zValidator } from '@hono/zod-validator'
@@ -58,56 +57,56 @@ const app = new Hono()
         )
         .orderBy(desc(courses.date))
 
-      const coursesWithChapters = await Promise.all(
-        data.map(async course => {
-          const courseChapters = await db
-            .select({
-              id: chapters.id,
-            })
-            .from(chapters)
-            .where(
-              and(
-                eq(chapters.courseId, course.id),
-                eq(chapters.isPublished, true)
-              )
-            )
+      // const coursesWithChapters = await Promise.all(
+      //   data.map(async course => {
+      //     const courseChapters = await db
+      //       .select({
+      //         id: chapters.id,
+      //       })
+      //       .from(chapters)
+      //       .where(
+      //         and(
+      //           eq(chapters.courseId, course.id),
+      //           eq(chapters.isPublished, true)
+      //         )
+      //       )
 
-          return {
-            ...course,
-            chapters: courseChapters,
-          }
-        })
-      )
+      //     return {
+      //       ...course,
+      //       chapters: courseChapters,
+      //     }
+      //   })
+      // )
 
-      const progresses: { courseId: string; progress: number }[] = []
+      // const progresses: { courseId: string; progress: number }[] = []
 
-      for (let course of coursesWithChapters) {
-        const progress = await getProgress(auth.token?.id, course.id)
-        progresses.push({
-          courseId: course.id,
-          progress,
-        })
-      }
+      // for (let course of coursesWithChapters) {
+      //   const progress = await getProgress(auth.token?.id, course.id)
+      //   progresses.push({
+      //     courseId: course.id,
+      //     progress,
+      //   })
+      // }
 
-      const finalCoursesData = coursesWithChapters.map(course => {
-        // if (!course?.purchase) {
-        //   return {
-        //     ...course,
-        //     progress: 0,
-        //   }
-        // }
+      // const finalCoursesData = coursesWithChapters.map(course => {
+      //   // if (!course?.purchase) {
+      //   //   return {
+      //   //     ...course,
+      //   //     progress: 0,
+      //   //   }
+      //   // }
 
-        const foundProgress = progresses.find(
-          progress => progress.courseId === course.id
-        )
-        return {
-          ...course,
-          progress: foundProgress ? foundProgress.progress : 0,
-        }
-      })
+      //   const foundProgress = progresses.find(
+      //     progress => progress.courseId === course.id
+      //   )
+      //   return {
+      //     ...course,
+      //     progress: foundProgress ? foundProgress.progress : 0,
+      //   }
+      // })
 
       return c.json({
-        data: finalCoursesData,
+        data,
       })
     }
   )

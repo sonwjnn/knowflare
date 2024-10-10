@@ -15,6 +15,11 @@ const connection = mysql.createPool({
 
 const db = drizzle(connection)
 
+function getRandomImageUrl(): string {
+  const randomId = Math.floor(Math.random() * 1000)
+  return `https://picsum.photos/id/${randomId}/200/200`
+}
+
 async function main() {
   try {
     // Reset db
@@ -47,7 +52,7 @@ async function main() {
       categoryId: categoryIds[index % categoryIds.length], // Assign categories in a round-robin manner
       title: `Course Title ${index + 1}`,
       description: `Description for Course Title ${index + 1}`,
-      imageUrl: `http://example.com/image${index + 1}.jpg`,
+      imageUrl: getRandomImageUrl(),
       price: Math.floor(Math.random() * 100) + 1,
       isPublished: Math.random() < 0.5,
       date: new Date(),

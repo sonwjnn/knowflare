@@ -1,11 +1,13 @@
 'use client'
 
 import NavbarRoutes from '@/components/navbar-routes'
+import SearchInput from '@/components/search-input'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { UserButton } from '@/features/auth/components/user-button'
 import { useCurrentUser } from '@/hooks/use-current-user'
 import { ChevronDown, Search } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
 
 import { Cart } from './cart'
@@ -19,12 +21,13 @@ const Navbar = () => {
     //   <MobileSidebar />
     //   <NavbarRoutes />
     // </div>
-    <nav className="bg-white shadow-sm">
+    <nav className="bg-[#2d2f31] shadow-sm">
       <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <Link href="/" className="text-2xl font-bold text-blue-700">
-              Knowflare
+            <Link href="/" className="flex items-center">
+              <Image src="/logo.png" width={60} height={60} alt="Logo" />
+              <h3 className="text-2xl font-bold text-slate-300">Knowflare</h3>
             </Link>
             {/* <nav className="ml-10 hidden space-x-8 md:flex">
               <div className="group relative">
@@ -54,17 +57,11 @@ const Navbar = () => {
               </div>
             </nav> */}
           </div>
-          <div className="flex items-center">
-            <div className="mr-4 hidden md:block">
-              <div className="relative">
-                <Input
-                  type="text"
-                  placeholder="What do you want to learn?"
-                  className="w-64 pl-10"
-                />
-                <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 transform text-gray-400" />
-              </div>
+          <div className="flex items-center gap-x-3">
+            <div className="hidden md:block">
+              <SearchInput />
             </div>
+            <Cart />
             {currentUser ? (
               <UserButton />
             ) : (
@@ -77,9 +74,6 @@ const Navbar = () => {
                 </Link>
               </>
             )}
-            <div className="ml-3">
-              <Cart />
-            </div>
           </div>
         </div>
       </div>

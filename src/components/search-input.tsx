@@ -9,9 +9,9 @@ import { useCallback, useEffect, useState } from 'react'
 import { Input } from './ui/input'
 
 const SearchInput = () => {
+  const pathname = usePathname()
   const [value, setValue] = useState('')
   const searchParams = useSearchParams()
-  const pathname = usePathname()
   const router = useRouter()
 
   const currentyCategoryId = searchParams.get('categoryId')
@@ -22,7 +22,7 @@ const SearchInput = () => {
 
       const url = qs.stringifyUrl(
         {
-          url: pathname,
+          url: '/courses',
           query: {
             categoryId: currentyCategoryId,
             title: value,
@@ -32,23 +32,25 @@ const SearchInput = () => {
       )
       router.push(url)
     },
-    [currentyCategoryId, value, pathname, router]
+    [currentyCategoryId, value, router]
   )
 
   const onClear = useCallback(() => {
     setValue('')
 
-    const url = qs.stringifyUrl(
-      {
-        url: pathname,
-        query: {
-          categoryId: currentyCategoryId,
+    if (pathname.includes('/courses')) {
+      const url = qs.stringifyUrl(
+        {
+          url: '/courses',
+          query: {
+            categoryId: currentyCategoryId,
+          },
         },
-      },
-      { skipEmptyString: true, skipNull: true }
-    )
-    router.push(url)
-  }, [currentyCategoryId, pathname, router])
+        { skipEmptyString: true, skipNull: true }
+      )
+      router.push(url)
+    }
+  }, [currentyCategoryId, router, pathname])
 
   return (
     <form className="relative flex items-center" onSubmit={onClick}>
@@ -68,10 +70,10 @@ const SearchInput = () => {
         </button>
       )}
       <button
-        className="inline-flex h-10 items-center justify-center rounded-md rounded-l-none bg-sky-700 px-4 py-2 text-sm font-medium text-white ring-offset-background transition-colors hover:bg-sky-700/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+        className="inline-flex h-10 items-center justify-center rounded-md rounded-l-none bg-slate-100 px-4 py-2 text-sm font-medium text-white ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
         type="submit"
       >
-        <Search className="h-4 w-4 text-white" />
+        <Search className="h-4 w-4 text-muted-foreground" />
       </button>
     </form>
   )

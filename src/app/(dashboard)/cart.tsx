@@ -1,78 +1,134 @@
 import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
+import { Separator } from '@/components/ui/separator'
 import { ShoppingCart } from 'lucide-react'
-import { useState } from 'react'
-
-interface Course {
-  id: number
-  title: string
-  institution: string
-  rating: number
-  students: string
-  image: string
-  price: number
-}
+import Image from 'next/image'
+import Link from 'next/link'
+import { useEffect, useRef, useState } from 'react'
 
 export const Cart = () => {
-  const [cartItems, setCartItems] = useState<Course[]>([])
-  const [isCartOpen, setIsCartOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
+  const timeoutRef = useRef<NodeJS.Timeout>()
 
-  const removeFromCart = (courseId: number) => {
-    setCartItems(cartItems.filter(item => item.id !== courseId))
+  const cartItems = [
+    {
+      id: 1,
+      name: 'Course 1',
+      price: 199000,
+      quantity: 2,
+      image: '/placeholder.svg?height=80&width=80',
+    },
+    {
+      id: 2,
+      name: 'Course 2',
+      price: 399000,
+      quantity: 1,
+      image: '/placeholder.svg?height=80&width=80',
+    },
+    {
+      id: 3,
+      name: 'Course 3',
+      price: 599000,
+      quantity: 1,
+      image: '/placeholder.svg?height=80&width=80',
+    },
+  ]
+
+  const total = cartItems.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  )
+
+  const handleMouseEnter = () => {
+    clearTimeout(timeoutRef.current)
+    setIsOpen(true)
   }
 
-  const totalPrice = cartItems.reduce((total, item) => total + item.price, 0)
+  const handleMouseLeave = () => {
+    timeoutRef.current = setTimeout(() => setIsOpen(false), 300)
+  }
+
+  useEffect(() => {
+    return () => clearTimeout(timeoutRef.current)
+  }, [])
 
   return (
-    <div className="relative">
-      <Button
-        variant="outline"
-        className="flex items-center"
-        onClick={() => setIsCartOpen(!isCartOpen)}
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          size="icon"
+          className="relative bg-white text-primary hover:bg-gray-100"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          <ShoppingCart className="h-5 w-5" />
+          <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+            {cartItems.reduce((sum, item) => sum + item.quantity, 0)}
+          </span>
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent
+        className="w-80 border-gray-800 p-0"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
-        <ShoppingCart className="mr-2 h-5 w-5" />
-        <span className="sr-only">Shopping cart</span>
-        <span className="ml-2 inline-flex h-4 w-4 items-center justify-center rounded-full bg-blue-200 text-xs font-semibold text-blue-800">
-          {cartItems.length}
-        </span>
-      </Button>
-      {isCartOpen && (
-        <div className="absolute right-0 z-10 mt-2 w-80 rounded-md bg-white shadow-lg">
-          <div className="p-4">
-            <h3 className="mb-2 text-lg font-semibold">Shopping Cart</h3>
+        <Card className="border-0 shadow-none">
+          <CardHeader className="rounded-t-sm bg-primary py-3 text-primary-foreground">
+            <CardTitle className="text-lg font-semibold">Your cart</CardTitle>
+          </CardHeader>
+          <CardContent className="max-h-80 overflow-y-auto p-4">
             {cartItems.length === 0 ? (
-              <p>Your cart is empty</p>
+              <p className="text-center text-gray-500">Giỏ hàng trống</p>
             ) : (
-              <>
+              <ul className="space-y-4">
                 {cartItems.map(item => (
-                  <div
-                    key={item.id}
-                    className="mb-2 flex items-center justify-between"
-                  >
-                    <span>{item.title}</span>
-                    <div>
-                      <span className="mr-2">${item.price.toFixed(2)}</span>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => removeFromCart(item.id)}
-                      >
-                        Remove
-                      </Button>
+                  <li key={item.id} className="flex items-center space-x-4">
+                    <Image
+                      src={item.image}
+                      alt={item.name}
+                      className="rounded object-cover"
+                      width={80}
+                      height={80}
+                    />
+                    <div className="flex-1">
+                      <h3 className="font-semibold">{item.name}</h3>
+                      <p className="text-sm text-gray-500">
+                        {item.price.toLocaleString('vi-VN')} ₫
+                      </p>
                     </div>
-                  </div>
+                  </li>
                 ))}
-                <div className="mt-4 border-t border-gray-200 pt-4">
-                  <div className="flex items-center justify-between">
-                    <span className="font-semibold">Total:</span>
-                    <span>${totalPrice.toFixed(2)}</span>
-                  </div>
-                  <Button className="mt-4 w-full">Checkout</Button>
-                </div>
-              </>
+              </ul>
             )}
-          </div>
-        </div>
-      )}
-    </div>
+          </CardContent>
+          <Separator />
+          <CardFooter className="flex items-center justify-between p-4">
+            <div>
+              <p className="text-sm text-gray-500">Total</p>
+              <p className="text-lg font-bold">
+                {total.toLocaleString('vi-VN')} ₫
+              </p>
+            </div>
+            <Link href="/cart" onClick={() => setIsOpen(false)}>
+              <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+                Go to cart
+              </Button>
+            </Link>
+          </CardFooter>
+        </Card>
+      </PopoverContent>
+    </Popover>
   )
 }
