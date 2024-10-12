@@ -1,8 +1,8 @@
 import { db } from '@/db/drizzle'
-import { carts, insertCartsSchema } from '@/db/schema'
+import { carts, courses, insertCartsSchema } from '@/db/schema'
 import { verifyAuth } from '@hono/auth-js'
 import { zValidator } from '@hono/zod-validator'
-import { and, eq } from 'drizzle-orm'
+import { and, desc, eq, sql } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { z } from 'zod'
 
@@ -14,9 +14,20 @@ const app = new Hono()
     }
 
     const data = await db
-      .select()
+      .select({
+        id: carts.id,
+        courseId: courses.id,
+        title: courses.title,
+        description: courses.description,
+        imageUrl: courses.imageUrl,
+        price: courses.price,
+        date: courses.date,
+      })
       .from(carts)
+      .innerJoin(courses, eq(courses.id, carts.courseId))
       .where(eq(carts.userId, auth.token.id))
+      .orderBy(desc(carts.date))
+
     return c.json({ data })
   })
   .get(
@@ -42,6 +53,28 @@ const app = new Hono()
       return c.json({ data })
     }
   )
+  .get(
+    '/by-course-id/:courseId',
+    verifyAuth(),
+    zValidator('param', z.object({ courseId: z.string() })),
+    async c => {
+      const auth = c.get('authUser')
+      const { courseId } = c.req.valid('param')
+
+      if (!auth.token?.id) {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
+      const [data] = await db
+        .select()
+        .from(carts)
+        .where(
+          and(eq(carts.courseId, courseId), eq(carts.userId, auth.token.id))
+        )
+
+      return c.json({ data: data || null })
+    }
+  )
   .post(
     '/',
     verifyAuth(),
@@ -49,7 +82,6 @@ const app = new Hono()
       'json',
       insertCartsSchema.pick({
         courseId: true,
-        quantity: true,
       })
     ),
     async c => {
@@ -63,7 +95,7 @@ const app = new Hono()
       const [data] = await db.insert(carts).values({
         ...values,
         userId: auth.token.id,
-        createdAt: new Date(),
+        date: new Date(),
       })
 
       if (!data) {
@@ -73,46 +105,44 @@ const app = new Hono()
       return c.json({ data })
     }
   )
-  .patch(
-    '/:id',
-    verifyAuth(),
-    zValidator('param', z.object({ id: z.string() })),
-    zValidator(
-      'json',
-      insertCartsSchema.pick({
-        courseId: true,
-        quantity: true,
-      })
-    ),
-    async c => {
-      const auth = c.get('authUser')
-      if (!auth.token?.id) {
-        return c.json({ error: 'Unauthorized' }, 401)
-      }
+  // .patch(
+  //   '/:id',
+  //   verifyAuth(),
+  //   zValidator('param', z.object({ id: z.string() })),
+  //   zValidator(
+  //     'json',
+  //     insertCartsSchema.pick({
+  //       courseId: true,
+  //       quantity: true,
+  //     })
+  //   ),
+  //   async c => {
+  //     const auth = c.get('authUser')
+  //     if (!auth.token?.id) {
+  //       return c.json({ error: 'Unauthorized' }, 401)
+  //     }
 
-      const { id } = c.req.valid('param')
-      const { quantity, courseId } = c.req.valid('json')
+  //     const { id } = c.req.valid('param')
+  //     const { courseId } = c.req.valid('json')
 
-      const [data] = await db
-        .update(carts)
-        .set({
-          quantity,
-        })
-        .where(
-          and(
-            eq(carts.id, id),
-            eq(carts.courseId, courseId),
-            eq(carts.userId, auth.token.id)
-          )
-        )
+  //     const [data] = await db
+  //       .update(carts)
+  //       .set()
+  //       .where(
+  //         and(
+  //           eq(carts.id, id),
+  //           eq(carts.courseId, courseId),
+  //           eq(carts.userId, auth.token.id)
+  //         )
+  //       )
 
-      if (!data) {
-        return c.json({ error: 'Not found' }, 404)
-      }
+  //     if (!data) {
+  //       return c.json({ error: 'Not found' }, 404)
+  //     }
 
-      return c.json({ data })
-    }
-  )
+  //     return c.json({ data })
+  //   }
+  // )
   .delete(
     '/:id',
     verifyAuth(),

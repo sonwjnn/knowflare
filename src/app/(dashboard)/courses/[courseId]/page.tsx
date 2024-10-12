@@ -10,6 +10,10 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useCreateCart } from '@/features/carts/use-create-cart'
+import { useDeleteCart } from '@/features/carts/use-delete-cart'
+import { useGetCartByCourseId } from '@/features/carts/use-get-cart'
+import { useCourseId } from '@/hooks/use-course-id'
 import {
   BarChart,
   ChevronLeft,
@@ -22,10 +26,18 @@ import {
 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function CourseDetail() {
-  const [isInCart, setIsInCart] = useState(false)
+  const courseId = useCourseId()
+
+  const { mutate: createCart, isPending: createCartLoading } = useCreateCart()
+
+  const { data: cart, isPending: cartLoading } = useGetCartByCourseId(courseId)
+
+  const { mutate: deleteCart, isPending: deleteCartLoading } = useDeleteCart(
+    cart?.id
+  )
 
   const course = {
     title: 'Advanced Web Development',
@@ -39,6 +51,14 @@ export default function CourseDetail() {
     language: 'English',
     duration: '20 hours',
     level: 'Intermediate',
+  }
+
+  const onDeleteCart = () => {
+    deleteCart()
+  }
+
+  const onCreateCart = () => {
+    createCart({ courseId })
   }
 
   return (
@@ -193,13 +213,26 @@ export default function CourseDetail() {
               <div className="mb-4 text-3xl font-bold">
                 ${course.price.toFixed(2)}
               </div>
-              <Button
-                className="mb-4 w-full rounded-md"
-                onClick={() => setIsInCart(!isInCart)}
-              >
-                {isInCart ? 'Remove from Cart' : 'Add to Cart'}
-                <ShoppingCart className="ml-2 h-4 w-4" />
-              </Button>
+              {cart ? (
+                <Button
+                  disabled={deleteCartLoading}
+                  className="mb-4 w-full rounded-md"
+                  onClick={onDeleteCart}
+                >
+                  Remove from Cart
+                  <ShoppingCart className="ml-2 h-4 w-4" />
+                </Button>
+              ) : (
+                <Button
+                  className="mb-4 w-full rounded-md"
+                  disabled={createCartLoading}
+                  onClick={onCreateCart}
+                >
+                  Add to Cart
+                  <ShoppingCart className="ml-2 h-4 w-4" />
+                </Button>
+              )}
+
               <ul className="space-y-2 text-sm">
                 <li className="flex justify-between">
                   <span>Instructor:</span> <span>{course.instructor}</span>

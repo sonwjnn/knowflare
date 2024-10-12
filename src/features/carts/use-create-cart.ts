@@ -20,8 +20,8 @@ export const useCreateCart = () => {
 
       return await response.json()
     },
-    onSuccess: () => {
-      toast.success('Cart created.')
+    onSuccess: data => {
+      toast.success('Added cart.')
 
       queryClient.invalidateQueries({ queryKey: ['carts'] })
     },

@@ -146,7 +146,7 @@ export default function KnowflareHomepage() {
                         {item.description}
                       </p>
                       <Link href={item.href}>
-                        <Button className="bg-white px-8 py-3 text-lg text-blue-700 hover:bg-blue-50">
+                        <Button className="bg-emerald-600 px-8 py-3 text-lg text-white hover:bg-emerald-500">
                           {item.ctaText}
                         </Button>
                       </Link>

@@ -1,6 +1,7 @@
 import { db } from '@/db/drizzle'
 import { getProgress } from '@/db/queries'
 import {
+  carts,
   categories,
   chapters,
   courses,

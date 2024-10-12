@@ -1,3 +1,4 @@
+import { useCourseId } from '@/hooks/use-course-id'
 import { client } from '@/lib/hono'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { InferResponseType } from 'hono'
@@ -11,7 +12,7 @@ export const useDeleteCart = (id?: string) => {
   const queryClient = useQueryClient()
 
   const mutation = useMutation<ResponseType, Error>({
-    mutationFn: async json => {
+    mutationFn: async () => {
       const response = await client.api.carts[':id']['$delete']({
         param: { id },
       })
@@ -20,7 +21,8 @@ export const useDeleteCart = (id?: string) => {
     },
     onSuccess: () => {
       toast.success('Cart deleted')
-      queryClient.invalidateQueries({ queryKey: ['cart', { id }] })
+      queryClient.invalidateQueries({ queryKey: ['carts', { id }] })
+
       queryClient.invalidateQueries({ queryKey: ['carts'] })
     },
     onError: () => {

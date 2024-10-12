@@ -51,11 +51,10 @@ export const UserButton = () => {
             Teacher Mode
           </DropdownMenuItem>
         )}
-        <DropdownMenuItem className="h-10" onClick={() => {}} disabled={false}>
+        {/* <DropdownMenuItem className="h-10" onClick={() => {}} disabled={false}>
           <CreditCard className="mr-2 size-4" />
           Billing
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
+        </DropdownMenuItem> */}
         <DropdownMenuItem
           className="h-10"
           onClick={() => signOut()}

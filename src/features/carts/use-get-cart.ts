@@ -3,20 +3,22 @@ import { useQuery } from '@tanstack/react-query'
 import { InferResponseType } from 'hono'
 
 export type ResponseType = InferResponseType<
-  (typeof client.api.carts)[':id']['$get'],
+  (typeof client.api.carts)['by-course-id'][':courseId']['$get'],
   200
 >
 
-export const useGetCart = (id: string) => {
+export const useGetCartByCourseId = (courseId: string) => {
   const query = useQuery({
-    enabled: !!id,
-    queryKey: ['cart', { id }],
+    enabled: !!courseId,
+    queryKey: ['carts', { courseId }],
     queryFn: async () => {
-      const response = await client.api.carts[':id'].$get({
-        param: {
-          id,
-        },
-      })
+      const response = await client.api.carts['by-course-id'][':courseId'].$get(
+        {
+          param: {
+            courseId,
+          },
+        }
+      )
 
       if (!response.ok) {
         throw new Error('Failed to fetch cart')

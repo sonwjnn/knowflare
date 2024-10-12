@@ -7,22 +7,11 @@ export type ResponseType = InferResponseType<
   200
 >
 
-export const useGetCarts = ({
-  categoryId,
-  title,
-}: {
-  categoryId?: string
-  title?: string
-}) => {
+export const useGetCarts = () => {
   const query = useQuery({
-    queryKey: ['carts', title, categoryId],
+    queryKey: ['carts'],
     queryFn: async () => {
-      const response = await client.api.carts.$get({
-        query: {
-          categoryId,
-          title,
-        },
-      })
+      const response = await client.api.carts.$get()
 
       if (!response.ok) {
         throw new Error('Failed to fetch cart')

@@ -391,8 +391,7 @@ export const carts = mysqlTable('cart', {
     .references(() => courses.id, {
       onDelete: 'cascade',
     }),
-  quantity: int('quantity').notNull(),
-  createdAt: timestamp('created_at', { mode: 'date' }),
+  date: timestamp('created_at', { mode: 'date' }),
 })
 
 export const insertCartsSchema = createInsertSchema(carts)
