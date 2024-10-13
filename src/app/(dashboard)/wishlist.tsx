@@ -67,33 +67,54 @@ export const Wishlist = () => {
               Manage your wishlist items
             </p>
           </div>
-          <ScrollArea className="h-[300px] rounded-md border p-4">
-            {wishlists?.map(item => (
-              <div key={item.id} className="mb-4 flex items-center space-x-4">
-                <div className="size-16">
-                  <Image
-                    src={item.imageUrl || ''}
-                    alt={item.title}
-                    width={0}
-                    height={0}
-                    sizes="100vw"
-                    className="h-full w-auto rounded-md object-cover"
-                  />
-                </div>
-                <div className="flex-1">
-                  <h5 className="font-medium">{item.title}</h5>
-                  <p className="text-sm text-muted-foreground">${item.price}</p>
-                </div>
+
+          {!!wishlists?.length && (
+            <>
+              <ScrollArea className="h-[300px] rounded-md border p-4">
+                {wishlists?.map(item => (
+                  <div
+                    key={item.id}
+                    className="mb-4 flex items-center space-x-4"
+                  >
+                    <div className="size-16">
+                      <Image
+                        src={item.imageUrl || ''}
+                        alt={item.title}
+                        width={0}
+                        height={0}
+                        sizes="100vw"
+                        className="h-full w-auto rounded-md object-cover"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <h5 className="font-medium">{item.title}</h5>
+                      <p className="text-sm text-muted-foreground">
+                        ${item.price}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </ScrollArea>
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-medium">Total:</p>
+                <p className="text-lg font-bold">${total}</p>
               </div>
-            ))}
-          </ScrollArea>
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-medium">Total:</p>
-            <p className="text-lg font-bold">${total}</p>
-          </div>
-          <Link href="/cart">
-            <Button className="w-full">Go to Wishlist</Button>
-          </Link>
+              <Link href="/wishlist">
+                <Button className="w-full">Go to Wishlist</Button>
+              </Link>
+            </>
+          )}
+
+          {!wishlists?.length && (
+            <>
+              <div className="flex h-40 items-center justify-center">
+                <p>Your wishlist is empty.</p>
+              </div>
+              <Link href="/courses">
+                <Button className="w-full">Explore Courses</Button>
+              </Link>
+            </>
+          )}
         </div>
       </PopoverContent>
     </Popover>

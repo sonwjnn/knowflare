@@ -24,10 +24,7 @@ export const Hero = () => {
         playsInline
         className="absolute left-0 top-0 h-full w-full object-cover"
       >
-        <source
-          src="https://utfs.io/f/3EYyrLh8l1iOP4berRyqZ9FHvOYrTSfUwtVlh8ogJy7zBdGR"
-          type="video/mp4"
-        />
+        <source src="/hero-home.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
       <div className="absolute inset-0 bg-black bg-opacity-60" />

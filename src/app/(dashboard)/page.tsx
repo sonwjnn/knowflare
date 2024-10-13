@@ -1,20 +1,10 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from '@/components/ui/carousel'
 import { useGetCategories } from '@/features/categories/api/use-get-categories'
-import { useCurrentUser } from '@/hooks/use-current-user'
-import Autoplay from 'embla-carousel-autoplay'
 import { Book, Globe, Star, Zap } from 'lucide-react'
 import Image from 'next/image'
-import Link from 'next/link'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 
 import { Hero } from './hero'
 import { Marquee } from './marquee'
@@ -31,7 +21,6 @@ interface Course {
 
 export default function KnowflareHomepage() {
   const { data: categories, isPending: categoriesLoading } = useGetCategories()
-  const currentUser = useCurrentUser()
   const [cartItems, setCartItems] = useState<Course[]>([])
 
   const featuredCourses = [
@@ -76,8 +65,6 @@ export default function KnowflareHomepage() {
   const addToCart = (course: Course) => {
     setCartItems([...cartItems, course])
   }
-
-  const plugin = useRef(Autoplay({ delay: 2000 }))
 
   return (
     <main>
