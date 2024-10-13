@@ -32,13 +32,16 @@ async function main() {
     const categoryIds = Array.from({ length: 8 }, (_, i) => uuidv4())
 
     const SEED_CATEGORIES = [
-      { id: categoryIds[1], name: 'Computer Science' },
-      { id: categoryIds[2], name: 'Music' },
-      { id: categoryIds[3], name: 'Fitness' },
-      { id: categoryIds[4], name: 'Photography' },
-      { id: categoryIds[5], name: 'Accounting' },
-      { id: categoryIds[6], name: 'Engineering' },
-      { id: categoryIds[7], name: 'Filming' },
+      { id: categoryIds[1], name: 'IT' },
+      { id: categoryIds[2], name: 'Health' },
+      { id: categoryIds[3], name: 'Language' },
+      { id: categoryIds[4], name: 'Business' },
+      { id: categoryIds[5], name: 'Management' },
+      { id: categoryIds[6], name: 'English' },
+      { id: categoryIds[7], name: 'Personal Development' },
+      { id: categoryIds[8], name: 'Sales & Marketing' },
+      { id: categoryIds[9], name: 'Engineering & Construction' },
+      { id: categoryIds[10], name: 'Teaching & Academics' },
     ]
 
     // Seed categories

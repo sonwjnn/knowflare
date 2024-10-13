@@ -30,12 +30,12 @@ export const Categories = () => {
   }, [])
 
   return (
-    <div className="ml-3 p-2">
+    <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
       <DropdownMenu open={open} onOpenChange={setOpen}>
         <DropdownMenuTrigger asChild>
           <div
             onMouseEnter={handleMouseEnter}
-            className="flex w-full items-center justify-start text-white"
+            className="flex w-full items-center justify-start font-medium text-gray-500 hover:text-gray-700"
           >
             Categories
             <ChevronDown className="mr-2 h-4 w-4" />

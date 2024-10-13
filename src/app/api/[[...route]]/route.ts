@@ -12,6 +12,7 @@ import purchases from './purchases'
 import teachers from './teachers'
 import userProgress from './user-progress'
 import users from './users'
+import wishlists from './wishlists'
 
 const runtime = 'nodejs'
 
@@ -36,6 +37,7 @@ const routes = app
   // .route('/teachers', teachers)
   // .route('/userProgress', userProgress)
   .route('/carts', carts)
+  .route('/wishlists', wishlists)
 
 export const GET = handle(app)
 export const POST = handle(app)

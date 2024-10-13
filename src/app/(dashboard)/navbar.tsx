@@ -12,31 +12,27 @@ import Link from 'next/link'
 
 import { Cart } from './cart'
 import { Categories } from './categories'
+import Logo from './logo'
 import MobileSidebar from './mobile-sidebar'
+import { Wishlist } from './wishlist'
 
 const Navbar = () => {
   const currentUser = useCurrentUser()
 
   return (
-    // <div className="flex h-full items-center border-b bg-white p-4 shadow-sm">
-    //   <MobileSidebar />
-    //   <NavbarRoutes />
-    // </div>
-    <nav className="bg-[#2d2f31] shadow-sm">
-      <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between">
+    <nav className="border border-b-slate-200 bg-white">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 justify-between">
           <div className="flex items-center">
-            <Link href="/" className="flex items-center">
-              <Image src="/logo.png" width={60} height={60} alt="Logo" />
-              <h3 className="text-2xl font-bold text-slate-300">Knowflare</h3>
-            </Link>
+            <Logo />
             <Categories />
           </div>
-          <div className="flex items-center gap-x-3">
+          <div className="flex items-center gap-x-4">
             <div className="hidden md:block">
               <SearchInput />
             </div>
             <Cart />
+            <Wishlist />
             {currentUser ? (
               <UserButton />
             ) : (

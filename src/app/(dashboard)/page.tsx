@@ -8,12 +8,16 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel'
+import { useGetCategories } from '@/features/categories/api/use-get-categories'
 import { useCurrentUser } from '@/hooks/use-current-user'
 import Autoplay from 'embla-carousel-autoplay'
 import { Book, Globe, Star, Zap } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRef, useState } from 'react'
+
+import { Hero } from './hero'
+import { Marquee } from './marquee'
 
 interface Course {
   id: number
@@ -26,21 +30,9 @@ interface Course {
 }
 
 export default function KnowflareHomepage() {
+  const { data: categories, isPending: categoriesLoading } = useGetCategories()
   const currentUser = useCurrentUser()
   const [cartItems, setCartItems] = useState<Course[]>([])
-
-  const categories = [
-    'Data Science',
-    'Business',
-    'Computer Science',
-    'Information Technology',
-    'Language Learning',
-    'Health',
-    'Personal Development',
-    'Physical Science and Engineering',
-    'Social Sciences',
-    'Arts and Humanities',
-  ]
 
   const featuredCourses = [
     {
@@ -81,36 +73,6 @@ export default function KnowflareHomepage() {
     },
   ]
 
-  const heroSlides = [
-    {
-      title: 'Unlock Your Potential with World-Class Learning',
-      description:
-        'Join millions of learners worldwide and explore a universe of knowledge. Start your journey to success today!',
-      image:
-        'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=1080',
-      ctaText: 'Get Started',
-      href: currentUser ? '/courses' : '/sign-in',
-    },
-    {
-      title: 'Learn from Industry Experts',
-      description:
-        'Access courses taught by leading professionals and gain real-world skills to advance your career.',
-      image:
-        'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80&w=1080',
-      ctaText: 'Explore Courses',
-      href: '/courses',
-    },
-    {
-      title: 'Flexible Learning for Busy Professionals',
-      description:
-        'Study at your own pace with our on-demand courses and flexible schedules.',
-      image:
-        'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=1080',
-      ctaText: 'Start Learning',
-      href: '/my-courses',
-    },
-  ]
-
   const addToCart = (course: Course) => {
     setCartItems([...cartItems, course])
   }
@@ -119,47 +81,8 @@ export default function KnowflareHomepage() {
 
   return (
     <main>
-      <section className="relative">
-        <Carousel
-          plugins={[plugin.current]}
-          className="w-full"
-          onMouseEnter={plugin.current.stop}
-          onMouseLeave={plugin.current.reset}
-        >
-          <CarouselContent>
-            {heroSlides.map((item, index) => (
-              <CarouselItem key={index}>
-                <div className="relative h-[calc(100vh-4rem)] w-full overflow-hidden">
-                  <Image
-                    src={item.image}
-                    alt={`Slide ${index + 1}`}
-                    layout="fill"
-                    objectFit="cover"
-                    className="brightness-50"
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center text-white">
-                      <h1 className="mx-auto mb-6 max-w-4xl text-4xl font-extrabold leading-tight md:text-5xl lg:text-6xl">
-                        {item.title}
-                      </h1>
-                      <p className="mx-auto mb-8 max-w-2xl text-lg text-blue-100 md:text-xl">
-                        {item.description}
-                      </p>
-                      <Link href={item.href}>
-                        <Button className="bg-emerald-600 px-8 py-3 text-lg text-white hover:bg-emerald-500">
-                          {item.ctaText}
-                        </Button>
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 fill-black" />
-          <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 fill-black" />
-        </Carousel>
-      </section>
+      <Hero />
+      <Marquee />
 
       <section className="bg-gray-50 py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -250,13 +173,13 @@ export default function KnowflareHomepage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="mb-8 text-3xl font-bold">Top categories</h2>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
-            {categories.slice(0, 10).map(category => (
+            {categories?.slice(0, 10).map(item => (
               <Button
-                key={category}
+                key={item.id}
                 variant="outline"
                 className="justify-start text-left"
               >
-                {category}
+                {item.name}
               </Button>
             ))}
           </div>

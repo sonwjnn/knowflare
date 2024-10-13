@@ -1,10 +1,11 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { useCreateCart } from '@/features/carts/use-create-cart'
-import { useGetCartByCourseId } from '@/features/carts/use-get-cart'
 import { Star } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+
+import { WishlistButton } from './wishlist-button'
 
 type Props = {
   id: string
@@ -12,7 +13,8 @@ type Props = {
   imageUrl: string | null
   description: string | null
   price: number
-  isInCart: boolean
+  wishlistId: string | undefined
+  cartId: string | undefined
 }
 
 export const Item = ({
@@ -21,7 +23,8 @@ export const Item = ({
   imageUrl,
   description,
   price,
-  isInCart,
+  wishlistId,
+  cartId,
 }: Props) => {
   const { mutate: createCart, isPending: createCartLoading } = useCreateCart()
 
@@ -29,6 +32,8 @@ export const Item = ({
     e.preventDefault()
     createCart({ courseId: id })
   }
+
+  const isInCart = !!cartId
 
   return (
     <Link key={id} href={`/courses/${id}`}>
@@ -67,6 +72,7 @@ export const Item = ({
                 Add to cart
               </Button>
             )}
+            <WishlistButton courseId={id} wishlistId={wishlistId} />
           </div>
         </CardContent>
       </Card>

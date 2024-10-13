@@ -1,34 +1,37 @@
+import { useTeacherId } from '@/hooks/use-teacher-id'
 import { client } from '@/lib/hono'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { InferRequestType, InferResponseType } from 'hono'
 import { toast } from 'sonner'
 
 type ResponseType = InferResponseType<
-  (typeof client.api.carts)[':id']['$patch']
+  (typeof client.api.wishlists)['$post'],
+  200
 >
 type RequestType = InferRequestType<
-  (typeof client.api.carts)[':id']['$patch']
+  (typeof client.api.wishlists)['$post']
 >['json']
 
-export const useEditCart = (id?: string) => {
+export const useCreateWishlist = () => {
   const queryClient = useQueryClient()
 
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async json => {
-      const response = await client.api.carts[':id']['$patch']({
-        json,
-        param: { id },
-      })
+      const response = await client.api.wishlists.$post({ json })
+
+      if (!response.ok) {
+        throw new Error('Something went wrong')
+      }
 
       return await response.json()
     },
-    onSuccess: () => {
-      toast.success('Cart updated')
-      queryClient.invalidateQueries({ queryKey: ['cart', { id }] })
-      queryClient.invalidateQueries({ queryKey: ['carts'] })
+    onSuccess: data => {
+      toast.success('Added wishlist.')
+
+      queryClient.invalidateQueries({ queryKey: ['wishlists'] })
     },
     onError: () => {
-      toast.error('Failed to edit cart')
+      toast.error('Failed to create wishlist. ')
     },
   })
 

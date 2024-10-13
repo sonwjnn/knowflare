@@ -2,6 +2,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useGetCarts } from '@/features/carts/use-get-carts'
 import { useGetCourses } from '@/features/courses/api/use-get-courses'
+import { useGetWishlists } from '@/features/wishlists/use-get-carts'
 import { useSearchParams } from 'next/navigation'
 
 import { Item } from './item'
@@ -12,6 +13,7 @@ export const List = () => {
   const categoryId = searchParams.get('categoryId') || ''
 
   const { data: carts, isPending: cartsLoading } = useGetCarts()
+  const { data: wishlists, isPending: wishlistsLoading } = useGetWishlists()
 
   const { data: courses, isPending: coursesLoading } = useGetCourses({
     categoryId: categoryId === 'all' ? '' : categoryId,
@@ -41,6 +43,9 @@ export const List = () => {
   return (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
       {courses?.map(item => {
+        const wishlistId = wishlists?.find(w => w.courseId === item.id)?.id
+        const cartId = carts?.find(w => w.courseId === item.id)?.id
+
         return (
           <Item
             key={item.id}
@@ -49,7 +54,8 @@ export const List = () => {
             description={item.description}
             imageUrl={item.imageUrl}
             price={item.price}
-            isInCart={!!carts?.some(cartItem => cartItem.courseId === item.id)}
+            cartId={cartId}
+            wishlistId={wishlistId}
           />
         )
       })}

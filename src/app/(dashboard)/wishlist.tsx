@@ -5,22 +5,22 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { useGetCarts } from '@/features/carts/use-get-carts'
+import { useGetWishlists } from '@/features/wishlists/use-get-carts'
 import { cn } from '@/lib/utils'
-import { ShoppingCart } from 'lucide-react'
+import { Heart } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
-export const Cart = () => {
+export const Wishlist = () => {
   const router = useRouter()
-  const { data: carts, isPending: cartsLoading } = useGetCarts()
+  const { data: wishlists, isPending: wishlistsLoading } = useGetWishlists()
 
   const [isOpen, setIsOpen] = useState(false)
   const timeoutRef = useRef<NodeJS.Timeout>()
 
-  const total = carts?.reduce((sum, item) => sum + item.price, 0) || 0
+  const total = wishlists?.reduce((sum, item) => sum + item.price, 0) || 0
 
   const handleMouseEnter = () => {
     clearTimeout(timeoutRef.current)
@@ -39,19 +39,19 @@ export const Cart = () => {
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
         <div
-          className="group relative border-none bg-white p-2 text-primary hover:bg-transparent"
+          className="group relative bg-white p-2 text-primary"
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
-          onClick={() => router.push('/cart')}
+          onClick={() => router.push('/wishlist')}
         >
-          <ShoppingCart
+          <Heart
             className={cn(
-              'size-5',
-              isOpen && 'text-blue-500 transition-colors'
+              'size-5 transition-colors',
+              isOpen && 'text-rose-400'
             )}
           />
           <span className="absolute -right-1 top-0 flex size-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
-            {(carts ?? []).length || 0}
+            {(wishlists ?? []).length || 0}
           </span>
         </div>
       </PopoverTrigger>
@@ -62,13 +62,13 @@ export const Cart = () => {
       >
         <div className="grid gap-4">
           <div className="space-y-2">
-            <h4 className="font-medium leading-none">Your Cart</h4>
+            <h4 className="font-medium leading-none">Your Wishlist</h4>
             <p className="text-sm text-muted-foreground">
-              Manage your cart items
+              Manage your wishlist items
             </p>
           </div>
           <ScrollArea className="h-[300px] rounded-md border p-4">
-            {carts?.map(item => (
+            {wishlists?.map(item => (
               <div key={item.id} className="mb-4 flex items-center space-x-4">
                 <div className="size-16">
                   <Image
@@ -92,7 +92,7 @@ export const Cart = () => {
             <p className="text-lg font-bold">${total}</p>
           </div>
           <Link href="/cart">
-            <Button className="w-full">Go to Cart</Button>
+            <Button className="w-full">Go to Wishlist</Button>
           </Link>
         </div>
       </PopoverContent>

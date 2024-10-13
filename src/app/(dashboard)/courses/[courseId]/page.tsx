@@ -1,5 +1,6 @@
 'use client'
 
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -9,20 +10,23 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { Label } from '@/components/ui/label'
+import { Progress } from '@/components/ui/progress'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Textarea } from '@/components/ui/textarea'
 import { useCreateCart } from '@/features/carts/use-create-cart'
 import { useDeleteCart } from '@/features/carts/use-delete-cart'
-import { useGetCartByCourseId } from '@/features/carts/use-get-cart'
+import { useGetCartByCourseId } from '@/features/carts/use-get-cart-by-course-id'
 import { useCourseId } from '@/hooks/use-course-id'
 import {
   BarChart,
-  ChevronLeft,
   Clock,
-  Download,
-  Globe,
+  Heart,
   Play,
   ShoppingCart,
   Star,
+  Users,
 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -30,6 +34,33 @@ import { useEffect, useState } from 'react'
 
 export default function CourseDetail() {
   const courseId = useCourseId()
+
+  const [isInCart, setIsInCart] = useState(false)
+  const [isInWishlist, setIsInWishlist] = useState(false)
+  const [reviews, setReviews] = useState([
+    {
+      id: 1,
+      user: 'Alex',
+      rating: 5,
+      comment:
+        'Excellent course! The instructor explains complex concepts very clearly.',
+    },
+    {
+      id: 2,
+      user: 'Sam',
+      rating: 4,
+      comment:
+        'Great content, but some sections could use more practical examples.',
+    },
+    {
+      id: 3,
+      user: 'Taylor',
+      rating: 5,
+      comment:
+        'This course took my React skills to the next level. Highly recommended!',
+    },
+  ])
+  const [newReview, setNewReview] = useState({ rating: 5, comment: '' })
 
   const { mutate: createCart, isPending: createCartLoading } = useCreateCart()
 
@@ -39,18 +70,23 @@ export default function CourseDetail() {
     cart?.id
   )
 
-  const course = {
-    title: 'Advanced Web Development',
-    description: 'Master modern web technologies and frameworks',
-    image: '/placeholder.svg?height=400&width=800',
-    rating: 4.8,
-    students: 1234,
-    price: 91.0,
+  const courseDetails = {
+    title: 'Advanced React and Redux',
     instructor: 'Jane Doe',
+    rating: 4.8,
+    students: 12345,
     lastUpdated: 'April 2023',
-    language: 'English',
-    duration: '20 hours',
-    level: 'Intermediate',
+    description:
+      'Master React 18 and Redux with this comprehensive course. Learn to build complex, scalable web applications with the latest features and best practices.',
+    price: 99.99,
+    image: '/course-image.jpg',
+  }
+
+  const handleSubmitReview = (e: React.FormEvent) => {
+    e.preventDefault()
+    const newId = reviews.length + 1
+    setReviews([...reviews, { id: newId, user: 'You', ...newReview }])
+    setNewReview({ rating: 5, comment: '' })
   }
 
   const onDeleteCart = () => {
@@ -62,22 +98,33 @@ export default function CourseDetail() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <Link href="/courses">
-        <Button variant="ghost" className="mb-4 pl-0">
-          <ChevronLeft className="mr-2 h-4 w-4" />
-          Back to Courses
-        </Button>
-      </Link>
-      <div className="flex flex-col gap-8 lg:flex-row">
-        <div className="lg:w-2/3">
+    <div className="mx-auto max-w-6xl p-6">
+      <div className="grid gap-6 md:grid-cols-3">
+        <div className="md:col-span-2">
           <Image
-            src={course.image}
-            alt={course.title}
-            className="mb-4 h-64 w-full rounded-lg object-cover"
-            width={800}
-            height={400}
+            src={courseDetails.image}
+            alt={courseDetails.title}
+            width={0}
+            height={0}
+            sizes="100vw"
+            className="mb-6 h-auto w-full rounded-lg object-cover"
           />
+          <h1 className="mb-4 text-3xl font-bold">{courseDetails.title}</h1>
+
+          <p className="mb-4 text-xl">{courseDetails.description}</p>
+          <div className="mb-4 flex items-center">
+            <Star className="mr-1 text-yellow-400" />
+            <span className="mr-2 font-bold">{courseDetails.rating}</span>
+            <span className="text-gray-600">
+              ({courseDetails.students.toLocaleString()} students)
+            </span>
+          </div>
+          <p className="mb-4">
+            Created by{' '}
+            <span className="font-semibold">{courseDetails.instructor}</span>
+          </p>
+          <p className="mb-4">Last updated: {courseDetails.lastUpdated}</p>
+
           <Tabs defaultValue="overview" className="w-full">
             <TabsList>
               <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -88,26 +135,21 @@ export default function CourseDetail() {
             <TabsContent value="overview">
               <Card>
                 <CardHeader>
-                  <CardTitle>Course Overview</CardTitle>
+                  <CardTitle>What you&apos;ll learn</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p>{course.description}</p>
-                  <ul className="mt-4 space-y-2">
-                    <li className="flex items-center">
-                      <Clock className="mr-2 h-4 w-4" /> {course.duration} of
-                      video content
+                  <ul className="list-disc space-y-2 pl-5">
+                    <li>
+                      Build powerful, fast, user-friendly and reactive web apps
                     </li>
-                    <li className="flex items-center">
-                      <Download className="mr-2 h-4 w-4" /> Downloadable
-                      resources
+                    <li>
+                      Provide amazing user experiences by leveraging the power
+                      of JavaScript with ease
                     </li>
-                    <li className="flex items-center">
-                      <Globe className="mr-2 h-4 w-4" /> Full lifetime access
+                    <li>
+                      Apply for high-paid jobs or work as a freelance developer
                     </li>
-                    <li className="flex items-center">
-                      <BarChart className="mr-2 h-4 w-4" /> Certificate of
-                      completion
-                    </li>
+                    <li>Learn all about React Hooks and React Components</li>
                   </ul>
                 </CardContent>
               </Card>
@@ -118,58 +160,44 @@ export default function CourseDetail() {
                   <CardTitle>Course Curriculum</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <ul className="space-y-2">
-                    <li className="flex items-center">
-                      <Play className="mr-2 h-4 w-4" /> Introduction to the
-                      course
-                    </li>
-                    <li className="flex items-center">
-                      <Play className="mr-2 h-4 w-4" /> Setting up your
-                      development environment
-                    </li>
-                    <li className="flex items-center">
-                      <Play className="mr-2 h-4 w-4" /> HTML5 and CSS3
-                      fundamentals
-                    </li>
-                    <li className="flex items-center">
-                      <Play className="mr-2 h-4 w-4" /> JavaScript ES6+ features
-                    </li>
-                    <li className="flex items-center">
-                      <Play className="mr-2 h-4 w-4" /> React.js basics
-                    </li>
-                  </ul>
+                  <ol className="list-decimal space-y-2 pl-5">
+                    <li>Introduction to React</li>
+                    <li>React Fundamentals</li>
+                    <li>Working with Components</li>
+                    <li>State Management with Redux</li>
+                    <li>Advanced React Patterns</li>
+                    <li>Testing React Applications</li>
+                    <li>Deploying React Apps</li>
+                  </ol>
                 </CardContent>
               </Card>
             </TabsContent>
             <TabsContent value="instructor">
               <Card>
                 <CardHeader>
-                  <CardTitle>About the Instructor</CardTitle>
+                  <CardTitle>Instructor</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="mb-4 flex items-center">
-                    <Image
-                      src="/placeholder.svg?height=100&width=100"
-                      alt={course.instructor}
-                      className="mr-4 h-16 w-16 rounded-full"
-                      width={100}
-                      height={100}
+                <CardContent className="flex items-center space-x-4">
+                  <Avatar className="h-20 w-20">
+                    <AvatarImage
+                      src="/placeholder.svg"
+                      alt={courseDetails.instructor}
                     />
-                    <div>
-                      <h3 className="text-lg font-semibold">
-                        {course.instructor}
-                      </h3>
-                      <p className="text-sm text-gray-500">
-                        Web Development Expert
-                      </p>
-                    </div>
+                    <AvatarFallback>
+                      {courseDetails.instructor[0]}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <h3 className="text-xl font-semibold">
+                      {courseDetails.instructor}
+                    </h3>
+                    <p className="text-gray-600">Senior React Developer</p>
+                    <p className="mt-2">
+                      Jane has been teaching React for over 5 years and has
+                      helped thousands of students master modern web
+                      development.
+                    </p>
                   </div>
-                  <p>
-                    Jane Doe is a seasoned web developer with over 10 years of
-                    experience in the industry. She has worked with numerous
-                    startups and large corporations, helping them build scalable
-                    and efficient web applications.
-                  </p>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -179,82 +207,144 @@ export default function CourseDetail() {
                   <CardTitle>Student Reviews</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="mb-4 flex items-center">
-                    <div className="mr-4 text-4xl font-bold">
-                      {course.rating}
-                    </div>
-                    <div>
-                      <div className="flex">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`h-5 w-5 ${i < Math.floor(course.rating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
-                          />
-                        ))}
+                  {reviews.map(review => (
+                    <div
+                      key={review.id}
+                      className="mb-4 border-b pb-4 last:border-b-0"
+                    >
+                      <div className="mb-2 flex items-center">
+                        <Avatar className="mr-2 h-10 w-10">
+                          <AvatarFallback>{review.user[0]}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="font-semibold">{review.user}</p>
+                          <div className="flex items-center">
+                            {[...Array(5)].map((_, i) => (
+                              <Star
+                                key={i}
+                                className={`h-4 w-4 ${i < review.rating ? 'text-yellow-400' : 'text-gray-300'}`}
+                              />
+                            ))}
+                          </div>
+                        </div>
                       </div>
-                      <p className="text-sm text-gray-500">
-                        {course.students} students
-                      </p>
+                      <p>{review.comment}</p>
                     </div>
-                  </div>
-                  {/* Add more detailed reviews here */}
+                  ))}
                 </CardContent>
+                <CardFooter>
+                  <form onSubmit={handleSubmitReview} className="w-full">
+                    <h4 className="mb-2 text-lg font-semibold">
+                      Write a Review
+                    </h4>
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="rating">Rating</Label>
+                        <RadioGroup
+                          id="rating"
+                          className="flex space-x-1"
+                          value={newReview.rating.toString()}
+                          onValueChange={value =>
+                            setNewReview({
+                              ...newReview,
+                              rating: parseInt(value),
+                            })
+                          }
+                        >
+                          {[1, 2, 3, 4, 5].map(value => (
+                            <div key={value} className="flex items-center">
+                              <RadioGroupItem
+                                value={value.toString()}
+                                id={`rating-${value}`}
+                                className="sr-only"
+                              />
+                              <Label
+                                htmlFor={`rating-${value}`}
+                                className="cursor-pointer"
+                              >
+                                <Star
+                                  className={`h-6 w-6 ${
+                                    value <= newReview.rating
+                                      ? 'text-yellow-400'
+                                      : 'text-gray-300'
+                                  }`}
+                                />
+                              </Label>
+                            </div>
+                          ))}
+                        </RadioGroup>
+                      </div>
+                      <div>
+                        <Label htmlFor="comment">Your Review</Label>
+                        <Textarea
+                          id="comment"
+                          placeholder="Write your review here..."
+                          value={newReview.comment}
+                          onChange={e =>
+                            setNewReview({
+                              ...newReview,
+                              comment: e.target.value,
+                            })
+                          }
+                          className="mt-1"
+                        />
+                      </div>
+                      <Button type="submit">Submit Review</Button>
+                    </div>
+                  </form>
+                </CardFooter>
               </Card>
             </TabsContent>
           </Tabs>
         </div>
-        <div className="lg:w-1/3">
-          <Card>
-            <CardHeader>
-              <CardTitle>{course.title}</CardTitle>
-              <CardDescription>{course.description}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="mb-4 text-3xl font-bold">
-                ${course.price.toFixed(2)}
-              </div>
-              {cart ? (
-                <Button
-                  disabled={deleteCartLoading}
-                  className="mb-4 w-full rounded-md"
-                  onClick={onDeleteCart}
-                >
-                  Remove from Cart
-                  <ShoppingCart className="ml-2 h-4 w-4" />
-                </Button>
-              ) : (
-                <Button
-                  className="mb-4 w-full rounded-md"
-                  disabled={createCartLoading}
-                  onClick={onCreateCart}
-                >
-                  Add to Cart
-                  <ShoppingCart className="ml-2 h-4 w-4" />
-                </Button>
-              )}
 
-              <ul className="space-y-2 text-sm">
-                <li className="flex justify-between">
-                  <span>Instructor:</span> <span>{course.instructor}</span>
-                </li>
-                <li className="flex justify-between">
-                  <span>Last updated:</span> <span>{course.lastUpdated}</span>
-                </li>
-                <li className="flex justify-between">
-                  <span>Language:</span> <span>{course.language}</span>
-                </li>
-                <li className="flex justify-between">
-                  <span>Duration:</span> <span>{course.duration}</span>
-                </li>
-                <li className="flex justify-between">
-                  <span>Level:</span> <span>{course.level}</span>
-                </li>
-              </ul>
-            </CardContent>
-            <CardFooter>
-              <Button variant="outline" className="w-full rounded-md">
-                Buy Now
+        <div className="md:col-span-1">
+          <Card className="sticky top-6">
+            <CardHeader>
+              <CardTitle className="text-3xl font-bold">
+                ${courseDetails.price}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Button
+                className="w-full py-6 text-lg"
+                onClick={() => setIsInCart(!isInCart)}
+              >
+                <ShoppingCart className="mr-2 h-5 w-5" />
+                {isInCart ? 'Remove from Cart' : 'Add to Cart'}
               </Button>
+              <Button
+                variant="outline"
+                className="w-full py-6 text-lg"
+                onClick={() => setIsInWishlist(!isInWishlist)}
+              >
+                <Heart
+                  className={`mr-2 h-5 w-5 ${isInWishlist ? 'fill-current' : ''}`}
+                />
+                {isInWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
+              </Button>
+            </CardContent>
+            <CardFooter className="flex flex-col space-y-4">
+              <div className="flex w-full items-center justify-between">
+                <div className="flex items-center">
+                  <Play className="mr-2 h-5 w-5" />
+                  <span>12 hours of video</span>
+                </div>
+                <div className="flex items-center">
+                  <Users className="mr-2 h-5 w-5" />
+                  <span>All levels</span>
+                </div>
+              </div>
+              <div className="flex w-full items-center justify-between">
+                <div className="flex items-center">
+                  <Clock className="mr-2 h-5 w-5" />
+                  <span>Lifetime access</span>
+                </div>
+                <div className="flex items-center">
+                  <BarChart className="mr-2 h-5 w-5" />
+                  <span>Certificate</span>
+                </div>
+              </div>
             </CardFooter>
           </Card>
         </div>

@@ -53,28 +53,28 @@ const SearchInput = () => {
   }, [currentyCategoryId, router, pathname])
 
   return (
-    <form className="relative flex items-center" onSubmit={onClick}>
-      <Input
-        onChange={e => setValue(e.target.value)}
-        value={value}
-        className="flex h-10 w-full rounded-lg rounded-r-none border border-input bg-background px-3 py-2 pr-8 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-transparent focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 lg:w-[600px]"
-        placeholder="Search for a course"
-      />
-      {value && (
-        <button
-          type="button"
-          onClick={onClear}
-          className="absolute right-12 inline-flex h-10 w-10 items-center justify-center rounded-none text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-        >
-          <X className="h-4 w-4 text-muted-foreground" />
-        </button>
-      )}
-      <button
-        className="inline-flex h-10 items-center justify-center rounded-md rounded-l-none bg-slate-100 px-4 py-2 text-sm font-medium text-white ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-        type="submit"
-      >
-        <Search className="h-4 w-4 text-muted-foreground" />
-      </button>
+    <form onSubmit={onClick}>
+      <div className="flex flex-1 items-center justify-center px-2 lg:ml-6 lg:justify-end">
+        <div className="w-full max-w-lg lg:max-w-xs">
+          <label htmlFor="search" className="sr-only">
+            Search
+          </label>
+          <div className="relative">
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+              <Search className="h-5 w-5 text-gray-400" />
+            </div>
+            <Input
+              id="search"
+              name="search"
+              onChange={e => setValue(e.target.value)}
+              value={value}
+              className="block w-full rounded-md border border-gray-300 bg-white py-2 pl-10 pr-3 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-transparent focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              placeholder="Search for a course"
+              type="search"
+            />
+          </div>
+        </div>
+      </div>
     </form>
   )
 }

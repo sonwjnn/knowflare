@@ -395,3 +395,22 @@ export const carts = mysqlTable('cart', {
 })
 
 export const insertCartsSchema = createInsertSchema(carts)
+
+export const wishlists = mysqlTable('wishlist', {
+  id: varchar('id', { length: 255 })
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: varchar('user_id', { length: 255 })
+    .notNull()
+    .references(() => users.id, {
+      onDelete: 'cascade',
+    }),
+  courseId: varchar('course_id', { length: 255 })
+    .notNull()
+    .references(() => courses.id, {
+      onDelete: 'cascade',
+    }),
+  date: timestamp('created_at', { mode: 'date' }),
+})
+
+export const insertWishlistsSchema = createInsertSchema(wishlists)

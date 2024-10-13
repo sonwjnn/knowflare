@@ -3,12 +3,17 @@ import { Modals } from '@/components/modals'
 import { Providers } from '@/components/providers'
 import type { Metadata } from 'next'
 import { SessionProvider } from 'next-auth/react'
-import { Inter } from 'next/font/google'
+import { Poppins } from 'next/font/google'
 import { Toaster } from 'sonner'
 
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin'] })
+const poppins = Poppins({
+  subsets: ['latin'],
+  weight: ['400', '500', '700'],
+  variable: '--font-poppins',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: 'Knowflare',
@@ -25,7 +30,7 @@ export default async function RootLayout({
   return (
     <SessionProvider session={session}>
       <html lang="en" suppressHydrationWarning>
-        <body className={inter.className}>
+        <body className={poppins.className}>
           <Providers>
             <Toaster />
             <Modals />
