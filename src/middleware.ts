@@ -15,6 +15,7 @@ export default auth(req => {
   const { nextUrl } = req
   const isLoggedIn = !!req.auth
 
+  const isApiRequest = nextUrl.pathname.startsWith('/api')
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix)
   const isApiWebhooksRoute = nextUrl.pathname.startsWith(apiWebhooksPrefix)
 
@@ -25,7 +26,7 @@ export default auth(req => {
     return NextResponse.next()
   }
 
-  if (isApiAuthRoute || isApiWebhooksRoute) {
+  if (isApiAuthRoute || isApiWebhooksRoute || isApiRequest) {
     return NextResponse.next()
   }
 
@@ -37,7 +38,7 @@ export default auth(req => {
   }
 
   if (!isLoggedIn && !isPublicRoute) {
-    const isSignInRoute = nextUrl.pathname === '/sign-in'
+    const isSignInRoute = nextUrl.pathname.includes('/sign-in')
     if (isSignInRoute) {
       return NextResponse.next()
     }
@@ -49,7 +50,7 @@ export default auth(req => {
 
     const encodedCallbackUrl = encodeURIComponent(callbackUrl)
 
-    return Response.redirect(
+    return NextResponse.redirect(
       new URL(`/sign-in?callbackUrl=${encodedCallbackUrl}`, nextUrl)
     )
   }

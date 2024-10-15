@@ -8,7 +8,6 @@ import { useGetCategories } from '@/features/categories/api/use-get-categories'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 import React, { useEffect, useRef, useState } from 'react'
-import { UrlObject } from 'url'
 
 export const Categories = () => {
   const { data: categories, isPending: categoriesLoading } = useGetCategories()

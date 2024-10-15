@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { useCreateCart } from '@/features/carts/use-create-cart'
+import { cn } from '@/lib/utils'
 import { Star } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -39,17 +40,27 @@ export const Item = ({
     <Link key={id} href={`/courses/${id}`}>
       <Card
         key={id}
-        className="overflow-hidden transition-all duration-300 hover:shadow-lg"
+        className="group overflow-hidden transition-all duration-300 hover:shadow-lg"
       >
-        <div className="relative h-48">
+        <div className="relative">
           <Image
             src={imageUrl || '/placeholder.svg?height=400&width=600'}
             alt={title}
-            layout="fill"
-            objectFit="cover"
+            width={0}
+            height={0}
+            sizes="100vw"
+            className="h-48 w-full object-cover"
           />
+          <div
+            className={cn(
+              'absolute right-2 top-2 rounded-full bg-white opacity-0 transition group-hover:opacity-100',
+              !!wishlistId && 'opacity-100'
+            )}
+          >
+            <WishlistButton courseId={id} wishlistId={wishlistId} />
+          </div>
         </div>
-        <CardContent className="p-6">
+        <CardContent className="p-4">
           <h3 className="mb-2 line-clamp-2 text-lg font-bold text-gray-800">
             {title}
           </h3>
@@ -72,7 +83,6 @@ export const Item = ({
                 Add to cart
               </Button>
             )}
-            <WishlistButton courseId={id} wishlistId={wishlistId} />
           </div>
         </CardContent>
       </Card>

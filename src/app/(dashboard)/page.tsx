@@ -1,9 +1,28 @@
 'use client'
 
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
 import { useGetCategories } from '@/features/categories/api/use-get-categories'
-import { Book, Globe, Star, Zap } from 'lucide-react'
-import Image from 'next/image'
+import {
+  BarChart,
+  Book,
+  BookOpen,
+  Briefcase,
+  Building2,
+  Computer,
+  Globe,
+  GraduationCap,
+  Heart,
+  Icon,
+  Loader,
+  LucideIcon,
+  MessageCircle,
+  User,
+  Zap,
+} from 'lucide-react'
+import 'lucide-react'
+import Link from 'next/link'
 import { useState } from 'react'
 
 import { Hero } from './hero'
@@ -20,6 +39,19 @@ interface Course {
 }
 
 export default function KnowflareHomepage() {
+  const iconMap: { [key: string]: LucideIcon } = {
+    'Teaching & Academics': GraduationCap,
+    'Sales & Marketing': BarChart,
+    'Personal Development': User,
+    Management: Briefcase,
+    Language: Globe,
+    IT: Computer,
+    Health: Heart,
+    English: MessageCircle,
+    'Engineering & Construction': Building2,
+    Business: BookOpen,
+  }
+
   const { data: categories, isPending: categoriesLoading } = useGetCategories()
   const [cartItems, setCartItems] = useState<Course[]>([])
 
@@ -71,7 +103,7 @@ export default function KnowflareHomepage() {
       <Hero />
       <Marquee />
 
-      <section className="bg-gray-50 py-16">
+      <section className="bg-gray-100 py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="mb-8 text-center text-3xl font-bold">
             Why Choose Knowflare?
@@ -111,7 +143,7 @@ export default function KnowflareHomepage() {
         </div>
       </section>
 
-      <section className="py-16">
+      {/* <section className="py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="mb-8 text-3xl font-bold">Featured Courses</h2>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
@@ -146,7 +178,7 @@ export default function KnowflareHomepage() {
                       ${course.price.toFixed(2)}
                     </span>
                     <Button onClick={() => addToCart(course)}>
-                      Add to Cart
+                      Add to cart
                     </Button>
                   </div>
                 </div>
@@ -154,49 +186,64 @@ export default function KnowflareHomepage() {
             ))}
           </div>
         </div>
+      </section> */}
+
+      <section className="mx-auto max-w-6xl py-16">
+        <h2 className="mb-8 text-center text-3xl font-bold text-gray-800">
+          Top Categories
+        </h2>
+        {categoriesLoading && (
+          <div className="flex h-full min-h-64 w-full items-center justify-center">
+            <Loader className="h-6 w-6 animate-spin" />
+          </div>
+        )}
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
+          {categories?.slice(0, 10).map(item => {
+            const Icon = iconMap[item.name]
+
+            return (
+              <Link href={`/courses?categoryId=${item.id}`} key={item.id}>
+                <Card className="transform transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+                  <CardContent className="flex flex-col items-center justify-center p-4 text-center">
+                    <div className="mb-4 rounded-full bg-slate-100 p-3">
+                      <Icon className="h-8 w-8 text-slate-500" />
+                    </div>
+                    <h3 className="mb-2 line-clamp-2 h-12 font-semibold text-gray-800">
+                      {item.name}
+                    </h3>
+                    <Badge variant="secondary">{10} courses</Badge>
+                  </CardContent>
+                </Card>
+              </Link>
+            )
+          })}
+        </div>
       </section>
 
       <section className="bg-gray-100 py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <h2 className="mb-8 text-3xl font-bold">Top categories</h2>
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
-            {categories?.slice(0, 10).map(item => (
-              <Button
-                key={item.id}
-                variant="outline"
-                className="justify-start text-left"
-              >
-                {item.name}
-              </Button>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="rounded-lg bg-gradient-to-r from-blue-500 to-indigo-600 p-8 shadow-lg">
-            <div className="md:flex md:items-center md:justify-between">
-              <div className="md:w-2/3">
-                <h2 className="mb-4 text-3xl font-bold text-white">
-                  Start Your Learning Journey Today
+          <div className="overflow-hidden rounded-lg bg-white shadow-xl">
+            <div className="flex flex-col items-center justify-between p-8 md:flex-row">
+              <div className="mb-6 md:mb-0 md:w-2/3">
+                <h2 className="mb-4 text-3xl font-bold text-gray-800">
+                  Ready to Start Learning?
                 </h2>
-                <p className="mb-6 text-lg text-blue-100">
-                  Join millions of learners and unlock your potential with
-                  Knowflare. Get started for free!
+                <p className="mb-6 text-xl text-gray-600">
+                  Join millions of learners and start your journey today. Get
+                  unlimited access to all courses.
                 </p>
-                <Button className="bg-white text-blue-700 hover:bg-blue-50">
-                  Sign up now
-                </Button>
+                <div className="flex space-x-4">
+                  <Button size="lg">Start Free Trial</Button>
+
+                  <Button size="lg" variant="outline">
+                    Learn More
+                  </Button>
+                </div>
               </div>
-              <div className="mt-8 md:mt-0">
-                <Image
-                  src="/placeholder.svg?height=200&width=300"
-                  alt="Join Knowflare"
-                  width={300}
-                  height={200}
-                  className="rounded-lg shadow-md"
-                />
+              <div className="flex justify-center md:w-1/3">
+                <div className="rounded-full bg-slate-100 p-6">
+                  <GraduationCap className="h-24 w-24 text-slate-600" />
+                </div>
               </div>
             </div>
           </div>

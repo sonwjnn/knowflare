@@ -4,9 +4,11 @@ import {
   carts,
   categories,
   chapters,
+  comments,
   courses,
   insertCoursesSchema,
   purchases,
+  users,
 } from '@/db/schema'
 import { verifyAuth } from '@hono/auth-js'
 import { zValidator } from '@hono/zod-validator'
@@ -17,7 +19,6 @@ import { z } from 'zod'
 const app = new Hono()
   .get(
     '/',
-    verifyAuth(),
     zValidator(
       'query',
       z.object({
@@ -26,12 +27,6 @@ const app = new Hono()
       })
     ),
     async c => {
-      const auth = c.get('authUser')
-
-      if (!auth.token?.id) {
-        return c.json({ error: 'Unauthorized' }, 401)
-      }
-
       const { title, categoryId } = c.req.valid('query')
 
       const data = await db
@@ -123,14 +118,38 @@ const app = new Hono()
         return c.json({ error: 'Unauthorized' }, 401)
       }
 
-      const [data] = await db.select().from(courses).where(eq(courses.id, id))
+      const [data] = await db
+        .select({
+          id: courses.id,
+          price: courses.price,
+          title: courses.title,
+          description: courses.description,
+          date: courses.date,
+          imageUrl: courses.imageUrl,
+          isPublished: courses.isPublished,
+          user: {
+            id: users.id,
+            name: users.name,
+          },
+        })
+        .from(courses)
+        .innerJoin(users, eq(users.id, courses.userId))
+        .where(eq(courses.id, id))
 
       if (!data) {
         return c.json({ error: 'Not found' }, 404)
       }
 
+      const chaptersData = await db
+        .select()
+        .from(chapters)
+        .where(eq(chapters.courseId, data.id))
+
       return c.json({
-        data,
+        data: {
+          ...data,
+          chapters: chaptersData,
+        },
       })
     }
   )

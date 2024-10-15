@@ -26,7 +26,13 @@ export const WishlistButton = ({ courseId, wishlistId }: Props) => {
     }
   }
   return (
-    <Button onClick={onClick} disabled={isPending} size="icon" variant="ghost">
+    <Button
+      onClick={onClick}
+      disabled={isPending}
+      size="icon"
+      variant="ghost"
+      className="rounded-full"
+    >
       <Heart
         className={`h-4 w-4 ${wishlistId ? 'fill-red-500 text-red-500' : 'text-foreground'}`}
       />

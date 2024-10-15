@@ -4,13 +4,7 @@ import { verifyAuth } from '@hono/auth-js'
 import { desc } from 'drizzle-orm'
 import { Hono } from 'hono'
 
-const app = new Hono().get('/', verifyAuth(), async c => {
-  // const auth = c.get('authUser')
-
-  // if (!auth.token?.id) {
-  //   return c.json({ error: 'Unauthorized' }, 401)
-  // }
-
+const app = new Hono().get('/', async c => {
   const data = await db.select().from(categories).orderBy(desc(categories.name))
 
   if (!data) {

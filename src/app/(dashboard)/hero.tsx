@@ -2,31 +2,24 @@ import { useCurrentUser } from '@/hooks/use-current-user'
 import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useRef } from 'react'
+import { useVideo } from 'react-use'
 
 export const Hero = () => {
+  const [video, _, controls] = useVideo(
+    <video
+      src="/hero-home.mp4"
+      className="absolute left-0 top-0 h-full w-full object-cover"
+      autoPlay
+      loop
+      playsInline
+      muted
+    />
+  )
   const currentUser = useCurrentUser()
-
-  const videoRef = useRef<HTMLVideoElement>(null)
-
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.playbackRate = 0.75
-    }
-  }, [])
 
   return (
     <section className="relative h-[80vh] overflow-hidden">
-      <video
-        ref={videoRef}
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="absolute left-0 top-0 h-full w-full object-cover"
-      >
-        <source src="/hero-home.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
+      {video}
       <div className="absolute inset-0 bg-black bg-opacity-60" />
       <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-white">
         <h1 className="mb-6 text-center text-4xl font-bold md:text-6xl">

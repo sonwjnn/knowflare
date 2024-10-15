@@ -38,12 +38,7 @@ const Navbar = () => {
             ) : (
               <>
                 <Link href="/sign-in">
-                  <Button
-                    variant="ghost"
-                    className="text-white hover:bg-transparent hover:text-white"
-                  >
-                    Log In
-                  </Button>
+                  <Button variant="ghost">Log In</Button>
                 </Link>
                 <Link href="/sign-up">
                   <Button>Sign up</Button>

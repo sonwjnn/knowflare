@@ -336,6 +336,8 @@ export const comments = mysqlTable('comment', {
   createdAt: timestamp('created_at', { mode: 'date' }),
 })
 
+export const insertCommentsSchema = createInsertSchema(comments)
+
 export const coupons = mysqlTable('coupon', {
   id: varchar('id', { length: 255 })
     .primaryKey()

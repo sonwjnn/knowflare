@@ -7,6 +7,7 @@ import attachments from './attachments'
 import carts from './carts'
 import categories from './categories'
 import chapters from './chapters'
+import comments from './comments'
 import courses from './courses'
 import purchases from './purchases'
 import teachers from './teachers'
@@ -38,6 +39,7 @@ const routes = app
   // .route('/userProgress', userProgress)
   .route('/carts', carts)
   .route('/wishlists', wishlists)
+  .route('/comments', comments)
 
 export const GET = handle(app)
 export const POST = handle(app)
