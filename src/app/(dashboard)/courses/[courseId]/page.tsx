@@ -19,6 +19,7 @@ import { useGetWishlistByCourseId } from '@/features/wishlists/use-wishlist-cart
 import { useCourseId } from '@/hooks/use-course-id'
 import { format } from 'date-fns'
 import {
+  ArrowRight,
   BarChart,
   Clock,
   Heart,
@@ -253,9 +254,10 @@ export default function CourseDetail() {
                 </div>
               </div>
 
-              <Link href={`/courses/${courseId}/learn`}>
+              <Link href={`/courses/${courseId}/learn`} className="w-full">
                 <Button variant="outline" className="w-full px-4 py-6 text-lg">
                   Learn now
+                  <ArrowRight className="ml-2 size-5" />
                 </Button>
               </Link>
             </CardFooter>

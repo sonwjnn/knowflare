@@ -39,7 +39,7 @@ export const Item = ({ id, title, imageUrl, description, price }: Props) => {
           size="sm"
           onClick={onRemove}
         >
-          <Trash2 className="mr-2 h-4 w-4" /> Remove
+          <Trash2 className="size-4 text-rose-500" />
         </Button>
       </div>
     </div>

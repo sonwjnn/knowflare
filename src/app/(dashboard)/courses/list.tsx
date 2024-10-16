@@ -3,6 +3,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useGetCarts } from '@/features/carts/use-get-carts'
 import { useGetCourses } from '@/features/courses/api/use-get-courses'
 import { useGetWishlists } from '@/features/wishlists/use-get-carts'
+import { BookOpen } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 
 import { Item } from './item'
@@ -36,6 +37,25 @@ export const List = () => {
             </CardContent>
           </Card>
         ))}
+      </div>
+    )
+  }
+
+  if (courses?.length === 0) {
+    return (
+      <div className="flex h-[50vh] items-center justify-center">
+        <Card className="w-full max-w-md border-0">
+          <CardContent className="flex flex-col items-center p-6 text-center">
+            <BookOpen className="mb-4 h-12 w-12 text-muted-foreground" />
+            <h2 className="mb-2 text-2xl font-semibold">
+              No Courses Available
+            </h2>
+            <p className="mb-4 text-muted-foreground">
+              It looks like there are no courses available at the moment. Check
+              back later for new additions!
+            </p>
+          </CardContent>
+        </Card>
       </div>
     )
   }
