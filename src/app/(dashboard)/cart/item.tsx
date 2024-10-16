@@ -25,7 +25,7 @@ export const Item = ({ id, title, imageUrl, description, price }: Props) => {
         alt={title}
         width={120}
         height={80}
-        className="mr-6 rounded-lg object-cover"
+        className="mr-6 aspect-video rounded-lg object-cover"
       />
       <div className="flex-grow">
         <h3 className="mb-1 text-lg font-semibold">{title}</h3>

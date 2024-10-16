@@ -3,22 +3,22 @@ import { useQuery } from '@tanstack/react-query'
 import { InferResponseType } from 'hono'
 
 export type ResponseType = InferResponseType<
-  (typeof client.api.comments)['$get'],
+  (typeof client.api.reviews)['$get'],
   200
 >
 
-export const useGetComments = (courseId: string) => {
+export const useGetReviews = (courseId: string) => {
   const query = useQuery({
-    queryKey: ['comments'],
+    queryKey: ['reviews'],
     queryFn: async () => {
-      const response = await client.api.comments.$get({
+      const response = await client.api.reviews.$get({
         query: {
           courseId,
         },
       })
 
       if (!response.ok) {
-        throw new Error('Failed to fetch comments')
+        throw new Error('Failed to fetch reviews')
       }
       const { data } = await response.json()
 

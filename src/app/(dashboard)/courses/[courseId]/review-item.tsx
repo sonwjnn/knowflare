@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { useDeleteComment } from '@/features/comments/api/use-delete-comment'
+import { useDeleteReview } from '@/features/reviews/api/use-delete-review'
 import { useConfirm } from '@/hooks/use-confirm'
 import { Star, Trash2 } from 'lucide-react'
 
@@ -13,7 +13,7 @@ type Props = {
   rating: number
 }
 
-export const CommentItem = ({
+export const ReviewItem = ({
   id,
   canDelete,
   username,
@@ -23,17 +23,17 @@ export const CommentItem = ({
 }: Props) => {
   const [ConfirmDialog, confirm] = useConfirm(
     'Are you sure?',
-    'You are about to delete this comment'
+    'You are about to delete this review'
   )
-  const { mutate: deleteComment, isPending: deleteCommentLoading } =
-    useDeleteComment(id)
+  const { mutate: deleteReview, isPending: deleteReviewLoading } =
+    useDeleteReview(id)
 
-  const onDeleteComment = async () => {
+  const onDeleteReview = async () => {
     const ok = await confirm()
 
     if (!ok) return
 
-    deleteComment()
+    deleteReview()
   }
 
   return (
@@ -66,8 +66,8 @@ export const CommentItem = ({
             <Button
               variant="ghost"
               size="icon"
-              onClick={onDeleteComment}
-              disabled={deleteCommentLoading}
+              onClick={onDeleteReview}
+              disabled={deleteReviewLoading}
             >
               <Trash2 className="h-4 w-4 text-red-500" />
             </Button>

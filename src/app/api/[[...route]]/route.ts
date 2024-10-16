@@ -10,6 +10,8 @@ import chapters from './chapters'
 import comments from './comments'
 import courses from './courses'
 import purchases from './purchases'
+import reviews from './reviews'
+import subscriptions from './subscriptions'
 import teachers from './teachers'
 import userProgress from './user-progress'
 import users from './users'
@@ -39,7 +41,9 @@ const routes = app
   // .route('/userProgress', userProgress)
   .route('/carts', carts)
   .route('/wishlists', wishlists)
+  .route('/reviews', reviews)
   .route('/comments', comments)
+  .route('/subscriptions', subscriptions)
 
 export const GET = handle(app)
 export const POST = handle(app)

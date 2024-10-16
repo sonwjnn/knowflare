@@ -49,7 +49,7 @@ export const Item = ({
             width={0}
             height={0}
             sizes="100vw"
-            className="h-48 w-full object-cover"
+            className="aspect-video w-full object-cover"
           />
           <div
             className={cn(

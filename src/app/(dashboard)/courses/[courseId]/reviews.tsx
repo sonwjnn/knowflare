@@ -1,9 +1,7 @@
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -12,25 +10,23 @@ import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Textarea } from '@/components/ui/textarea'
-import { useCreateComment } from '@/features/comments/api/use-create-comment'
-import { useDeleteComment } from '@/features/comments/api/use-delete-comment'
-import { useGetComments } from '@/features/comments/api/use-get-comments'
+import { useCreateReview } from '@/features/reviews/api/use-create-review'
+import { useGetReviews } from '@/features/reviews/api/use-get-reviews'
 import { useCourseId } from '@/hooks/use-course-id'
 import { useCurrentUser } from '@/hooks/use-current-user'
 import { format } from 'date-fns'
 import { Star } from 'lucide-react'
 import { useState } from 'react'
 
-import { CommentItem } from './comment-item'
+import { ReviewItem } from './review-item'
 
-export const Comments = () => {
+export const Reviews = () => {
   const currentUser = useCurrentUser()
   const courseId = useCourseId()
 
-  const { data: comments, isPending: commentsLoading } =
-    useGetComments(courseId)
-  const { mutate: createComment, isPending: createCommentLoading } =
-    useCreateComment()
+  const { data: reviews, isPending: reviewsLoading } = useGetReviews(courseId)
+  const { mutate: createReview, isPending: createReviewLoading } =
+    useCreateReview()
 
   const [content, setContent] = useState<string>('')
   const [rating, setRating] = useState<number>(0)
@@ -38,7 +34,7 @@ export const Comments = () => {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    createComment(
+    createReview(
       {
         content,
         rating,
@@ -53,7 +49,7 @@ export const Comments = () => {
     )
   }
 
-  if (commentsLoading) {
+  if (reviewsLoading) {
     return (
       <Card>
         <CardHeader>
@@ -83,13 +79,13 @@ export const Comments = () => {
         <CardTitle>Student Reviews</CardTitle>
       </CardHeader>
       <CardContent>
-        {comments?.length === 0 && (
+        {reviews?.length === 0 && (
           <div className="flex h-10 items-center justify-center">
             This course has no reviews yet.
           </div>
         )}
-        {comments?.map(item => (
-          <CommentItem
+        {reviews?.map(item => (
+          <ReviewItem
             key={item.id}
             id={item.id}
             content={item.content || ''}
@@ -107,7 +103,7 @@ export const Comments = () => {
             <div>
               <RadioGroup
                 id="rating"
-                disabled={createCommentLoading}
+                disabled={createReviewLoading}
                 className="flex space-x-1"
                 value={rating.toString()}
                 onValueChange={value => setRating(+value)}
@@ -139,14 +135,14 @@ export const Comments = () => {
             <div>
               <Textarea
                 id="comment"
-                disabled={createCommentLoading}
+                disabled={createReviewLoading}
                 placeholder="Write your review here..."
                 value={content}
                 onChange={e => setContent(e.target.value)}
                 className="mt-1"
               />
             </div>
-            <Button disabled={createCommentLoading} type="submit">
+            <Button disabled={createReviewLoading} type="submit">
               Submit Review
             </Button>
           </div>

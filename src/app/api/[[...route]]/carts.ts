@@ -89,8 +89,21 @@ const app = new Hono()
       if (!auth.token?.id) {
         return c.json({ error: 'Unauthorized' }, 401)
       }
-
       const values = c.req.valid('json')
+
+      const [existingCart] = await db
+        .select()
+        .from(carts)
+        .where(
+          and(
+            eq(carts.userId, auth.token?.id),
+            eq(carts.courseId, values.courseId)
+          )
+        )
+
+      if (existingCart) {
+        return c.json({ error: 'This course already exist in your cart!' }, 401)
+      }
 
       const [data] = await db.insert(carts).values({
         ...values,

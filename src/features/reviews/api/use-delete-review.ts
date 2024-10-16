@@ -4,26 +4,26 @@ import { InferResponseType } from 'hono'
 import { toast } from 'sonner'
 
 type ResponseType = InferResponseType<
-  (typeof client.api.comments)[':id']['$delete']
+  (typeof client.api.reviews)[':id']['$delete']
 >
 
-export const useDeleteComment = (id?: string) => {
+export const useDeleteReview = (id?: string) => {
   const queryClient = useQueryClient()
 
   const mutation = useMutation<ResponseType, Error>({
     mutationFn: async json => {
-      const response = await client.api.comments[':id']['$delete']({
+      const response = await client.api.reviews[':id']['$delete']({
         param: { id },
       })
 
       return await response.json()
     },
     onSuccess: () => {
-      toast.success('Comment deleted')
-      queryClient.invalidateQueries({ queryKey: ['comments'] })
+      toast.success('Review deleted')
+      queryClient.invalidateQueries({ queryKey: ['reviews'] })
     },
     onError: () => {
-      toast.error('Failed to delete comment')
+      toast.error('Failed to delete review')
     },
   })
 

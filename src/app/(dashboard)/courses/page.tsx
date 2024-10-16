@@ -43,7 +43,7 @@ export default function CoursesPage() {
 
       <div className="flex flex-col gap-8 lg:flex-row">
         <div className="lg:w-1/4">
-          <div className="rounded-lg border border-gray-200 bg-white p-6">
+          <div className="rounded-lg border border-gray-200 p-6">
             <h2 className="mb-4 text-xl font-semibold">Filters</h2>
 
             <div className="mb-6">

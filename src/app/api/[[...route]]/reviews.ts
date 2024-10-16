@@ -1,5 +1,5 @@
 import { db } from '@/db/drizzle'
-import { comments, insertCommentsSchema, users } from '@/db/schema'
+import { insertReviewsSchema, reviews, users } from '@/db/schema'
 import { verifyAuth } from '@hono/auth-js'
 import { zValidator } from '@hono/zod-validator'
 import { and, desc, eq } from 'drizzle-orm'
@@ -21,18 +21,19 @@ const app = new Hono()
 
       const data = await db
         .select({
-          id: comments.id,
-          content: comments.content,
-          createdAt: comments.createdAt,
+          id: reviews.id,
+          content: reviews.content,
+          rating: reviews.rating,
+          createdAt: reviews.createdAt,
           user: {
             id: users.id,
             name: users.name,
           },
         })
-        .from(comments)
-        .innerJoin(users, eq(users.id, comments.userId))
-        .where(eq(comments.courseId, courseId))
-        .orderBy(desc(comments.createdAt))
+        .from(reviews)
+        .innerJoin(users, eq(users.id, reviews.userId))
+        .where(eq(reviews.courseId, courseId))
+        .orderBy(desc(reviews.createdAt))
 
       return c.json({ data })
     }
@@ -42,8 +43,9 @@ const app = new Hono()
     verifyAuth(),
     zValidator(
       'json',
-      insertCommentsSchema.pick({
+      insertReviewsSchema.pick({
         content: true,
+        rating: true,
         courseId: true,
       })
     ),
@@ -57,15 +59,15 @@ const app = new Hono()
       const values = c.req.valid('json')
 
       const [existingComment] = await db
-        .select({ id: comments.id })
-        .from(comments)
-        .where(eq(comments.userId, auth.token.id))
+        .select({ id: reviews.id })
+        .from(reviews)
+        .where(eq(reviews.userId, auth.token.id))
 
       if (existingComment) {
         return c.json({ error: 'Comment exist!' }, 401)
       }
 
-      const [data] = await db.insert(comments).values({
+      const [data] = await db.insert(reviews).values({
         ...values,
         userId: auth.token.id,
         createdAt: new Date(),
@@ -104,16 +106,16 @@ const app = new Hono()
 
       const [existingComment] = await db
         .select()
-        .from(comments)
-        .where(and(eq(comments.userId, auth.token.id), eq(comments.id, id)))
+        .from(reviews)
+        .where(and(eq(reviews.userId, auth.token.id), eq(reviews.id, id)))
 
       if (!existingComment) {
         return c.json({ error: 'Unauthorized' }, 401)
       }
 
       const data = await db
-        .delete(comments)
-        .where(eq(comments.id, existingComment.id))
+        .delete(reviews)
+        .where(eq(reviews.id, existingComment.id))
 
       return c.json({ data })
     }

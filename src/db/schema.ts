@@ -315,7 +315,30 @@ export const subscriptions = mysqlTable('subscription', {
   priceId: varchar('price_id', { length: 255 }).notNull(),
   status: varchar('status', { length: 255 }).notNull(),
   currentPeriodEnd: timestamp('current_period_end', { mode: 'date' }),
+  createdAt: timestamp('created_at', { mode: 'date' }),
+  updatedAt: timestamp('updated_at', { mode: 'date' }),
 })
+
+export const reviews = mysqlTable('review', {
+  id: varchar('id', { length: 255 })
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: varchar('user_id', { length: 255 })
+    .notNull()
+    .references(() => users.id, {
+      onDelete: 'cascade',
+    }),
+  courseId: varchar('course_id', { length: 255 })
+    .notNull()
+    .references(() => courses.id, {
+      onDelete: 'cascade',
+    }),
+  rating: int('rating').notNull(),
+  content: varchar('content', { length: 255 }),
+  createdAt: timestamp('created_at', { mode: 'date' }),
+})
+
+export const insertReviewsSchema = createInsertSchema(reviews)
 
 export const comments = mysqlTable('comment', {
   id: varchar('id', { length: 255 })
@@ -331,7 +354,6 @@ export const comments = mysqlTable('comment', {
     .references(() => courses.id, {
       onDelete: 'cascade',
     }),
-  rating: int('rating').notNull(),
   content: varchar('content', { length: 255 }),
   createdAt: timestamp('created_at', { mode: 'date' }),
 })

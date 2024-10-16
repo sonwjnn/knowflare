@@ -3,20 +3,17 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { InferRequestType, InferResponseType } from 'hono'
 import { toast } from 'sonner'
 
-type ResponseType = InferResponseType<
-  (typeof client.api.comments)['$post'],
-  200
->
+type ResponseType = InferResponseType<(typeof client.api.reviews)['$post'], 200>
 type RequestType = InferRequestType<
-  (typeof client.api.comments)['$post']
+  (typeof client.api.reviews)['$post']
 >['json']
 
-export const useCreateComment = () => {
+export const useCreateReview = () => {
   const queryClient = useQueryClient()
 
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async json => {
-      const response = await client.api.comments.$post({ json })
+      const response = await client.api.reviews.$post({ json })
 
       if (!response.ok) {
         throw new Error('Something went wrong')
@@ -25,12 +22,12 @@ export const useCreateComment = () => {
       return await response.json()
     },
     onSuccess: () => {
-      toast.success('Comments created.')
+      toast.success('Reviews created.')
 
-      queryClient.invalidateQueries({ queryKey: ['comments'] })
+      queryClient.invalidateQueries({ queryKey: ['reviews'] })
     },
     onError: () => {
-      toast.error('Failed to create comments.')
+      toast.error('Failed to create reviews.')
     },
   })
 

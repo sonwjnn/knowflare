@@ -13,6 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useCreateCart } from '@/features/carts/use-create-cart'
 import { useGetCartByCourseId } from '@/features/carts/use-get-cart-by-course-id'
 import { useGetCourse } from '@/features/courses/api/use-get-course'
+import { useGetReviews } from '@/features/reviews/api/use-get-reviews'
 import { useCreateWishlist } from '@/features/wishlists/use-create-wishlist'
 import { useDeleteWishlist } from '@/features/wishlists/use-delete-wishlist'
 import { useGetWishlistByCourseId } from '@/features/wishlists/use-wishlist-cart-by-course-id'
@@ -32,8 +33,9 @@ import {
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useCallback } from 'react'
 
-import { Comments } from './comments'
+import { Reviews } from './reviews'
 
 const DATE_FORMAT = 'dd/MM/yyyy'
 
@@ -52,14 +54,25 @@ export default function CourseDetail() {
   const { mutate: deleteWishlist, isPending: deleteWishlistLoading } =
     useDeleteWishlist(wishlist?.id)
 
+  const { data: reviews, isPending: reviewsLoading } = useGetReviews(courseId)
+
   const isWishlistLoading =
     createWishlistLoading || wishlistLoading || deleteWishlistLoading
   const isCartLoading = createCartLoading || cartLoading
 
+  const rating = useCallback(() => {
+    if (!reviews || reviews.length === 0) return 0
+    const totalRating = reviews.reduce(
+      (acc, comment) => acc + comment.rating,
+      0
+    )
+    return totalRating / reviews.length
+  }, [reviews])
+
   const courseDetails = {
     title: course?.title,
     instructor: course?.user?.name,
-    rating: 4.8,
+    rating: rating(),
     students: 12345,
     lastUpdated: course?.date,
     description: course?.description,
@@ -195,7 +208,7 @@ export default function CourseDetail() {
               </Card>
             </TabsContent>
             <TabsContent value="reviews">
-              <Comments />
+              <Reviews />
             </TabsContent>
           </Tabs>
         </div>

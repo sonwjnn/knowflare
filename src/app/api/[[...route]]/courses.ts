@@ -4,7 +4,6 @@ import {
   carts,
   categories,
   chapters,
-  comments,
   courses,
   insertCoursesSchema,
   purchases,
