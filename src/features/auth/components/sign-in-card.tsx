@@ -72,6 +72,7 @@ export const SignInCard = () => {
         <form onSubmit={onCredentialSignIn} className="space-y-2.5">
           <Input
             value={email}
+            disabled={signInLoading}
             onChange={e => setEmail(e.target.value)}
             placeholder="Email"
             type="email"
@@ -79,6 +80,7 @@ export const SignInCard = () => {
           />
           <Input
             value={password}
+            disabled={signInLoading}
             onChange={e => setPassword(e.target.value)}
             placeholder="Password"
             type="password"

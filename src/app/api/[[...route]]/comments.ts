@@ -27,6 +27,7 @@ const app = new Hono()
           user: {
             id: users.id,
             name: users.name,
+            imageUrl: users.image,
           },
         })
         .from(comments)
@@ -55,15 +56,6 @@ const app = new Hono()
       }
 
       const values = c.req.valid('json')
-
-      const [existingComment] = await db
-        .select({ id: comments.id })
-        .from(comments)
-        .where(eq(comments.userId, auth.token.id))
-
-      if (existingComment) {
-        return c.json({ error: 'Comment exist!' }, 401)
-      }
 
       const [data] = await db.insert(comments).values({
         ...values,

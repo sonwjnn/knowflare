@@ -73,6 +73,8 @@ export const Reviews = () => {
     )
   }
 
+  const currentReview = reviews?.some(item => item.user.id === currentUser?.id)
+
   return (
     <Card>
       <CardHeader>
@@ -97,56 +99,58 @@ export const Reviews = () => {
         ))}
       </CardContent>
       <CardFooter>
-        <form onSubmit={onSubmit} className="w-full">
-          <h4 className="mb-2 text-lg font-semibold">Write a Review</h4>
-          <div className="space-y-4">
-            <div>
-              <RadioGroup
-                id="rating"
-                disabled={createReviewLoading}
-                className="flex space-x-1"
-                value={rating.toString()}
-                onValueChange={value => setRating(+value)}
-              >
-                {[1, 2, 3, 4, 5].map(value => (
-                  <div key={value} className="flex items-center">
-                    <RadioGroupItem
-                      value={value.toString()}
-                      id={`rating-${value}`}
-                      className="sr-only"
-                    />
-                    <Label
-                      htmlFor={`rating-${value}`}
-                      className="cursor-pointer"
-                      onMouseEnter={() => setRating(value)}
-                    >
-                      <Star
-                        className={`h-6 w-6 ${
-                          value <= rating
-                            ? 'fill-yellow-400 text-yellow-400'
-                            : 'fill-gray-300 text-gray-300'
-                        }`}
+        {!currentReview && (
+          <form onSubmit={onSubmit} className="w-full">
+            <h4 className="mb-2 text-lg font-semibold">Write a Review</h4>
+            <div className="space-y-4">
+              <div>
+                <RadioGroup
+                  id="rating"
+                  disabled={createReviewLoading}
+                  className="flex space-x-1"
+                  value={rating.toString()}
+                  onValueChange={value => setRating(+value)}
+                >
+                  {[1, 2, 3, 4, 5].map(value => (
+                    <div key={value} className="flex items-center">
+                      <RadioGroupItem
+                        value={value.toString()}
+                        id={`rating-${value}`}
+                        className="sr-only"
                       />
-                    </Label>
-                  </div>
-                ))}
-              </RadioGroup>
+                      <Label
+                        htmlFor={`rating-${value}`}
+                        className="cursor-pointer"
+                        onMouseEnter={() => setRating(value)}
+                      >
+                        <Star
+                          className={`h-6 w-6 ${
+                            value <= rating
+                              ? 'fill-yellow-400 text-yellow-400'
+                              : 'fill-gray-300 text-gray-300'
+                          }`}
+                        />
+                      </Label>
+                    </div>
+                  ))}
+                </RadioGroup>
+              </div>
+              <div>
+                <Textarea
+                  id="comment"
+                  disabled={createReviewLoading}
+                  placeholder="Write your review here..."
+                  value={content}
+                  onChange={e => setContent(e.target.value)}
+                  className="mt-1"
+                />
+              </div>
+              <Button disabled={createReviewLoading} type="submit">
+                Submit Review
+              </Button>
             </div>
-            <div>
-              <Textarea
-                id="comment"
-                disabled={createReviewLoading}
-                placeholder="Write your review here..."
-                value={content}
-                onChange={e => setContent(e.target.value)}
-                className="mt-1"
-              />
-            </div>
-            <Button disabled={createReviewLoading} type="submit">
-              Submit Review
-            </Button>
-          </div>
-        </form>
+          </form>
+        )}
       </CardFooter>
     </Card>
   )

@@ -9,7 +9,6 @@ import { useCourseId } from '@/hooks/use-course-id'
 import { Bell, ChevronLeft, ChevronRight } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
-import { useMountedState } from 'react-use'
 
 import { ChaptersList } from './chapters-list'
 import { MobileChaptersButton } from './mobile-chapters-button'
