@@ -70,7 +70,6 @@ const app = new Hono()
       const [data] = await db.insert(reviews).values({
         ...values,
         userId: auth.token.id,
-        createdAt: new Date(),
       })
 
       if (!data) {

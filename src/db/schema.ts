@@ -1,4 +1,5 @@
 import { relations } from 'drizzle-orm'
+import { sql } from 'drizzle-orm'
 import {
   boolean,
   int,
@@ -312,8 +313,32 @@ export const subscriptions = mysqlTable('subscription', {
   priceId: varchar('price_id', { length: 255 }).notNull(),
   status: varchar('status', { length: 255 }).notNull(),
   currentPeriodEnd: timestamp('current_period_end', { mode: 'date' }),
-  createdAt: timestamp('created_at', { mode: 'date' }),
-  updatedAt: timestamp('updated_at', { mode: 'date' }),
+  createdAt: timestamp('created_at', { mode: 'date' }).default(
+    sql`CURRENT_TIMESTAMP`
+  ),
+  updatedAt: timestamp('updated_at', { mode: 'date' }).default(
+    sql`CURRENT_TIMESTAMP`
+  ),
+})
+
+export const orders = mysqlTable('order', {
+  id: varchar('id', { length: 255 })
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: varchar('user_id', { length: 255 })
+    .notNull()
+    .references(() => users.id, {
+      onDelete: 'cascade',
+    }),
+  paymentId: varchar('payment_id', { length: 255 }).notNull(),
+  customerId: varchar('customer_id', { length: 255 }).notNull(),
+  status: varchar('status', { length: 255 }).notNull(),
+  createdAt: timestamp('created_at', { mode: 'date' }).default(
+    sql`CURRENT_TIMESTAMP`
+  ),
+  updatedAt: timestamp('updated_at', { mode: 'date' }).default(
+    sql`CURRENT_TIMESTAMP`
+  ),
 })
 
 export const reviews = mysqlTable('review', {
@@ -332,7 +357,9 @@ export const reviews = mysqlTable('review', {
     }),
   rating: int('rating').notNull(),
   content: varchar('content', { length: 255 }),
-  createdAt: timestamp('created_at', { mode: 'date' }),
+  createdAt: timestamp('created_at', { mode: 'date' }).default(
+    sql`CURRENT_TIMESTAMP`
+  ),
 })
 
 export const insertReviewsSchema = createInsertSchema(reviews)
@@ -352,7 +379,9 @@ export const comments = mysqlTable('comment', {
       onDelete: 'cascade',
     }),
   content: varchar('content', { length: 255 }),
-  createdAt: timestamp('created_at', { mode: 'date' }),
+  createdAt: timestamp('created_at', { mode: 'date' }).default(
+    sql`CURRENT_TIMESTAMP`
+  ),
 })
 
 export const insertCommentsSchema = createInsertSchema(comments)
@@ -401,7 +430,9 @@ export const wishlists = mysqlTable('wishlist', {
     .references(() => courses.id, {
       onDelete: 'cascade',
     }),
-  date: timestamp('created_at', { mode: 'date' }),
+  date: timestamp('created_at', { mode: 'date' }).default(
+    sql`CURRENT_TIMESTAMP`
+  ),
 })
 
 export const insertWishlistsSchema = createInsertSchema(wishlists)
