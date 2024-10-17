@@ -1,9 +1,24 @@
 import { Button } from '@/components/ui/button'
 import { useGetCarts } from '@/features/carts/use-get-carts'
+import { useCheckout } from '@/features/subscriptions/api/use-checkout'
 import Link from 'next/link'
 
 export const Summary = () => {
   const { data: carts, isPending: cartsLoading } = useGetCarts()
+  const { mutate: checkout, isPending: checkoutLoading } = useCheckout()
+
+  const handleCheckout = () => {
+    if (carts?.length === 0) return
+
+    const courses = (carts ?? []).map(item => ({
+      id: item.id,
+      title: item.title,
+      imageUrl: item.imageUrl,
+      price: item.price,
+    }))
+
+    checkout({ courses })
+  }
 
   const total = carts?.reduce((total, item) => total + item.price, 0) || 0
 
@@ -14,11 +29,14 @@ export const Summary = () => {
         <span>Total</span>
         <span>${total.toFixed(2)}</span>
       </div>
-      <Link href="/payment/checkout">
-        <Button className="mt-6 w-full" size="lg">
-          Checkout
-        </Button>
-      </Link>
+      <Button
+        className="mt-6 w-full"
+        size="lg"
+        onClick={handleCheckout}
+        disabled={checkoutLoading}
+      >
+        Checkout
+      </Button>
     </div>
   )
 }

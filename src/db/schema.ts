@@ -289,9 +289,6 @@ export const purchases = mysqlTable('purchases', {
     .references(() => courses.id, {
       onDelete: 'cascade',
     }),
-  couponId: varchar('coupon_id', { length: 255 }).references(() => coupons.id, {
-    onDelete: 'set null',
-  }),
 })
 
 export const purchasesRelations = relations(purchases, ({ one }) => ({
@@ -369,36 +366,6 @@ export const coupons = mysqlTable('coupon', {
   discountValue: int('discount_value').notNull(),
   expires: timestamp('expires', { mode: 'date' }),
   isActive: boolean('is_active').default(true).notNull(),
-})
-
-export const orders = mysqlTable('order', {
-  id: varchar('id', { length: 255 })
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  userId: varchar('user_id', { length: 255 })
-    .notNull()
-    .references(() => users.id, {
-      onDelete: 'cascade',
-    }),
-  totalAmount: int('total_amount').notNull(),
-  status: varchar('status', { length: 255 }).notNull(), // Ví dụ: 'pending', 'completed', 'canceled'
-  createdAt: timestamp('created_at', { mode: 'date' }),
-})
-
-export const orderItems = mysqlTable('order_item', {
-  id: varchar('id', { length: 255 })
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  orderId: varchar('order_id', { length: 255 })
-    .notNull()
-    .references(() => orders.id, {
-      onDelete: 'cascade',
-    }),
-  courseId: varchar('course_id', { length: 255 })
-    .notNull()
-    .references(() => courses.id, {
-      onDelete: 'cascade',
-    }),
 })
 
 export const carts = mysqlTable('cart', {

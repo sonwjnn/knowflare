@@ -1,5 +1,5 @@
 import { db } from '@/db/drizzle'
-import { insertCoursesSchema, subscriptions } from '@/db/schema'
+import { insertCoursesSchema, purchases, subscriptions } from '@/db/schema'
 import { stripe } from '@/lib/stripe'
 import { verifyAuth } from '@hono/auth-js'
 import { zValidator } from '@hono/zod-validator'
@@ -62,14 +62,16 @@ const app = new Hono()
     verifyAuth(),
     zValidator(
       'json',
-      z.array(
-        insertCoursesSchema.pick({
-          id: true,
-          title: true,
-          imageUrl: true,
-          price: true,
-        })
-      )
+      z.object({
+        courses: z.array(
+          insertCoursesSchema.pick({
+            id: true,
+            title: true,
+            imageUrl: true,
+            price: true,
+          })
+        ),
+      })
     ),
     async c => {
       const auth = c.get('authUser')
@@ -78,20 +80,29 @@ const app = new Hono()
         return c.json({ error: 'Unauthorized' }, 401)
       }
 
+      const { courses } = c.req.valid('json')
+
+      const line_items = courses.map(item => ({
+        quantity: 1,
+        price_data: {
+          currency: 'USD',
+          product_data: {
+            name: item.title,
+          },
+          unit_amount: (item.price || 0) * 100,
+        },
+      }))
+
       const session = await stripe.checkout.sessions.create({
-        success_url: `${process.env.NEXT_PUBLIC_APP_URL}?success=1`,
-        cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}?canceled=1`,
-        payment_method_types: ['card', 'paypal'],
-        mode: 'subscription',
+        success_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment/checkout?success=1`,
+        cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment/checkout?canceled=1`,
+        payment_method_types: ['card'],
+        mode: 'payment',
         billing_address_collection: 'auto',
         customer_email: auth.token.email || '',
-        line_items: [
-          {
-            price: process.env.STRIPE_PRICE_ID,
-            quantity: 1,
-          },
-        ],
+        line_items,
         metadata: {
+          productIds: JSON.stringify(courses.map(item => item.id)),
           userId: auth.token.id,
         },
       })
@@ -124,6 +135,7 @@ const app = new Hono()
     const session = event.data.object as Stripe.Checkout.Session
 
     if (event.type === 'checkout.session.completed') {
+      //TODO: Fix error "Stripe: Argument "subscription_exposed_id" must be a strin"
       const subscription = await stripe.subscriptions.retrieve(
         session.subscription as string
       )
@@ -142,6 +154,17 @@ const app = new Hono()
         createdAt: new Date(),
         updatedAt: new Date(),
       })
+
+      // const courseIds = JSON.parse(session?.metadata?.productIds) as string[]
+
+      // const purchasesData = courseIds
+      //   .map(id => ({
+      //     userId: session?.metadata?.userId!,
+      //     courseId: id,
+      //   }))
+      //   .filter(data => data.userId !== undefined)
+
+      // await db.insert(purchases).values(purchasesData)
     }
 
     if (event.type === 'invoice.payment_succeeded') {
