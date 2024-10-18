@@ -16,7 +16,7 @@ const LearnPage = () => {
 
   if (!chapters) redirect(`/courses`)
 
-  return redirect(`/courses/${courseId}/learn/chapters/${chapters[0].id}`)
+  return redirect(`/courses/${courseId}/learn/chapters/${chapters[0]?.id}`)
 }
 
 export default LearnPage

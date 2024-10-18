@@ -1,6 +1,7 @@
 import { db } from '@/db/drizzle'
 import { getProgress } from '@/db/queries'
 import {
+  CourseLevel,
   carts,
   categories,
   chapters,
@@ -23,10 +24,13 @@ const app = new Hono()
       z.object({
         categoryId: z.string().optional(),
         title: z.string().optional(),
+        level: z.string().optional(),
       })
     ),
     async c => {
-      const { title, categoryId } = c.req.valid('query')
+      const { title, categoryId, level } = c.req.valid('query')
+
+      console.log(level, categoryId, title)
 
       const data = await db
         .select({
@@ -35,6 +39,7 @@ const app = new Hono()
           description: courses.description,
           imageUrl: courses.imageUrl,
           price: courses.price,
+          level: courses.level,
           isPublished: courses.isPublished,
           category: {
             id: categories.id,
@@ -47,7 +52,8 @@ const app = new Hono()
           and(
             eq(courses.isPublished, true),
             title ? like(courses.title, `%${title}%`) : undefined,
-            categoryId ? eq(courses.categoryId, categoryId) : undefined
+            categoryId ? eq(courses.categoryId, categoryId) : undefined,
+            level ? eq(courses.level, level as CourseLevel) : undefined
           )
         )
         .orderBy(desc(courses.date))

@@ -14,33 +14,33 @@ import Stripe from 'stripe'
 import { z } from 'zod'
 
 const app = new Hono()
-  // .post('/billing', verifyAuth(), async c => {
-  //   const auth = c.get('authUser')
+  .post('/billing', verifyAuth(), async c => {
+    const auth = c.get('authUser')
 
-  //   if (!auth.token?.id) {
-  //     return c.json({ error: 'Unauthorized' }, 401)
-  //   }
+    if (!auth.token?.id) {
+      return c.json({ error: 'Unauthorized' }, 401)
+    }
 
-  //   const [subscription] = await db
-  //     .select()
-  //     .from(subscriptions)
-  //     .where(eq(subscriptions.userId, auth.token.id))
+    const [order] = await db
+      .select()
+      .from(orders)
+      .where(eq(orders.userId, auth.token.id))
 
-  //   if (!subscription) {
-  //     return c.json({ error: 'No subscription found' }, 404)
-  //   }
+    if (!order) {
+      return c.json({ error: 'No subscription found' }, 404)
+    }
 
-  //   const session = await stripe.billingPortal.sessions.create({
-  //     customer: subscription.customerId,
-  //     return_url: `${process.env.NEXT_PUBLIC_APP_URL}`,
-  //   })
+    const session = await stripe.billingPortal.sessions.create({
+      customer: order.customerId,
+      return_url: `${process.env.NEXT_PUBLIC_APP_URL}`,
+    })
 
-  //   if (!session.url) {
-  //     return c.json({ error: 'Failed to create session' }, 400)
-  //   }
+    if (!session.url) {
+      return c.json({ error: 'Failed to create session' }, 400)
+    }
 
-  //   return c.json({ data: session.url })
-  // })
+    return c.json({ data: session.url })
+  })
   // .get("/current", verifyAuth(), async (c) => {
   //   const auth = c.get("authUser");
 
@@ -109,6 +109,9 @@ const app = new Hono()
         billing_address_collection: 'auto',
         customer_email: auth.token.email || '',
         customer_creation: 'always',
+        invoice_creation: {
+          enabled: true,
+        },
         line_items,
         metadata: {
           productIds: JSON.stringify(courses.map(item => item.id)),

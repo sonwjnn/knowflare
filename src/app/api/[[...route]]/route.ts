@@ -36,7 +36,7 @@ const routes = app
   .route('/courses', courses)
   .route('/chapters', chapters)
   // .route('/attachments', attachments)
-  // .route('/purchases', purchases)
+  .route('/purchases', purchases)
   // .route('/teachers', teachers)
   // .route('/userProgress', userProgress)
   .route('/carts', carts)

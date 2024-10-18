@@ -128,6 +128,15 @@ export const passwordResetTokens = mysqlTable(
   })
 )
 
+export enum CourseLevel {
+  BEGINNER = 'beginner',
+  INTERMEDIATE = 'intermediate',
+  ADVANCED = 'advanced',
+  ALL_LEVEL = 'all level',
+}
+
+export const levelEnum = mysqlEnum('level', enumToPgEnum(CourseLevel))
+
 export const courses = mysqlTable('course', {
   id: varchar('id', { length: 255 })
     .primaryKey()
@@ -143,6 +152,7 @@ export const courses = mysqlTable('course', {
       onDelete: 'set null',
     }
   ),
+  level: levelEnum.default(CourseLevel.ALL_LEVEL).notNull(),
   title: varchar('title', { length: 255 }).notNull(),
   description: varchar('description', { length: 255 }),
   imageUrl: varchar('image_url', { length: 255 }),

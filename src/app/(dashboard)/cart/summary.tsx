@@ -11,7 +11,7 @@ export const Summary = () => {
     if (carts?.length === 0) return
 
     const courses = (carts ?? []).map(item => ({
-      id: item.id,
+      id: item.courseId,
       title: item.title,
       imageUrl: item.imageUrl,
       price: item.price,

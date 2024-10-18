@@ -1,6 +1,5 @@
 'use client'
 
-import NavbarRoutes from '@/components/navbar-routes'
 import SearchInput from '@/components/search-input'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'

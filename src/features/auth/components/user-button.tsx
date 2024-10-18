@@ -8,15 +8,25 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { useGetCurrentTeacher } from '@/features/teachers/use-get-current-teacher'
-import { BrainCog, CreditCard, Loader, LogOut } from 'lucide-react'
+import { useBilling } from '@/features/subscriptions/api/use-billing'
+import {
+  BrainCog,
+  CreditCard,
+  Loader,
+  LogOut,
+  TvMinimalPlay,
+} from 'lucide-react'
 import { signOut, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 
 export const UserButton = () => {
-  const { data: teacher } = useGetCurrentTeacher()
+  const mutation = useBilling()
   const session = useSession()
   const router = useRouter()
+
+  const onClick = () => {
+    mutation.mutate()
+  }
 
   if (session.status === 'loading') {
     return <Loader className="size-4 animate-spin text-muted-foreground" />
@@ -41,7 +51,7 @@ export const UserButton = () => {
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-60">
-        {teacher && (
+        {/* {teacher && (
           <DropdownMenuItem
             className="h-10"
             onClick={() => router.push(`/teacher/${teacher.id}/courses`)}
@@ -50,11 +60,19 @@ export const UserButton = () => {
             <BrainCog className="mr-2 size-4" />
             Teacher Mode
           </DropdownMenuItem>
-        )}
-        {/* <DropdownMenuItem className="h-10" onClick={() => {}} disabled={false}>
+        )} */}
+        <DropdownMenuItem
+          className="h-10"
+          onClick={() => router.push(`/my-courses`)}
+          disabled={false}
+        >
+          <TvMinimalPlay className="mr-2 size-4" />
+          My course
+        </DropdownMenuItem>
+        <DropdownMenuItem className="h-10" onClick={onClick} disabled={false}>
           <CreditCard className="mr-2 size-4" />
           Billing
-        </DropdownMenuItem> */}
+        </DropdownMenuItem>
         <DropdownMenuItem
           className="h-10"
           onClick={() => signOut()}

@@ -12,6 +12,7 @@ export const List = () => {
   const searchParams = useSearchParams()
   const title = searchParams.get('title') || ''
   const categoryId = searchParams.get('categoryId') || ''
+  const level = searchParams.get('level') || ''
 
   const { data: carts, isPending: cartsLoading } = useGetCarts()
   const { data: wishlists, isPending: wishlistsLoading } = useGetWishlists()
@@ -19,6 +20,7 @@ export const List = () => {
   const { data: courses, isPending: coursesLoading } = useGetCourses({
     categoryId: categoryId === 'all' ? '' : categoryId,
     title,
+    level,
   })
 
   const isPending = cartsLoading || coursesLoading
@@ -44,18 +46,14 @@ export const List = () => {
   if (courses?.length === 0) {
     return (
       <div className="flex h-[50vh] items-center justify-center">
-        <Card className="w-full max-w-md border-0">
-          <CardContent className="flex flex-col items-center p-6 text-center">
-            <BookOpen className="mb-4 h-12 w-12 text-muted-foreground" />
-            <h2 className="mb-2 text-2xl font-semibold">
-              No Courses Available
-            </h2>
-            <p className="mb-4 text-muted-foreground">
-              It looks like there are no courses available at the moment. Check
-              back later for new additions!
-            </p>
-          </CardContent>
-        </Card>
+        <div className="flex w-2/3 flex-col items-center justify-center">
+          <BookOpen className="mb-4 h-12 w-12 text-muted-foreground" />
+          <h2 className="mb-2 text-2xl font-semibold">No Courses Available</h2>
+          <p className="mb-4 text-center text-muted-foreground">
+            It looks like there are no courses available at the moment. Check
+            back later for new additions!
+          </p>
+        </div>
       </div>
     )
   }

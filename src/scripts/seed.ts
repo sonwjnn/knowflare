@@ -1,4 +1,5 @@
 import { categories, chapters, courses } from '@/db/schema'
+import { CourseLevel } from '@/db/schema'
 import { config } from 'dotenv'
 import { drizzle } from 'drizzle-orm/mysql2'
 import mysql from 'mysql2/promise'
@@ -20,44 +21,51 @@ function getRandomImageUrl(): string {
   return `https://picsum.photos/id/${randomId}/200/200`
 }
 
+function getRandomLevel() {
+  const levels = Object.values(CourseLevel)
+  return levels[Math.floor(Math.random() * levels.length)]
+}
+
 async function main() {
   try {
     // Reset db
+    await db.delete(categories).execute()
     await db.delete(chapters).execute()
     await db.delete(courses).execute()
-    await db.delete(categories).execute()
 
-    const userId = 'fa0569b1-1954-43d5-a586-b5176523fde6'
-
-    const categoryIds = Array.from({ length: 8 }, (_, i) => uuidv4())
+    const userId = '48ee14d7-953b-4a2e-a92b-14d8d8f60fff'
 
     const SEED_CATEGORIES = [
-      { id: categoryIds[1], name: 'IT' },
-      { id: categoryIds[2], name: 'Health' },
-      { id: categoryIds[3], name: 'Language' },
-      { id: categoryIds[4], name: 'Business' },
-      { id: categoryIds[5], name: 'Management' },
-      { id: categoryIds[6], name: 'English' },
-      { id: categoryIds[7], name: 'Personal Development' },
-      { id: categoryIds[8], name: 'Sales & Marketing' },
-      { id: categoryIds[9], name: 'Engineering & Construction' },
-      { id: categoryIds[10], name: 'Teaching & Academics' },
+      { id: uuidv4(), name: 'IT' },
+      { id: uuidv4(), name: 'Health' },
+      { id: uuidv4(), name: 'Language' },
+      { id: uuidv4(), name: 'Business' },
+      { id: uuidv4(), name: 'Management' },
+      { id: uuidv4(), name: 'English' },
+      { id: uuidv4(), name: 'Personal Development' },
+      { id: uuidv4(), name: 'Sales & Marketing' },
+      { id: uuidv4(), name: 'Engineering & Construction' },
+      { id: uuidv4(), name: 'Teaching & Academics' },
     ]
 
     // Seed categories
-    await db.insert(categories).values(SEED_CATEGORIES)
+    await db.insert(categories).values(SEED_CATEGORIES).execute()
+
+    // Retrieve inserted category IDs
+    const categoryIds = SEED_CATEGORIES.map(cat => cat.id)
 
     // Create courses
     const courseIds = Array.from({ length: 30 }, () => uuidv4())
     const SEED_COURSES = courseIds.map((id, index) => ({
       id,
-      userId, // Replace with a valid user ID
-      categoryId: categoryIds[index % categoryIds.length], // Assign categories in a round-robin manner
+      userId,
+      categoryId: categoryIds[index % categoryIds.length], // Ensure valid category ID
       title: `Course Title ${index + 1}`,
       description: `Description for Course Title ${index + 1}`,
       imageUrl: getRandomImageUrl(),
       price: Math.floor(Math.random() * 100) + 1,
       isPublished: Math.random() < 0.5,
+      level: getRandomLevel(),
       date: new Date(),
     }))
 
