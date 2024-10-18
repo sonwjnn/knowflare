@@ -4,11 +4,14 @@ import Logo from '@/app/(dashboard)/logo'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { useGetChapters } from '@/features/chapters/api/use-get-chapters'
 import { useCommentsSheet } from '@/features/comments/store/use-comments-sheet'
+import { useChapterId } from '@/hooks/use-chapter-id'
 import { useCourseId } from '@/hooks/use-course-id'
 import { Bell, ChevronLeft, ChevronRight } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 import { ChaptersList } from './chapters-list'
 import { MobileChaptersButton } from './mobile-chapters-button'
@@ -17,7 +20,20 @@ const ReactPlayer = dynamic(() => import('react-player'), { ssr: false })
 
 export default function CourseInterface() {
   const courseId = useCourseId()
+  const chapterId = useChapterId()
+  const router = useRouter()
+  const { data: chapters, isPending: chaptersLoading } =
+    useGetChapters(courseId)
   const [open, setOpen] = useCommentsSheet()
+
+  const currentChapter =
+    chapters?.[chapters.findIndex(chapter => chapter.id === chapterId)] || null
+  const nextChapter =
+    chapters?.[chapters.findIndex(chapter => chapter.id === chapterId) + 1] ||
+    null
+  const prevChapter =
+    chapters?.[chapters.findIndex(chapter => chapter.id === chapterId) - 1] ||
+    null
 
   return (
     <div className="flex h-screen flex-col bg-gray-100">
@@ -64,14 +80,30 @@ export default function CourseInterface() {
               </div>
             </div>
             <div className="mb-6">
-              <h2 className="text-2xl font-bold">DOM CSS</h2>
+              <h2 className="text-2xl font-bold">{currentChapter?.title}</h2>
               <p className="text-gray-600">Updated 2 months ago</p>
             </div>
             <div className="mb-6 flex justify-between">
-              <Button variant="outline">
+              <Button
+                variant="outline"
+                disabled={chaptersLoading || !!prevChapter?.id === false}
+                onClick={() =>
+                  router.push(
+                    `/courses/${courseId}/learn/chapters/${prevChapter?.id}`
+                  )
+                }
+              >
                 <ChevronLeft className="mr-2 h-4 w-4" /> Previous Lesson
               </Button>
-              <Button variant="outline">
+              <Button
+                variant="outline"
+                disabled={chaptersLoading || !!nextChapter?.id === false}
+                onClick={() =>
+                  router.push(
+                    `/courses/${courseId}/learn/chapters/${nextChapter?.id}`
+                  )
+                }
+              >
                 Next Lesson <ChevronRight className="ml-2 h-4 w-4" />
               </Button>
             </div>

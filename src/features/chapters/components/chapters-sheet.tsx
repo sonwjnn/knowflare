@@ -9,9 +9,16 @@ import {
 } from '@/components/ui/sheet'
 import { insertChaptersSchema } from '@/db/schema'
 import { useChaptersSheet } from '@/features/chapters/store/use-chapters-sheet'
+import { useChapterId } from '@/hooks/use-chapter-id'
+import { useCourseId } from '@/hooks/use-course-id'
+import { cn } from '@/lib/utils'
 import { ChevronDown } from 'lucide-react'
+import Link from 'next/link'
 import { useState } from 'react'
 import { z } from 'zod'
+
+import { useGetChapter } from '../api/use-get-chapter'
+import { useGetChapters } from '../api/use-get-chapters'
 
 type ChaptersSheetProps = {}
 
@@ -47,14 +54,18 @@ const formSchema = insertChaptersSchema.omit({
 type FormValues = z.input<typeof formSchema>
 
 export const ChaptersSheet = ({}: ChaptersSheetProps) => {
+  const courseId = useCourseId()
+  const chapterId = useChapterId()
   const [open, setOpen] = useChaptersSheet()
+  const { data: chapters, isPending: chaptersLoading } =
+    useGetChapters(courseId)
   const [expandedChapter, setExpandedChapter] = useState<number | null>(null)
 
   const onSubmit = (values: FormValues) => {}
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetContent className="w-full space-y-4 md:w-[50%]">
+      <SheetContent className="w-full space-y-4 p-2 md:w-[50%]">
         <div className="flex h-full flex-col">
           <div className="border-b border-gray-200 p-4">
             <SheetTitle>Course Content</SheetTitle>
@@ -67,35 +78,41 @@ export const ChaptersSheet = ({}: ChaptersSheetProps) => {
           </div>
           <ScrollArea className="flex-1">
             <div className="p-4">
-              {chapters.map(chapter => (
-                <div key={chapter.id} className="mb-2">
+              {chapters?.map((chapter, index) => (
+                <Link
+                  href={`/courses/${courseId}/learn/chapters/${chapter.id}`}
+                  key={chapter.id}
+                  className="mb-2"
+                >
                   <Button
                     variant="ghost"
-                    className="w-full justify-between text-sm"
-                    onClick={() =>
-                      setExpandedChapter(
-                        expandedChapter === chapter.id ? null : chapter.id
-                      )
-                    }
+                    className={cn(
+                      'w-full justify-between text-sm',
+                      chapter.id === chapterId &&
+                        'bg-accent text-accent-foreground'
+                    )}
+                    // onClick={() =>
+                    //   setExpandedChapter(
+                    //     expandedChapter === chapter.id ? null : chapter.id
+                    //   )
+                    // }
                   >
                     <span className="truncate font-medium">
-                      {chapter.id}. {chapter.title}
+                      {index + 1}. {chapter.title}
                     </span>
-                    <ChevronDown
-                      className={`h-4 w-4 flex-shrink-0 transition-transform ${
-                        expandedChapter === chapter.id
-                          ? 'rotate-180 transform'
-                          : ''
-                      }`}
-                    />
+                    {/* <ChevronDown
+                  className={`h-4 w-4 flex-shrink-0 transition-transform ${
+                    expandedChapter === chapter.id ? 'rotate-180 transform' : ''
+                  }`}
+                /> */}
                   </Button>
-                  {expandedChapter === chapter.id && (
-                    <div className="ml-4 mt-2 text-xs text-gray-600">
-                      <p>{chapter.lessons} lessons</p>
-                      <p>{chapter.duration}</p>
-                    </div>
-                  )}
+                  {/* {expandedChapter === chapter.id && (
+                <div className="ml-4 mt-2 text-xs text-gray-600">
+                  <p>{chapter.lessons} lessons</p>
+                  <p>{chapter.duration}</p>
                 </div>
+              )} */}
+                </Link>
               ))}
             </div>
           </ScrollArea>
