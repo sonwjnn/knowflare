@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Textarea } from '@/components/ui/textarea'
+import { useGetCurrentPurchase } from '@/features/purchases/api/use-get-current-purchases'
 import { useCreateReview } from '@/features/reviews/api/use-create-review'
 import { useGetReviews } from '@/features/reviews/api/use-get-reviews'
 import { useCourseId } from '@/hooks/use-course-id'
@@ -27,6 +28,8 @@ export const Reviews = () => {
   const { data: reviews, isPending: reviewsLoading } = useGetReviews(courseId)
   const { mutate: createReview, isPending: createReviewLoading } =
     useCreateReview()
+  const { data: currentPurchase, isPending: currentPurchaseLoading } =
+    useGetCurrentPurchase(courseId)
 
   const [content, setContent] = useState<string>('')
   const [rating, setRating] = useState<number>(0)
@@ -75,6 +78,8 @@ export const Reviews = () => {
 
   const currentReview = reviews?.some(item => item.user.id === currentUser?.id)
 
+  const canReview = !!currentPurchase && !currentReview
+
   return (
     <Card>
       <CardHeader>
@@ -99,7 +104,7 @@ export const Reviews = () => {
         ))}
       </CardContent>
       <CardFooter>
-        {!currentReview && (
+        {canReview && (
           <form onSubmit={onSubmit} className="w-full">
             <h4 className="mb-2 text-lg font-semibold">Write a Review</h4>
             <div className="space-y-4">

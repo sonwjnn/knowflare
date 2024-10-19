@@ -235,31 +235,7 @@ export const chaptersRelations = relations(chapters, ({ one, many }) => ({
     fields: [chapters.courseId],
     references: [courses.id],
   }),
-  muxData: one(muxData, {
-    fields: [chapters.id],
-    references: [muxData.chapterId],
-  }),
   userProgress: many(userProgress),
-}))
-
-export const muxData = mysqlTable('mux_data', {
-  id: varchar('id', { length: 255 })
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  chapterId: varchar('chapter_id', { length: 255 })
-    .notNull()
-    .references(() => chapters.id, {
-      onDelete: 'cascade',
-    }),
-  assetId: varchar('asset_id', { length: 255 }).notNull(),
-  playbackId: varchar('playback_id', { length: 255 }),
-})
-
-export const muxDataRelations = relations(muxData, ({ one }) => ({
-  chapter: one(chapters, {
-    fields: [muxData.chapterId],
-    references: [chapters.id],
-  }),
 }))
 
 export const userProgress = mysqlTable('user_progress', {

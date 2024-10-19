@@ -40,7 +40,7 @@ export const Item = ({
     <Link key={id} href={`/courses/${id}`}>
       <Card
         key={id}
-        className="group overflow-hidden transition-all duration-300 hover:shadow-lg"
+        className="group overflow-hidden border-0 transition-all duration-300 hover:shadow-lg"
       >
         <div className="relative">
           <Image
@@ -66,7 +66,7 @@ export const Item = ({
           </h3>
           <p className="mb-4 text-sm text-gray-600">{description}</p>
           <div className="mb-4 flex items-center">
-            <Star className="mr-1 h-5 w-5 text-yellow-400" />
+            <Star className="mr-1 h-5 w-5 fill-yellow-400 text-yellow-400" />
             <span className="mr-2 text-sm font-medium text-gray-800">{5}</span>
             <span className="text-sm text-gray-500">(0 students)</span>
           </div>

@@ -101,18 +101,13 @@ const app = new Hono()
       }))
 
       const session = await stripe.checkout.sessions.create({
+        line_items,
         success_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment/checkout?success=1`,
         cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment/checkout?canceled=1`,
-        submit_type: 'pay',
         payment_method_types: ['card'],
         mode: 'payment',
         billing_address_collection: 'auto',
         customer_email: auth.token.email || '',
-        customer_creation: 'always',
-        invoice_creation: {
-          enabled: true,
-        },
-        line_items,
         metadata: {
           productIds: JSON.stringify(courses.map(item => item.id)),
           userId: auth.token.id,

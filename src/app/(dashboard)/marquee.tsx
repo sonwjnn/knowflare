@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { Star } from 'lucide-react'
 
 export const Marquee = () => {
   const marqueeVariants = {
@@ -26,9 +27,9 @@ export const Marquee = () => {
           {[...Array(20)].map((_, i) => (
             <span
               key={i}
-              className="mx-4 text-3xl capitalize text-white opacity-50"
+              className="mx-4 gap-x-1 text-3xl capitalize text-white opacity-50"
             >
-              knowflare
+              Knowflare
             </span>
           ))}
         </div>

@@ -10,64 +10,41 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
+import { Skeleton } from '@/components/ui/skeleton'
 import { useGetPurchases } from '@/features/purchases/api/use-get-purchases'
 import { Award, BookOpen, Clock } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 
-const purchasedCourses = [
-  {
-    id: 1,
-    title: 'Advanced Web Development',
-    progress: 65,
-    totalLessons: 12,
-    completedLessons: 8,
-    duration: '10 hours',
-    image: '',
-    category: 'Programming',
-  },
-  {
-    id: 2,
-    title: 'Data Science Fundamentals',
-    progress: 30,
-    totalLessons: 15,
-    completedLessons: 5,
-    duration: '15 hours',
-    image: '',
-    category: 'Data',
-  },
-  {
-    id: 3,
-    title: 'Mobile App Development with React Native',
-    progress: 90,
-    totalLessons: 10,
-    completedLessons: 9,
-    duration: '8 hours',
-    image: '',
-    category: 'Mobile',
-  },
-  {
-    id: 4,
-    title: 'Machine Learning Basics',
-    progress: 10,
-    totalLessons: 20,
-    completedLessons: 2,
-    duration: '20 hours',
-    image: '',
-    category: 'AI',
-  },
-]
-
 export default function EnhancedPurchasedCourses() {
   const { data: courses, isPending: coursesLoading } = useGetPurchases()
 
+  if (coursesLoading) {
+    return <CourseCardSkeleton />
+  }
+
+  if (courses?.length === 0) {
+    return (
+      <div className="flex h-[50vh] items-center justify-center">
+        <div className="flex w-2/3 flex-col items-center justify-center">
+          <BookOpen className="mb-4 h-12 w-12 text-muted-foreground" />
+          <h2 className="mb-2 text-2xl font-semibold">No Purchased Courses</h2>
+          <p className="mb-4 w-1/2 text-center text-muted-foreground">
+            It seems like you haven&apos;t purchased any courses yet. Start
+            exploring and purchase a course to begin your learning journey!
+          </p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen px-4 py-12 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-7xl">
+      <div className="max-w-8xl mx-auto">
         <h1 className="mb-8 text-center text-4xl font-extrabold text-gray-900">
           My Learning Journey
         </h1>
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-8 lg:grid-cols-3 xl:grid-cols-4">
           {courses?.map(course => (
             <Card
               key={course.id}
@@ -130,6 +107,55 @@ export default function EnhancedPurchasedCourses() {
                     )}
                   </Button>
                 </Link>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const CourseCardSkeleton = () => {
+  return (
+    <div className="min-h-screen px-4 py-12 sm:px-6 lg:px-8">
+      <div className="max-w-8xl mx-auto">
+        <h1 className="mb-8 text-center text-4xl font-extrabold text-gray-900">
+          My Learning Journey
+        </h1>
+        <div className="grid grid-cols-2 gap-8 lg:grid-cols-3 xl:grid-cols-4">
+          {Array.from({ length: 8 }).map((_, index) => (
+            <Card
+              key={index}
+              className="flex animate-pulse flex-col overflow-hidden"
+            >
+              <div className="relative">
+                <Skeleton className="aspect-video w-full" />
+              </div>
+              <CardHeader className="px-4 pb-4">
+                <Skeleton className="h-6 w-3/4" />
+              </CardHeader>
+              <CardContent className="flex-grow px-4">
+                <div className="space-y-4">
+                  <div>
+                    <div className="mb-1 flex justify-between">
+                      <Skeleton className="h-4 w-16" />
+                      <Skeleton className="h-4 w-8" />
+                    </div>
+                    <Skeleton className="h-2 w-full" />
+                  </div>
+                  <div className="flex items-center">
+                    <Skeleton className="mr-2 h-4 w-4" />
+                    <Skeleton className="h-4 w-24" />
+                  </div>
+                  <div className="flex items-center">
+                    <Skeleton className="mr-2 h-4 w-4" />
+                    <Skeleton className="h-4 w-16" />
+                  </div>
+                </div>
+              </CardContent>
+              <CardFooter className="px-4 pt-4">
+                <Skeleton className="h-10 w-full" />
               </CardFooter>
             </Card>
           ))}

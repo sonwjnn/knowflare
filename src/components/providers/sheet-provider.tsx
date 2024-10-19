@@ -1,5 +1,6 @@
 'use client'
 
+import { FiltersSheet } from '@/components/filters-sheet'
 import { ChaptersSheet } from '@/features/chapters/components/chapters-sheet'
 import { CommentsSheet } from '@/features/comments/components/comments-sheet'
 import { useCommentsSheet } from '@/features/comments/store/use-comments-sheet'
@@ -14,6 +15,7 @@ export const SheetProvider = () => {
   return (
     <>
       {open && <CommentsSheet />}
+      <FiltersSheet />
       <ChaptersSheet />
     </>
   )

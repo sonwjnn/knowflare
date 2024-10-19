@@ -13,6 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useCreateCart } from '@/features/carts/use-create-cart'
 import { useGetCartByCourseId } from '@/features/carts/use-get-cart-by-course-id'
 import { useGetCourse } from '@/features/courses/api/use-get-course'
+import { useGetCurrentPurchase } from '@/features/purchases/api/use-get-current-purchases'
 import { useGetReviews } from '@/features/reviews/api/use-get-reviews'
 import { useCreateWishlist } from '@/features/wishlists/use-create-wishlist'
 import { useDeleteWishlist } from '@/features/wishlists/use-delete-wishlist'
@@ -55,6 +56,8 @@ export default function CourseDetail() {
     useDeleteWishlist(wishlist?.id)
 
   const { data: reviews, isPending: reviewsLoading } = useGetReviews(courseId)
+  const { data: currentPurchase, isPending: currentPurchaseLoading } =
+    useGetCurrentPurchase(courseId)
 
   const isWishlistLoading =
     createWishlistLoading || wishlistLoading || deleteWishlistLoading
@@ -94,6 +97,14 @@ export default function CourseDetail() {
     } else {
       createWishlist({ courseId })
     }
+  }
+
+  const onBuyNow = () => {
+    if (!cart) {
+      createCart({ courseId })
+    }
+
+    router.push('/cart')
   }
 
   if (courseLoading) {
@@ -241,7 +252,11 @@ export default function CourseDetail() {
                   />
                 </Button>
               </div>
-              <Button variant="outline" className="w-full px-4 py-6 text-lg">
+              <Button
+                onClick={onBuyNow}
+                variant="outline"
+                className="w-full px-4 py-6 text-lg"
+              >
                 Buy now
               </Button>
             </CardContent>
@@ -266,13 +281,17 @@ export default function CourseDetail() {
                   <span>Certificate</span>
                 </div>
               </div>
-
-              <Link href={`/courses/${courseId}/learn`} className="w-full">
-                <Button variant="outline" className="w-full px-4 py-6 text-lg">
-                  Learn now
-                  <ArrowRight className="ml-2 size-5" />
-                </Button>
-              </Link>
+              {!!currentPurchase && (
+                <Link href={`/courses/${courseId}/learn`} className="w-full">
+                  <Button
+                    variant="outline"
+                    className="w-full px-4 py-6 text-lg"
+                  >
+                    Learn now
+                    <ArrowRight className="ml-2 size-5" />
+                  </Button>
+                </Link>
+              )}
             </CardFooter>
           </Card>
         </div>

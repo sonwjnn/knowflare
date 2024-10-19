@@ -27,7 +27,7 @@ export const List = () => {
 
   if (isPending) {
     return (
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-2 gap-6 lg:grid-cols-3 xl:grid-cols-4">
         {[...Array(6)].map((_, index) => (
           <Card key={index} className="overflow-hidden">
             <Skeleton className="h-48 w-full" />
@@ -59,7 +59,7 @@ export const List = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid grid-cols-2 gap-6 lg:grid-cols-3 xl:grid-cols-4">
       {courses?.map(item => {
         const wishlistId = wishlists?.find(w => w.courseId === item.id)?.id
         const cartId = carts?.find(w => w.courseId === item.id)?.id
