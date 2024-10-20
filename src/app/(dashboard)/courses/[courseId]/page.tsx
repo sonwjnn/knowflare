@@ -46,8 +46,8 @@ export default function CourseDetail() {
   const { data: course, isPending: courseLoading } = useGetCourse(courseId)
 
   const { mutate: createCart, isPending: createCartLoading } = useCreateCart()
-  const { data: cart, isPending: cartLoading } = useGetCartByCourseId(courseId)
 
+  const { data: cart, isPending: cartLoading } = useGetCartByCourseId(courseId)
   const { mutate: createWishlist, isPending: createWishlistLoading } =
     useCreateWishlist()
   const { data: wishlist, isPending: wishlistLoading } =

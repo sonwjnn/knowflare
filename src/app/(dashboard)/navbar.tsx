@@ -31,7 +31,7 @@ const Navbar = () => {
               <SearchInput />
             </div>
             <Cart />
-            <Wishlist />
+            {/* <Wishlist /> */}
             {currentUser ? (
               <UserButton />
             ) : (

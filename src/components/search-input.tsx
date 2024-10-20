@@ -70,8 +70,16 @@ const SearchInput = () => {
               value={value}
               className="block w-full rounded-md border border-gray-300 bg-white py-2 pl-10 pr-3 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-transparent focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               placeholder="Search for a course"
-              type="search"
+              type="text"
             />
+            {value && (
+              <div
+                className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center"
+                onClick={onClear}
+              >
+                <X className="size-4 text-gray-400" />
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -102,7 +102,7 @@ const app = new Hono()
 
       const session = await stripe.checkout.sessions.create({
         line_items,
-        success_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment/checkout?success=1`,
+        success_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment/checkout?success=1&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment/checkout?canceled=1`,
         payment_method_types: ['card'],
         mode: 'payment',

@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { useBilling } from '@/features/subscriptions/api/use-billing'
 import {
+  BookHeart,
   BrainCog,
   CreditCard,
   Loader,
@@ -68,6 +69,14 @@ export const UserButton = () => {
         >
           <TvMinimalPlay className="mr-2 size-4" />
           My course
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className="h-10"
+          onClick={() => router.push(`/wishlist`)}
+          disabled={false}
+        >
+          <BookHeart className="mr-2 size-4" />
+          Wishlist
         </DropdownMenuItem>
         <DropdownMenuItem className="h-10" onClick={onClick} disabled={false}>
           <CreditCard className="mr-2 size-4" />

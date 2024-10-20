@@ -1,4 +1,17 @@
-import { categories, chapters, courses } from '@/db/schema'
+import {
+  attachments,
+  carts,
+  categories,
+  chapters,
+  comments,
+  courses,
+  orders,
+  purchases,
+  reviews,
+  subscriptions,
+  users,
+  wishlists,
+} from '@/db/schema'
 import { CourseLevel } from '@/db/schema'
 import { config } from 'dotenv'
 import { drizzle } from 'drizzle-orm/mysql2'
@@ -29,6 +42,15 @@ function getRandomLevel() {
 async function main() {
   try {
     // Reset db
+    await db.delete(orders).execute()
+    await db.delete(users).execute()
+    await db.delete(subscriptions).execute()
+    await db.delete(reviews).execute()
+    await db.delete(comments).execute()
+    await db.delete(attachments).execute()
+    await db.delete(carts).execute()
+    await db.delete(purchases).execute()
+    await db.delete(wishlists).execute()
     await db.delete(categories).execute()
     await db.delete(chapters).execute()
     await db.delete(courses).execute()

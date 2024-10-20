@@ -1,5 +1,5 @@
 import { db } from '@/db/drizzle'
-import { carts, courses, insertCartsSchema } from '@/db/schema'
+import { carts, courses, insertWishlistsSchema, wishlists } from '@/db/schema'
 import { verifyAuth } from '@hono/auth-js'
 import { zValidator } from '@hono/zod-validator'
 import { and, desc, eq } from 'drizzle-orm'
@@ -15,7 +15,7 @@ const app = new Hono()
 
     const data = await db
       .select({
-        id: carts.id,
+        id: wishlists.id,
         courseId: courses.id,
         title: courses.title,
         description: courses.description,
@@ -23,10 +23,10 @@ const app = new Hono()
         price: courses.price,
         date: courses.date,
       })
-      .from(carts)
-      .innerJoin(courses, eq(courses.id, carts.courseId))
-      .where(eq(carts.userId, auth.token.id))
-      .orderBy(desc(carts.date))
+      .from(wishlists)
+      .innerJoin(courses, eq(courses.id, wishlists.courseId))
+      .where(eq(wishlists.userId, auth.token.id))
+      .orderBy(desc(wishlists.date))
 
     return c.json({ data })
   })
@@ -44,8 +44,8 @@ const app = new Hono()
 
       const [data] = await db
         .select()
-        .from(carts)
-        .where(and(eq(carts.id, id), eq(carts.userId, auth.token.id)))
+        .from(wishlists)
+        .where(and(eq(wishlists.id, id), eq(wishlists.userId, auth.token.id)))
       if (!data) {
         return c.json({ error: 'Not found' }, 404)
       }
@@ -67,9 +67,12 @@ const app = new Hono()
 
       const [data] = await db
         .select()
-        .from(carts)
+        .from(wishlists)
         .where(
-          and(eq(carts.courseId, courseId), eq(carts.userId, auth.token.id))
+          and(
+            eq(wishlists.courseId, courseId),
+            eq(wishlists.userId, auth.token.id)
+          )
         )
 
       return c.json({ data: data || null })
@@ -80,7 +83,7 @@ const app = new Hono()
     verifyAuth(),
     zValidator(
       'json',
-      insertCartsSchema.pick({
+      insertWishlistsSchema.pick({
         courseId: true,
       })
     ),
@@ -92,7 +95,7 @@ const app = new Hono()
 
       const values = c.req.valid('json')
 
-      const [data] = await db.insert(carts).values({
+      const [data] = await db.insert(wishlists).values({
         ...values,
         userId: auth.token.id,
         date: new Date(),
@@ -105,6 +108,33 @@ const app = new Hono()
       return c.json({ data })
     }
   )
+  .post('/add-all-to-cart', verifyAuth(), async c => {
+    const auth = c.get('authUser')
+    if (!auth.token?.id) {
+      return c.json({ error: 'Unauthorized' }, 401)
+    }
+
+    const existingWishlists = await db
+      .select()
+      .from(wishlists)
+      .where(eq(wishlists.userId, auth.token.id))
+
+    if (!existingWishlists) {
+      return c.json({ error: 'No wishlists found' }, 404)
+    }
+
+    await db.delete(wishlists).where(eq(wishlists.userId, auth.token.id))
+
+    for (const wishlist of existingWishlists) {
+      await db.insert(carts).values({
+        userId: auth.token.id,
+        courseId: wishlist.courseId,
+        date: new Date(),
+      })
+    }
+
+    return c.json(null, 200)
+  })
   .delete(
     '/:id',
     verifyAuth(),
@@ -117,8 +147,8 @@ const app = new Hono()
 
       const { id } = c.req.valid('param')
       const [data] = await db
-        .delete(carts)
-        .where(and(eq(carts.id, id), eq(carts.userId, auth.token?.id)))
+        .delete(wishlists)
+        .where(and(eq(wishlists.id, id), eq(wishlists.userId, auth.token?.id)))
 
       if (!data) {
         return c.json({ error: 'Not found' }, 404)

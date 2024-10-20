@@ -327,26 +327,29 @@ export const orders = mysqlTable('order', {
   ),
 })
 
-export const reviews = mysqlTable('review', {
-  id: varchar('id', { length: 255 })
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  userId: varchar('user_id', { length: 255 })
-    .notNull()
-    .references(() => users.id, {
-      onDelete: 'cascade',
+export const reviews = mysqlTable(
+  'review',
+  {
+    userId: varchar('user_id', { length: 255 })
+      .notNull()
+      .references(() => users.id, {
+        onDelete: 'cascade',
+      }),
+    courseId: varchar('course_id', { length: 255 })
+      .notNull()
+      .references(() => courses.id, {
+        onDelete: 'cascade',
+      }),
+    rating: int('rating').notNull(),
+    content: varchar('content', { length: 255 }),
+    date: timestamp('date', { mode: 'date' }).default(sql`CURRENT_TIMESTAMP`),
+  },
+  reviews => ({
+    compositePk: primaryKey({
+      columns: [reviews.userId, reviews.courseId],
     }),
-  courseId: varchar('course_id', { length: 255 })
-    .notNull()
-    .references(() => courses.id, {
-      onDelete: 'cascade',
-    }),
-  rating: int('rating').notNull(),
-  content: varchar('content', { length: 255 }),
-  createdAt: timestamp('created_at', { mode: 'date' }).default(
-    sql`CURRENT_TIMESTAMP`
-  ),
-})
+  })
+)
 
 export const insertReviewsSchema = createInsertSchema(reviews)
 
@@ -383,42 +386,50 @@ export const coupons = mysqlTable('coupon', {
   isActive: boolean('is_active').default(true).notNull(),
 })
 
-export const carts = mysqlTable('cart', {
-  id: varchar('id', { length: 255 })
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  userId: varchar('user_id', { length: 255 })
-    .notNull()
-    .references(() => users.id, {
-      onDelete: 'cascade',
+export const carts = mysqlTable(
+  'cart',
+  {
+    userId: varchar('user_id', { length: 255 })
+      .notNull()
+      .references(() => users.id, {
+        onDelete: 'cascade',
+      }),
+    courseId: varchar('course_id', { length: 255 })
+      .notNull()
+      .references(() => courses.id, {
+        onDelete: 'cascade',
+      }),
+    date: timestamp('created_at', { mode: 'date' }),
+  },
+  carts => ({
+    compositePk: primaryKey({
+      columns: [carts.userId, carts.courseId],
     }),
-  courseId: varchar('course_id', { length: 255 })
-    .notNull()
-    .references(() => courses.id, {
-      onDelete: 'cascade',
-    }),
-  date: timestamp('created_at', { mode: 'date' }),
-})
+  })
+)
 
 export const insertCartsSchema = createInsertSchema(carts)
 
-export const wishlists = mysqlTable('wishlist', {
-  id: varchar('id', { length: 255 })
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  userId: varchar('user_id', { length: 255 })
-    .notNull()
-    .references(() => users.id, {
-      onDelete: 'cascade',
+export const wishlists = mysqlTable(
+  'wishlist',
+  {
+    userId: varchar('user_id', { length: 255 })
+      .notNull()
+      .references(() => users.id, {
+        onDelete: 'cascade',
+      }),
+    courseId: varchar('course_id', { length: 255 })
+      .notNull()
+      .references(() => courses.id, {
+        onDelete: 'cascade',
+      }),
+    date: timestamp('date', { mode: 'date' }).default(sql`CURRENT_TIMESTAMP`),
+  },
+  wishlists => ({
+    compositePk: primaryKey({
+      columns: [wishlists.userId, wishlists.courseId],
     }),
-  courseId: varchar('course_id', { length: 255 })
-    .notNull()
-    .references(() => courses.id, {
-      onDelete: 'cascade',
-    }),
-  date: timestamp('created_at', { mode: 'date' }).default(
-    sql`CURRENT_TIMESTAMP`
-  ),
-})
+  })
+)
 
 export const insertWishlistsSchema = createInsertSchema(wishlists)

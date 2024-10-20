@@ -15,7 +15,6 @@ const app = new Hono()
 
     const data = await db
       .select({
-        id: carts.id,
         courseId: courses.id,
         title: courses.title,
         description: courses.description,
@@ -45,7 +44,7 @@ const app = new Hono()
       const [data] = await db
         .select()
         .from(carts)
-        .where(and(eq(carts.id, id), eq(carts.userId, auth.token.id)))
+        .where(and(eq(carts.courseId, id), eq(carts.userId, auth.token.id)))
       if (!data) {
         return c.json({ error: 'Not found' }, 404)
       }
@@ -169,7 +168,7 @@ const app = new Hono()
       const { id } = c.req.valid('param')
       const [data] = await db
         .delete(carts)
-        .where(and(eq(carts.id, id), eq(carts.userId, auth.token?.id)))
+        .where(and(eq(carts.courseId, id), eq(carts.userId, auth.token?.id)))
 
       if (!data) {
         return c.json({ error: 'Not found' }, 404)

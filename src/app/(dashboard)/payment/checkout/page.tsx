@@ -1,19 +1,39 @@
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
+import { stripe } from '@/lib/stripe'
 import { ArrowLeft, CheckCircle, RotateCw, XCircle } from 'lucide-react'
 import Link from 'next/link'
+import { notFound } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 type Props = {
   searchParams: {
     success?: string
     error?: string
+    session_id?: string
   }
 }
 
-export default function CheckoutResult({ searchParams }: Props) {
-  const isSuccess = searchParams?.success
+export default async function CheckoutResult({ searchParams }: Props) {
+  if (!searchParams?.session_id) {
+    console.error('No session_id provided in searchParams:', searchParams)
+    return notFound()
+  }
+
+  let session
+  try {
+    session = await stripe.checkout.sessions.retrieve(
+      searchParams?.session_id as string
+    )
+  } catch {
+    return notFound()
+  }
+
+  if (session?.metadata?.productIds == null) return notFound()
+
+  const isSuccess = searchParams?.success && !!session.metadata.productIds
   const isError = searchParams?.error
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg transition-all duration-500 ease-out">

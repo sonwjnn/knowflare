@@ -6,7 +6,7 @@ import { Star } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { WishlistButton } from './wishlist-button'
+import { WishlistButton } from '../../../components/wishlist-button'
 
 type Props = {
   id: string
