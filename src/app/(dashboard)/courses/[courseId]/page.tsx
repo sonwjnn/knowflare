@@ -116,9 +116,9 @@ export default function CourseDetail() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl p-6">
+    <div className="mx-auto max-w-7xl p-6">
       <div className="grid gap-6 md:grid-cols-3">
-        <div className="md:col-span-2">
+        <div className="bg-white p-4 md:col-span-2">
           <Image
             src={courseDetails.image!}
             alt={courseDetails.title!}

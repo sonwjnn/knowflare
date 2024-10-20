@@ -41,6 +41,7 @@ const app = new Hono()
           price: courses.price,
           level: courses.level,
           isPublished: courses.isPublished,
+          date: courses.date,
           category: {
             id: categories.id,
             name: categories.name,

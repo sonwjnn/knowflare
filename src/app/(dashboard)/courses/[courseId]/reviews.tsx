@@ -52,6 +52,13 @@ export const Reviews = () => {
     )
   }
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      onSubmit(e as any)
+    }
+  }
+
   if (reviewsLoading) {
     return (
       <Card>
@@ -146,6 +153,7 @@ export const Reviews = () => {
                   disabled={createReviewLoading}
                   placeholder="Write your review here..."
                   value={content}
+                  onKeyDown={handleKeyDown}
                   onChange={e => setContent(e.target.value)}
                   className="mt-1"
                 />

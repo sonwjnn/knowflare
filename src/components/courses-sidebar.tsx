@@ -36,13 +36,6 @@ export const CourseSidebar = () => {
   }
 
   const levels = Object.values(CourseLevel)
-  const ratings = ['4.5+', '4.0+', '3.5+', '3.0+']
-  const sortOptions = [
-    { value: 'popular', label: 'Most Popular' },
-    { value: 'newest', label: 'Newest' },
-    { value: 'price-low', label: 'Price: Low to High' },
-    { value: 'price-high', label: 'Price: High to Low' },
-  ]
 
   const onClick = (value: string) => {
     const isSelected = value === categoryId
@@ -121,7 +114,7 @@ export const CourseSidebar = () => {
       <div className="mb-6">
         <h3 className="mb-2 font-medium">Rating</h3>
         <div className="space-y-2">
-          {[5, 4, 3, 2, 1].map(stars => (
+          {[5, 4, 3].map(stars => (
             <button
               key={stars}
               onClick={() => handleRatingClick(stars)}
@@ -148,59 +141,6 @@ export const CourseSidebar = () => {
             </button>
           ))}
         </div>
-      </div>
-
-      <div>
-        <h3 className="mb-2 font-medium">Price Range</h3>
-        <div className="flex space-x-4">
-          <div className="flex-1">
-            <Label htmlFor="min-price" className="text-sm text-gray-600">
-              Min Price
-            </Label>
-            <Input
-              type="number"
-              id="min-price"
-              placeholder="0"
-              value={minPrice}
-              onChange={e => setMinPrice(e.target.value)}
-              className="mt-1"
-            />
-          </div>
-          <div className="flex-1">
-            <Label htmlFor="max-price" className="text-sm text-gray-600">
-              Max Price
-            </Label>
-            <Input
-              type="number"
-              id="max-price"
-              placeholder="1000"
-              value={maxPrice}
-              onChange={e => setMaxPrice(e.target.value)}
-              className="mt-1"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <h3 className="mb-2 font-medium">Sort By</h3>
-        <Select
-        // value={filters.sort}
-        // onValueChange={value =>
-        //   setFilters(prev => ({ ...prev, sort: value }))
-        // }
-        >
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Sort courses" />
-          </SelectTrigger>
-          <SelectContent>
-            {sortOptions.map(option => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
       </div>
     </>
   )
