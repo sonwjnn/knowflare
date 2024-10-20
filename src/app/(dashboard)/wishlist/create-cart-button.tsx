@@ -6,21 +6,16 @@ import { cn } from '@/lib/utils'
 import { useRouter } from 'next/navigation'
 
 type Props = {
-  wishlistId: string
   courseId: string
   className?: string
 }
 
-export const CreateCartButton = ({
-  courseId,
-  wishlistId,
-  className,
-}: Props) => {
+export const CreateCartButton = ({ courseId, className }: Props) => {
   const router = useRouter()
   const { data: cart, isPending: cartLoading } = useGetCartByCourseId(courseId)
   const { mutate: createCart, isPending: createCartLoading } = useCreateCart()
   const { mutate: deleteWishlist, isPending: deleteWishlistLoading } =
-    useDeleteWishlist(wishlistId)
+    useDeleteWishlist(courseId)
 
   const isPending = cartLoading || createCartLoading || deleteWishlistLoading
 

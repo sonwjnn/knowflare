@@ -23,7 +23,7 @@ export const List = () => {
     level,
   })
 
-  const isPending = cartsLoading || coursesLoading
+  const isPending = coursesLoading
 
   if (isPending) {
     return (
@@ -61,8 +61,8 @@ export const List = () => {
   return (
     <div className="grid grid-cols-2 gap-6 lg:grid-cols-3 xl:grid-cols-4">
       {courses?.map(item => {
-        const wishlistId = wishlists?.find(w => w.courseId === item.id)?.id
-        const cartId = carts?.find(w => w.courseId === item.id)?.id
+        const isInWishlist = !!wishlists?.find(w => w.courseId === item.id)
+        const isInCart = !!carts?.find(w => w.courseId === item.id)
 
         return (
           <Item
@@ -72,8 +72,8 @@ export const List = () => {
             description={item.description}
             imageUrl={item.imageUrl}
             price={item.price}
-            cartId={cartId}
-            wishlistId={wishlistId}
+            isInCart={isInCart}
+            isInWishlist={isInWishlist}
           />
         )
       })}

@@ -108,6 +108,7 @@ const app = new Hono()
         mode: 'payment',
         billing_address_collection: 'auto',
         customer_email: auth.token.email || '',
+        customer_creation: 'always',
         metadata: {
           productIds: JSON.stringify(courses.map(item => item.id)),
           userId: auth.token.id,

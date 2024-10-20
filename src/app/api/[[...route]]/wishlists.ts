@@ -15,7 +15,6 @@ const app = new Hono()
 
     const data = await db
       .select({
-        id: wishlists.id,
         courseId: courses.id,
         title: courses.title,
         description: courses.description,
@@ -45,7 +44,9 @@ const app = new Hono()
       const [data] = await db
         .select()
         .from(wishlists)
-        .where(and(eq(wishlists.id, id), eq(wishlists.userId, auth.token.id)))
+        .where(
+          and(eq(wishlists.courseId, id), eq(wishlists.userId, auth.token.id))
+        )
       if (!data) {
         return c.json({ error: 'Not found' }, 404)
       }
@@ -148,7 +149,9 @@ const app = new Hono()
       const { id } = c.req.valid('param')
       const [data] = await db
         .delete(wishlists)
-        .where(and(eq(wishlists.id, id), eq(wishlists.userId, auth.token?.id)))
+        .where(
+          and(eq(wishlists.courseId, id), eq(wishlists.userId, auth.token?.id))
+        )
 
       if (!data) {
         return c.json({ error: 'Not found' }, 404)

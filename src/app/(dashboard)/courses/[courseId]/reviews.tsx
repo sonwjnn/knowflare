@@ -93,13 +93,13 @@ export const Reviews = () => {
         )}
         {reviews?.map(item => (
           <ReviewItem
-            key={item.id}
-            id={item.id}
+            key={item.courseId}
+            id={item.courseId}
             content={item.content || ''}
             rating={item.rating}
             username={item.user.name || ''}
             canDelete={item.user.id === currentUser?.id}
-            timestamp={format(new Date(item.createdAt!), 'd MMM yyyy, HH:mm')}
+            timestamp={format(new Date(item.date!), 'd MMM yyyy, HH:mm')}
           />
         ))}
       </CardContent>

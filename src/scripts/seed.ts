@@ -43,7 +43,6 @@ async function main() {
   try {
     // Reset db
     await db.delete(orders).execute()
-    await db.delete(users).execute()
     await db.delete(subscriptions).execute()
     await db.delete(reviews).execute()
     await db.delete(comments).execute()
@@ -55,7 +54,7 @@ async function main() {
     await db.delete(chapters).execute()
     await db.delete(courses).execute()
 
-    const userId = '48ee14d7-953b-4a2e-a92b-14d8d8f60fff'
+    const userId = 'da81dc4f-a3ab-4c03-b14f-e459e5b3dc8b'
 
     const SEED_CATEGORIES = [
       { id: uuidv4(), name: 'IT' },

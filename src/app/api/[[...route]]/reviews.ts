@@ -21,10 +21,10 @@ const app = new Hono()
 
       const data = await db
         .select({
-          id: reviews.id,
+          courseId: reviews.courseId,
           content: reviews.content,
           rating: reviews.rating,
-          createdAt: reviews.createdAt,
+          date: reviews.date,
           user: {
             id: users.id,
             name: users.name,
@@ -32,8 +32,10 @@ const app = new Hono()
         })
         .from(reviews)
         .innerJoin(users, eq(users.id, reviews.userId))
-        .where(eq(reviews.courseId, courseId))
-        .orderBy(desc(reviews.createdAt))
+        .where(
+          and(eq(reviews.courseId, courseId), eq(reviews.userId, auth.token.id))
+        )
+        .orderBy(desc(reviews.date))
 
       return c.json({ data })
     }
@@ -59,9 +61,14 @@ const app = new Hono()
       const values = c.req.valid('json')
 
       const [existingComment] = await db
-        .select({ id: reviews.id })
+        .select()
         .from(reviews)
-        .where(eq(reviews.userId, auth.token.id))
+        .where(
+          and(
+            eq(reviews.courseId, values.courseId),
+            eq(reviews.userId, auth.token.id)
+          )
+        )
 
       if (existingComment) {
         return c.json({ error: 'Comment exist!' }, 401)
@@ -106,15 +113,15 @@ const app = new Hono()
       const [existingComment] = await db
         .select()
         .from(reviews)
-        .where(and(eq(reviews.userId, auth.token.id), eq(reviews.id, id)))
+        .where(and(eq(reviews.userId, auth.token.id), eq(reviews.courseId, id)))
 
       if (!existingComment) {
-        return c.json({ error: 'Unauthorized' }, 401)
+        return c.json({ error: 'Comment not found!' }, 401)
       }
 
       const data = await db
         .delete(reviews)
-        .where(eq(reviews.id, existingComment.id))
+        .where(eq(reviews.courseId, existingComment.courseId))
 
       return c.json({ data })
     }

@@ -4,22 +4,32 @@ import { Trash2 } from 'lucide-react'
 import Image from 'next/image'
 
 type Props = {
-  id: string
+  courseId: string
   title: string
   imageUrl: string | null
   description: string | null
   price: number
 }
 
-export const Item = ({ id, title, imageUrl, description, price }: Props) => {
-  const { mutate: deleteCart, isPending: deleteCartLoading } = useDeleteCart(id)
+export const Item = ({
+  courseId,
+  title,
+  imageUrl,
+  description,
+  price,
+}: Props) => {
+  const { mutate: deleteCart, isPending: deleteCartLoading } =
+    useDeleteCart(courseId)
 
   const onRemove = () => {
     deleteCart()
   }
 
   return (
-    <div key={id} className="flex items-center border-b border-gray-200 p-6">
+    <div
+      key={courseId}
+      className="flex items-center border-b border-gray-200 p-6"
+    >
       <Image
         src={imageUrl!}
         alt={title}

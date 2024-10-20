@@ -53,7 +53,7 @@ export default function CourseDetail() {
   const { data: wishlist, isPending: wishlistLoading } =
     useGetWishlistByCourseId(courseId)
   const { mutate: deleteWishlist, isPending: deleteWishlistLoading } =
-    useDeleteWishlist(wishlist?.id)
+    useDeleteWishlist(wishlist?.courseId)
 
   const { data: reviews, isPending: reviewsLoading } = useGetReviews(courseId)
   const { data: currentPurchase, isPending: currentPurchaseLoading } =

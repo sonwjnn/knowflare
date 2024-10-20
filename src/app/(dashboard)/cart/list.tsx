@@ -37,8 +37,8 @@ export const List = () => {
     <div className="overflow-hidden rounded-lg bg-white shadow">
       {carts?.map(item => (
         <Item
-          key={item.id}
-          id={item.id}
+          key={item.courseId}
+          courseId={item.courseId}
           title={item.title}
           description={item.description}
           imageUrl={item.imageUrl}

@@ -69,56 +69,59 @@ export default function EnhancedPurchasedCourses() {
 
       <div className="flex flex-col gap-8 lg:flex-row">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
-          {courses?.map(course => (
-            <Card
-              key={course.id}
-              className="group overflow-hidden border-0 transition-all duration-300 hover:shadow-lg"
-            >
-              <div className="relative">
-                <Image
-                  src={
-                    course.imageUrl || '/placeholder.svg?height=400&width=600'
-                  }
-                  alt={course.title}
-                  width={0}
-                  height={0}
-                  sizes="100vw"
-                  className="aspect-video w-full object-cover"
-                />
-                <div
-                  className={cn(
-                    'absolute right-2 top-2 rounded-full bg-white opacity-0 transition group-hover:opacity-100',
-                    !!course.id && 'opacity-100'
-                  )}
-                >
-                  <WishlistButton
-                    courseId={course.courseId}
-                    wishlistId={course.id}
-                  />
-                </div>
-              </div>
-              <CardContent className="p-4">
-                <h3 className="mb-2 line-clamp-2 text-lg font-bold text-gray-800">
-                  {course.title}
-                </h3>
-                <p className="mb-4 text-sm text-gray-600">
-                  {course.description}
-                </p>
+          {courses?.map(course => {
+            const isInWishlist = !!courses.some(
+              c => c.courseId === course.courseId
+            )
 
-                <div className="flex items-center justify-between">
-                  <span className="text-lg font-bold text-gray-900">
-                    ${course.price.toFixed(2)}
-                  </span>
+            return (
+              <Card
+                key={course.courseId}
+                className="group overflow-hidden border-0 transition-all duration-300 hover:shadow-lg"
+              >
+                <div className="relative">
+                  <Image
+                    src={
+                      course.imageUrl || '/placeholder.svg?height=400&width=600'
+                    }
+                    alt={course.title}
+                    width={0}
+                    height={0}
+                    sizes="100vw"
+                    className="aspect-video w-full object-cover"
+                  />
+                  <div
+                    className={cn(
+                      'absolute right-2 top-2 rounded-full bg-white opacity-0 transition group-hover:opacity-100',
+                      !!isInWishlist && 'opacity-100'
+                    )}
+                  >
+                    <WishlistButton
+                      courseId={course.courseId}
+                      isInWishlist={isInWishlist}
+                    />
+                  </div>
                 </div>
-              </CardContent>
-              <CardFooter className="px-3 pb-2">
-                <CreateCartButton
-                  courseId={course.courseId}
-                  wishlistId={course.id}
-                />
-              </CardFooter>
-            </Card>
-          ))}
+                <CardContent className="p-4">
+                  <h3 className="mb-2 line-clamp-2 text-lg font-bold text-gray-800">
+                    {course.title}
+                  </h3>
+                  <p className="mb-4 text-sm text-gray-600">
+                    {course.description}
+                  </p>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-lg font-bold text-gray-900">
+                      ${course.price.toFixed(2)}
+                    </span>
+                  </div>
+                </CardContent>
+                <CardFooter className="px-3 pb-2">
+                  <CreateCartButton courseId={course.courseId} />
+                </CardFooter>
+              </Card>
+            )
+          })}
         </div>
       </div>
     </div>

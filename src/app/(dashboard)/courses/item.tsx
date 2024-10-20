@@ -14,8 +14,8 @@ type Props = {
   imageUrl: string | null
   description: string | null
   price: number
-  wishlistId: string | undefined
-  cartId: string | undefined
+  isInWishlist: boolean
+  isInCart: boolean
 }
 
 export const Item = ({
@@ -24,8 +24,8 @@ export const Item = ({
   imageUrl,
   description,
   price,
-  wishlistId,
-  cartId,
+  isInWishlist,
+  isInCart,
 }: Props) => {
   const { mutate: createCart, isPending: createCartLoading } = useCreateCart()
 
@@ -33,8 +33,6 @@ export const Item = ({
     e.preventDefault()
     createCart({ courseId: id })
   }
-
-  const isInCart = !!cartId
 
   return (
     <Link key={id} href={`/courses/${id}`}>
@@ -54,10 +52,10 @@ export const Item = ({
           <div
             className={cn(
               'absolute right-2 top-2 rounded-full bg-white opacity-0 transition group-hover:opacity-100',
-              !!wishlistId && 'opacity-100'
+              isInWishlist && 'opacity-100'
             )}
           >
-            <WishlistButton courseId={id} wishlistId={wishlistId} />
+            <WishlistButton courseId={id} isInWishlist={isInWishlist} />
           </div>
         </div>
         <CardContent className="p-4">
