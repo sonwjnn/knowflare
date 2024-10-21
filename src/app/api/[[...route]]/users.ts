@@ -18,6 +18,36 @@ import { Hono } from 'hono'
 import { z } from 'zod'
 
 const app = new Hono()
+  .get(
+    '/:id',
+    zValidator(
+      'param',
+      z.object({
+        id: z.string(),
+      })
+    ),
+    async c => {
+      const { id } = c.req.valid('param')
+
+      const [user] = await db
+        .select({
+          id: users.id,
+          name: users.name,
+          email: users.email,
+          role: users.role,
+          emailVerified: users.emailVerified,
+          image: users.image,
+        })
+        .from(users)
+        .where(eq(users.id, id))
+
+      if (!user) {
+        return c.json({ error: 'User not found' }, 404)
+      }
+
+      return c.json(user, 200)
+    }
+  )
   .post(
     '/register',
     zValidator(

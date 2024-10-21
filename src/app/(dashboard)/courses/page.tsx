@@ -12,7 +12,7 @@ export default function CoursesPage() {
         <h1 className="mb-8 text-3xl font-bold">Courses</h1>
 
         <div className="flex flex-col gap-8 md:flex-row">
-          <div className="lg:w-1/4">
+          <div className="md:w-1/4">
             <div className="rounded-lg bg-white p-6 shadow-sm md:hidden">
               <FiltersMobile />
             </div>
@@ -21,7 +21,7 @@ export default function CoursesPage() {
             </div>
           </div>
 
-          <div className="lg:w-3/4">
+          <div className="md:w-3/4">
             <List />
           </div>
         </div>

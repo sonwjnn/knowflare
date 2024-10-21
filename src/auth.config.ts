@@ -1,10 +1,9 @@
 import { db } from '@/db/drizzle'
-import { users } from '@/db/schema'
+import { UserRole, users } from '@/db/schema'
 import { DrizzleAdapter } from '@auth/drizzle-adapter'
 import bcrypt from 'bcryptjs'
 import { eq } from 'drizzle-orm'
 import type { NextAuthConfig } from 'next-auth'
-import { JWT } from 'next-auth/jwt'
 import Credentials from 'next-auth/providers/credentials'
 import GitHub from 'next-auth/providers/github'
 import Google from 'next-auth/providers/google'
@@ -14,18 +13,6 @@ const CredentialsSchema = z.object({
   email: z.string().email(),
   password: z.string(),
 })
-
-declare module 'next-auth/jwt' {
-  interface JWT {
-    id: string | undefined
-  }
-}
-
-declare module '@auth/core/jwt' {
-  interface JWT {
-    id: string | undefined
-  }
-}
 
 export default {
   adapter: DrizzleAdapter(db),
@@ -80,14 +67,30 @@ export default {
     session({ session, token }) {
       if (token.id) {
         session.user.id = token.id
+        session.user.name = token.name as string
+        session.user.image = token.image as string
+        session.user.email = token.email as string
+        session.user.role = token.role as UserRole
       }
 
       return session
     },
-    jwt({ token, user }) {
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id
       }
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_APP_URL}/api/users/${token.id}`
+      )
+
+      if (!res.ok) return token
+
+      const existingUser = await res.json()
+      token.name = existingUser.name as string
+      token.image = existingUser.image as string
+      token.email = existingUser.email as string
+      token.role = existingUser.role as UserRole
 
       return token
     },

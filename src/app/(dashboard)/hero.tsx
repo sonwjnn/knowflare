@@ -1,7 +1,6 @@
 import { useCurrentUser } from '@/hooks/use-current-user'
 import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
-import { useEffect, useRef } from 'react'
 import { useVideo } from 'react-use'
 
 export const Hero = () => {

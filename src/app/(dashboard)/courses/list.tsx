@@ -60,8 +60,8 @@ export const List = () => {
 
   if (isPending) {
     return (
-      <div className="grid grid-cols-2 gap-6 lg:grid-cols-3 xl:grid-cols-4">
-        {[...Array(6)].map((_, index) => (
+      <div className="grid w-full grid-cols-2 gap-6 lg:grid-cols-3 xl:grid-cols-4">
+        {[...Array(8)].map((_, index) => (
           <Card key={index} className="overflow-hidden">
             <Skeleton className="h-48 w-full" />
             <CardContent className="p-6">
@@ -99,7 +99,7 @@ export const List = () => {
         </p>
         <div>
           <Select value={sortOption || ''} onValueChange={setSortOption}>
-            <SelectTrigger>
+            <SelectTrigger className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-transparent">
               <SelectValue placeholder="Sort courses" />
             </SelectTrigger>
             <SelectContent>

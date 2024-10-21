@@ -231,35 +231,39 @@ export default function CourseDetail() {
                 ${courseDetails.price}
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2">
-              <div className="flex gap-x-2">
-                <Button
-                  className="w-full py-6 text-lg"
-                  onClick={onClickCart}
-                  disabled={isCartLoading}
-                >
-                  <ShoppingCart className="mr-2 h-5 w-5" />
-                  {cart ? 'Go to cart' : 'Add to cart'}
-                </Button>
-                <Button
-                  variant="outline"
-                  disabled={isWishlistLoading}
-                  className="px-4 py-6 text-lg"
-                  onClick={onClickWishlist}
-                >
-                  <Heart
-                    className={`size-5 ${wishlist ? 'fill-current' : ''}`}
-                  />
-                </Button>
-              </div>
-              <Button
-                onClick={onBuyNow}
-                variant="outline"
-                className="w-full px-4 py-6 text-lg"
-              >
-                Buy now
-              </Button>
-            </CardContent>
+            {!!currentPurchase === false && (
+              <CardContent className="space-y-2">
+                <>
+                  <div className="flex gap-x-2">
+                    <Button
+                      className="w-full py-6 text-lg"
+                      onClick={onClickCart}
+                      disabled={isCartLoading}
+                    >
+                      <ShoppingCart className="mr-2 h-5 w-5" />
+                      {cart ? 'Go to cart' : 'Add to cart'}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      disabled={isWishlistLoading}
+                      className="px-4 py-6 text-lg"
+                      onClick={onClickWishlist}
+                    >
+                      <Heart
+                        className={`size-5 ${wishlist ? 'fill-rose-500 text-rose-500' : ''}`}
+                      />
+                    </Button>
+                  </div>
+                  <Button
+                    onClick={onBuyNow}
+                    variant="outline"
+                    className="w-full px-4 py-6 text-lg"
+                  >
+                    Buy now
+                  </Button>
+                </>
+              </CardContent>
+            )}
             <CardFooter className="flex flex-col space-y-4">
               <div className="flex w-full items-center justify-between">
                 <div className="flex items-center">
