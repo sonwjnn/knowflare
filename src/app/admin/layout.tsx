@@ -1,5 +1,7 @@
 import { protectAdmin } from '@/features/admin/utils'
 
+import { Wrapper } from './wrapper'
+
 type AdminLayoutProps = {
   children: React.ReactNode
 }
@@ -7,7 +9,7 @@ type AdminLayoutProps = {
 const AdminLayout = async ({ children }: AdminLayoutProps) => {
   await protectAdmin()
 
-  return <>{children}</>
+  return <Wrapper>{children}</Wrapper>
 }
 
 export default AdminLayout
