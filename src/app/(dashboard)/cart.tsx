@@ -72,7 +72,7 @@ export const Cart = () => {
               <ScrollArea className="h-[300px] rounded-md border p-4">
                 {carts?.map(item => (
                   <div
-                    key={item.id}
+                    key={item.courseId}
                     className="mb-4 flex items-center space-x-4"
                   >
                     <div className="size-16">

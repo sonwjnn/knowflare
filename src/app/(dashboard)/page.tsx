@@ -109,7 +109,7 @@ export default function KnowflareHomepage() {
             Why Choose Knowflare?
           </h2>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            <div className="flex flex-col items-center rounded-lg bg-white p-6 text-center shadow-md">
+            <div className="flex flex-col items-center rounded-sm bg-white p-6 text-center shadow-md">
               <div className="mb-4 rounded-full bg-blue-100 p-4">
                 <Book className="h-8 w-8 text-blue-600" />
               </div>
@@ -121,7 +121,7 @@ export default function KnowflareHomepage() {
                 worldwide.
               </p>
             </div>
-            <div className="flex flex-col items-center rounded-lg bg-white p-6 text-center shadow-md">
+            <div className="flex flex-col items-center rounded-sm bg-white p-6 text-center shadow-md">
               <div className="mb-4 rounded-full bg-green-100 p-4">
                 <Globe className="h-8 w-8 text-green-600" />
               </div>
@@ -130,7 +130,7 @@ export default function KnowflareHomepage() {
                 Study at your own pace, anytime and anywhere in the world.
               </p>
             </div>
-            <div className="flex flex-col items-center rounded-lg bg-white p-6 text-center shadow-md">
+            <div className="flex flex-col items-center rounded-sm bg-white p-6 text-center shadow-md">
               <div className="mb-4 rounded-full bg-purple-100 p-4">
                 <Zap className="h-8 w-8 text-purple-600" />
               </div>
@@ -222,7 +222,7 @@ export default function KnowflareHomepage() {
 
       <section className="bg-gray-100 py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="overflow-hidden rounded-lg bg-white shadow-xl">
+          <div className="overflow-hidden rounded-sm bg-white shadow-xl">
             <div className="flex flex-col items-center justify-between p-8 md:flex-row">
               <div className="mb-6 md:mb-0 md:w-2/3">
                 <h2 className="mb-4 text-3xl font-bold text-gray-800">

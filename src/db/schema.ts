@@ -235,10 +235,71 @@ export const chaptersRelations = relations(chapters, ({ one, many }) => ({
     fields: [chapters.courseId],
     references: [courses.id],
   }),
-  userProgress: many(userProgress),
+  lessons: many(lessons),
 }))
 
-export const userProgress = mysqlTable('user_progress', {
+export enum LessonType {
+  VIDEO = 'video',
+  QUIZ = 'quiz',
+}
+
+export const lessonTypeEnum = mysqlEnum('lesson_type', enumToPgEnum(LessonType))
+
+export enum QuestionType {
+  SINGLE_CHOICE = 'single_choice',
+  MULTIPLE_CHOICE = 'multiple_choice',
+  TRUE_FALSE = 'true_false',
+}
+
+export const questionTypeEnum = mysqlEnum('type', enumToPgEnum(QuestionType))
+
+export const lessons = mysqlTable('lesson', {
+  id: varchar('id', { length: 255 })
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  chapterId: varchar('chapter_id', { length: 255 })
+    .notNull()
+    .references(() => chapters.id, {
+      onDelete: 'cascade',
+    }),
+  title: varchar('title', { length: 255 }).notNull(),
+  description: varchar('description', { length: 255 }),
+  lessonType: lessonTypeEnum.default(LessonType.VIDEO).notNull(),
+  position: int('position').notNull(),
+  isPublished: boolean('is_published').default(false),
+  isFree: boolean('is_free').default(false),
+
+  videoUrl: varchar('video_url', { length: 255 }),
+  duration: int('duration'),
+
+  question: varchar('question', { length: 255 }),
+  questionType: questionTypeEnum,
+})
+
+export const lessonsRelations = relations(lessons, ({ one, many }) => ({
+  chapter: one(chapters, {
+    fields: [lessons.chapterId],
+    references: [chapters.id],
+  }),
+  answers: many(quizAnswers),
+  userProgress: many(userLessonProgress),
+}))
+
+export const quizAnswers = mysqlTable('quiz_answer', {
+  id: varchar('id', { length: 255 })
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  lessonId: varchar('lesson_id', { length: 255 })
+    .notNull()
+    .references(() => lessons.id, {
+      onDelete: 'cascade',
+    }),
+  content: varchar('content', { length: 255 }).notNull(),
+  isCorrect: boolean('is_correct').notNull(),
+  explanation: varchar('explanation', { length: 255 }),
+})
+
+export const userLessonProgress = mysqlTable('user_lesson_progress', {
   id: varchar('id', { length: 255 })
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
@@ -247,20 +308,14 @@ export const userProgress = mysqlTable('user_progress', {
     .references(() => users.id, {
       onDelete: 'cascade',
     }),
-  chapterId: varchar('chapter_id', { length: 255 })
+  lessonId: varchar('lesson_id', { length: 255 })
     .notNull()
-    .references(() => chapters.id, {
+    .references(() => lessons.id, {
       onDelete: 'cascade',
     }),
   isCompleted: boolean('is_completed').default(false),
+  date: timestamp('date', { mode: 'date' }).default(sql`CURRENT_TIMESTAMP`),
 })
-
-export const userProgressRelations = relations(userProgress, ({ one }) => ({
-  chapter: one(chapters, {
-    fields: [userProgress.chapterId],
-    references: [chapters.id],
-  }),
-}))
 
 export const purchases = mysqlTable('purchases', {
   id: varchar('id', { length: 255 })

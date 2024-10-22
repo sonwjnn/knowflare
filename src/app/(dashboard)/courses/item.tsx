@@ -38,7 +38,7 @@ export const Item = ({
     <Link key={id} href={`/courses/${id}`}>
       <Card
         key={id}
-        className="group overflow-hidden border-0 transition-all duration-300 hover:shadow-lg"
+        className="group overflow-hidden transition-all duration-300 hover:shadow-lg"
       >
         <div className="relative">
           <Image
@@ -47,11 +47,11 @@ export const Item = ({
             width={0}
             height={0}
             sizes="100vw"
-            className="aspect-video w-full object-cover"
+            className="aspect-video w-full object-cover p-2"
           />
           <div
             className={cn(
-              'absolute right-2 top-2 rounded-full bg-white opacity-0 transition group-hover:opacity-100',
+              'absolute right-2.5 top-2.5 rounded-full bg-white opacity-0 transition group-hover:opacity-100',
               isInWishlist && 'opacity-100'
             )}
           >

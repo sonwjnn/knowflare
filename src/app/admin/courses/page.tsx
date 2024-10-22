@@ -1,9 +1,9 @@
 'use client'
 
-import { Search } from '@/components/admin/search'
-// import ThemeSwitch from '@/components/theme-switch'
-import { UserNav } from '@/components/admin/user-nav'
 import { Layout } from '@/components/custom/layout'
+import { Search } from '@/features/admin/components/search'
+// import ThemeSwitch from '@/components/theme-switch'
+import { UserNav } from '@/features/admin/components/user-nav'
 
 import { columns } from './_components/columns'
 import { DataTable } from './_components/data-table'

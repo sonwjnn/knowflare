@@ -1,9 +1,5 @@
 'use client'
 
-import { Search } from '@/components/admin/search'
-// import ThemeSwitch from '@/components/theme-switch'
-import { TopNav } from '@/components/admin/top-nav'
-import { UserNav } from '@/components/admin/user-nav'
 import { Button } from '@/components/custom/button'
 import { Layout } from '@/components/custom/layout'
 import {
@@ -14,6 +10,10 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Search } from '@/features/admin/components/search'
+// import ThemeSwitch from '@/components/theme-switch'
+import { TopNav } from '@/features/admin/components/top-nav'
+import { UserNav } from '@/features/admin/components/user-nav'
 
 import { Overview } from './overview'
 import { RecentSales } from './recent-sales'

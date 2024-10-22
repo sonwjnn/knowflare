@@ -1,12 +1,16 @@
 import {
+  LessonType,
+  QuestionType,
   attachments,
   carts,
   categories,
   chapters,
   comments,
   courses,
+  lessons,
   orders,
   purchases,
+  quizAnswers,
   reviews,
   subscriptions,
   users,
@@ -54,7 +58,7 @@ async function main() {
     await db.delete(chapters).execute()
     await db.delete(courses).execute()
 
-    const userId = 'da81dc4f-a3ab-4c03-b14f-e459e5b3dc8b'
+    const userId = '5de91ee5-3c49-4819-a2ad-b921cbf61d00'
 
     const SEED_CATEGORIES = [
       { id: uuidv4(), name: 'IT' },
@@ -93,7 +97,6 @@ async function main() {
     // Seed courses
     await db.insert(courses).values(SEED_COURSES).execute()
 
-    // Create chapters for each course
     for (const courseId of courseIds) {
       const chapterIds = Array.from({ length: 5 }, () => uuidv4())
       const SEED_CHAPTERS = chapterIds.map((id, index) => ({
@@ -101,7 +104,6 @@ async function main() {
         courseId,
         title: `Chapter Title ${index + 1} for Course ${courseId}`,
         description: `Description for Chapter Title ${index + 1}`,
-        videoUrl: `http://example.com/video${index + 1}.mp4`,
         position: index + 1,
         isPublished: Math.random() < 0.5,
         isFree: Math.random() < 0.5,
@@ -109,6 +111,47 @@ async function main() {
 
       // Seed chapters
       await db.insert(chapters).values(SEED_CHAPTERS).execute()
+
+      // Create lessons for each chapter
+      for (const chapterId of chapterIds) {
+        const lessonIds = Array.from({ length: 3 }, () => uuidv4())
+        const SEED_LESSONS = lessonIds.map((id, index) => {
+          const isVideo = Math.random() < 0.7 // 70% chance of being a video lesson
+          return {
+            id,
+            chapterId,
+            title: `Lesson Title ${index + 1} for Chapter ${chapterId}`,
+            description: `Description for Lesson Title ${index + 1}`,
+            lessonType: isVideo ? LessonType.VIDEO : LessonType.QUIZ,
+            position: index + 1,
+            isPublished: Math.random() < 0.5,
+            isFree: Math.random() < 0.5,
+            videoUrl: isVideo
+              ? `http://example.com/lesson${index + 1}.mp4`
+              : null,
+            duration: isVideo ? Math.floor(Math.random() * 3600) : null, // Random duration up to 1 hour
+            question: isVideo ? null : `Question for Quiz Lesson ${index + 1}?`,
+          }
+        })
+
+        // Seed lessons
+        await db.insert(lessons).values(SEED_LESSONS).execute()
+
+        // Create quiz answers for quiz lessons
+        for (const lesson of SEED_LESSONS) {
+          if (lesson.lessonType === LessonType.QUIZ) {
+            const answerIds = Array.from({ length: 4 }, () => uuidv4())
+            const SEED_ANSWERS = answerIds.map((id, index) => ({
+              id,
+              lessonId: lesson.id,
+              content: `Answer ${index + 1} for Quiz Lesson ${lesson.id}`,
+              isCorrect: index === 0, // First answer is correct
+              explanation: `Explanation for Answer ${index + 1}`,
+            }))
+            await db.insert(quizAnswers).values(SEED_ANSWERS).execute()
+          }
+        }
+      }
     }
   } catch (error) {
     console.log('Error during seed:', error)
