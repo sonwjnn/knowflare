@@ -8,8 +8,9 @@ import { useGetCategories } from '@/features/categories/api/use-get-categories'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 import React, { useEffect, useRef, useState } from 'react'
+import { cn } from '@/lib/utils'
 
-export const Categories = () => {
+export const Categories = ({ className }: { className?: string }) => {
   const { data: categories, isPending: categoriesLoading } = useGetCategories()
 
   const [open, setOpen] = useState(false)
@@ -34,10 +35,10 @@ export const Categories = () => {
         <DropdownMenuTrigger asChild>
           <div
             onMouseEnter={handleMouseEnter}
-            className="flex w-full items-center justify-start text-gray-500 hover:text-gray-700"
+            className={cn("flex w-full items-center justify-start hover:text-gray-700", className)}
           >
-            Categories
-            <ChevronDown className="mr-2 h-4 w-4" />
+            Exploring courses
+            <ChevronDown className="ml-1 h-4 w-4" />
           </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent
