@@ -2,6 +2,7 @@ import authConfig from '@/auth.config'
 import { AuthConfig, initAuthConfig } from '@hono/auth-js'
 import { Context, Hono } from 'hono'
 import { handle } from 'hono/vercel'
+import { AdapterUser } from 'next-auth/adapters'
 
 import attachments from './attachments'
 import carts from './carts'
@@ -9,11 +10,10 @@ import categories from './categories'
 import chapters from './chapters'
 import comments from './comments'
 import courses from './courses'
+import lessons from './lessons'
 import purchases from './purchases'
 import reviews from './reviews'
 import subscriptions from './subscriptions'
-import teachers from './teachers'
-import userProgress from './user-progress'
 import users from './users'
 import wishlists from './wishlists'
 
@@ -44,6 +44,7 @@ const routes = app
   .route('/reviews', reviews)
   .route('/comments', comments)
   .route('/subscriptions', subscriptions)
+  .route('/lessons', lessons)
 
 export const GET = handle(app)
 export const POST = handle(app)

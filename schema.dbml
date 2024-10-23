@@ -1,15 +1,15 @@
 table account {
-  userId text [not null]
-  type text [not null]
-  provider text [not null]
-  providerAccountId text [not null]
-  refresh_token text
-  access_token text
-  expires_at integer
-  token_type text
-  scope text
-  id_token text
-  session_state text
+  userId varchar(255) [not null]
+  type varchar(255) [not null]
+  provider varchar(255) [not null]
+  providerAccountId varchar(255) [not null]
+  refresh_token varchar(255)
+  access_token varchar(255)
+  expires_at int
+  token_type varchar(255)
+  scope varchar(255)
+  id_token varchar(2048)
+  session_state varchar(255)
 
   indexes {
     (provider, providerAccountId) [pk]
@@ -17,82 +17,111 @@ table account {
 }
 
 table attachment {
-  id text [pk, not null]
-  course_id text [not null]
-  name text [not null]
-  url text [not null]
+  id varchar(255) [pk, not null]
+  course_id varchar(255) [not null]
+  name varchar(255) [not null]
+  url varchar(255) [not null]
   date timestamp [not null]
 }
 
 table authenticator {
-  credentialID text [not null, unique]
-  userId text [not null]
-  providerAccountId text [not null]
-  credentialPublicKey text [not null]
-  counter integer [not null]
-  credentialDeviceType text [not null]
+  credentialID varchar(255) [not null, unique]
+  userId varchar(255) [not null]
+  providerAccountId varchar(255) [not null]
+  credentialPublicKey varchar(255) [not null]
+  counter int [not null]
+  credentialDeviceType varchar(255) [not null]
   credentialBackedUp boolean [not null]
-  transports text
+  transports varchar(255)
 
   indexes {
     (userId, credentialID) [pk]
   }
 }
 
+table cart {
+  user_id varchar(255) [not null]
+  course_id varchar(255) [not null]
+  created_at timestamp
+
+  indexes {
+    (user_id, course_id) [pk]
+  }
+}
+
 table category {
-  id text [pk, not null]
-  name text [not null]
+  id varchar(255) [pk, not null]
+  name varchar(255) [not null]
 }
 
 table chapter {
-  id text [pk, not null]
-  course_id text [not null]
-  title text [not null]
-  description text
-  video_url text
-  position integer [not null]
+  id varchar(255) [pk, not null]
+  course_id varchar(255) [not null]
+  title varchar(255) [not null]
+  description varchar(255)
+  position int [not null]
   is_published boolean [default: false]
   is_free boolean [default: false]
 }
 
+table comment {
+  id varchar(255) [pk, not null]
+  user_id varchar(255) [not null]
+  course_id varchar(255) [not null]
+  content varchar(255)
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+}
+
+table coupon {
+  id varchar(255) [pk, not null]
+  code varchar(255) [not null, unique]
+  discount_type varchar(255) [not null]
+  discount_value int [not null]
+  expires timestamp
+  is_active boolean [not null, default: true]
+}
+
 table course {
-  id text [pk, not null]
-  teacher_id text [not null]
-  category_id text
-  title text [not null]
-  description text
-  image_url text
-  price integer [not null, default: 0]
+  id varchar(255) [pk, not null]
+  user_id varchar(255) [not null]
+  category_id varchar(255)
+  level "enum('beginner','intermediate','advanced','all level')" [not null, default: 'all level']
+  title varchar(255) [not null]
+  description varchar(255)
+  image_url varchar(255)
+  price int [not null, default: 0]
   is_published boolean [not null, default: false]
   date timestamp [not null]
 }
 
-table mux_data {
-  id text [pk, not null]
-  chapter_id text [not null]
-  asset_id text [not null]
-  playback_id text
-}
-
-table order_detail {
-  id text [pk, not null]
-  order_id text [not null]
-  course_id text [not null]
-  quantity integer [not null]
-  price integer [not null]
+table lesson {
+  id varchar(255) [pk, not null]
+  chapter_id varchar(255) [not null]
+  title varchar(255) [not null]
+  description varchar(255)
+  lesson_type enum('video','quiz') [not null, default: 'video']
+  position int [not null]
+  is_published boolean [default: false]
+  is_free boolean [default: false]
+  video_url varchar(255)
+  duration int
+  question varchar(255)
+  type enum('single_choice','multiple_choice','true_false')
 }
 
 table order {
-  id text [pk, not null]
-  userId text [not null]
-  total_amount integer [not null]
-  createdAt timestamp [not null]
-  updatedAt timestamp [not null]
+  id varchar(255) [pk, not null]
+  user_id varchar(255) [not null]
+  payment_id varchar(255) [not null]
+  customer_id varchar(255) [not null]
+  status varchar(255) [not null]
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamp [default: `CURRENT_TIMESTAMP`]
 }
 
 table password_reset_token {
-  email text [not null]
-  token text [not null, unique]
+  email varchar(255) [not null]
+  token varchar(255) [not null, unique]
   expires timestamp [not null]
 
   indexes {
@@ -101,67 +130,70 @@ table password_reset_token {
 }
 
 table purchases {
-  id text [pk, not null]
-  userId text [not null]
-  course_id text [not null]
+  id varchar(255) [pk, not null]
+  user_id varchar(255) [not null]
+  course_id varchar(255) [not null]
+}
+
+table quiz_answer {
+  id varchar(255) [pk, not null]
+  lesson_id varchar(255) [not null]
+  content varchar(255) [not null]
+  is_correct boolean [not null]
+  explanation varchar(255)
 }
 
 table review {
-  id text [pk, not null]
-  userId text [not null]
-  course_id text [not null]
-  rating integer [not null]
-  comment text
-  createdAt timestamp [not null]
-}
+  user_id varchar(255) [not null]
+  course_id varchar(255) [not null]
+  rating int [not null]
+  content varchar(255)
+  date timestamp [default: `CURRENT_TIMESTAMP`]
 
-table role {
-  id text [pk, not null]
-  name text [not null, unique]
+  indexes {
+    (user_id, course_id) [pk]
+  }
 }
 
 table session {
-  sessionToken text [pk, not null]
-  userId text [not null]
+  sessionToken varchar(255) [pk, not null]
+  userId varchar(255) [not null]
   expires timestamp [not null]
 }
 
 table subscription {
-  id text [pk, not null]
-  userId text [not null]
-  subscriptionId text [not null]
-  customerId text [not null]
-  priceId text [not null]
-  status text [not null]
-  currentPeriodEnd timestamp
-  createdAt timestamp [not null]
-  updatedAt timestamp [not null]
+  id varchar(255) [pk, not null]
+  user_id varchar(255) [not null]
+  subscription_id varchar(255) [not null]
+  customer_id varchar(255) [not null]
+  price_id varchar(255) [not null]
+  status varchar(255) [not null]
+  current_period_end timestamp
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamp [default: `CURRENT_TIMESTAMP`]
 }
 
-table teacher {
-  id text [pk, not null]
-  userId text [not null]
-}
-
-table user_progress {
-  id text [pk, not null]
-  userId text [not null]
-  chapter_id text [not null]
+table user_lesson_progress {
+  id varchar(255) [pk, not null]
+  user_id varchar(255) [not null]
+  lesson_id varchar(255) [not null]
   is_completed boolean [default: false]
+  date timestamp [default: `CURRENT_TIMESTAMP`]
 }
 
 table user {
-  id text [pk, not null]
-  name text
-  email text [not null]
-  emailVerified timestamp
-  image text
-  password text
+  id varchar(255) [pk, not null]
+  name varchar(255)
+  email varchar(255) [unique]
+  emailVerified timestamp(3)
+  role enum('admin','user') [not null, default: 'user']
+  image varchar(255)
+  password varchar(255)
 }
 
 table verification_token {
-  email text [not null]
-  token text [not null, unique]
+  email varchar(255) [not null]
+  token varchar(255) [not null]
   expires timestamp [not null]
 
   indexes {
@@ -169,20 +201,24 @@ table verification_token {
   }
 }
 
+table wishlist {
+  user_id varchar(255) [not null]
+  course_id varchar(255) [not null]
+  date timestamp [default: `CURRENT_TIMESTAMP`]
+
+  indexes {
+    (user_id, course_id) [pk]
+  }
+}
+
 ref: attachment.course_id > course.id
 
 ref: chapter.course_id > course.id
 
-ref: mux_data.chapter_id - chapter.id
-
 ref: course.category_id - category.id
 
-ref: course.teacher_id - teacher.id
+ref: course.user_id - user.id
 
-ref: order_detail.order_id > order.id
-
-ref: order_detail.course_id - course.id
+ref: lesson.chapter_id > chapter.id
 
 ref: purchases.course_id > course.id
-
-ref: user_progress.chapter_id > chapter.id

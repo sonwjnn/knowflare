@@ -57,7 +57,7 @@ export default function NotFound() {
                 placeholder="Search for content..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="flex-grow rounded-sm"
+                className="flex-grow rounded-none"
               />
               <Button type="submit" variant="secondary">
                 <Search className="mr-2 h-4 w-4" />

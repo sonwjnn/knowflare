@@ -222,7 +222,6 @@ export const chapters = mysqlTable('chapter', {
     }),
   title: varchar('title', { length: 255 }).notNull(),
   description: varchar('description', { length: 255 }),
-  videoUrl: varchar('video_url', { length: 255 }),
   position: int('position').notNull(),
   isPublished: boolean('is_published').default(false),
   isFree: boolean('is_free').default(false),

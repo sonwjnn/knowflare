@@ -27,8 +27,8 @@ const CourseCard = ({
 }: CourseCardProps) => {
   return (
     <Link href={`/courses/${id}`}>
-      <div className="group h-full overflow-hidden rounded-lg border p-3 transition hover:shadow-sm">
-        <div className="relative aspect-video w-full overflow-hidden rounded-md">
+      <div className="group h-full overflow-hidden rounded-none border p-3 transition hover:shadow-sm">
+        <div className="relative aspect-video w-full overflow-hidden rounded-none">
           <Image fill className="object-cover" src={imageUrl} alt={title} />
         </div>
         <div className="flex flex-col pt-2">

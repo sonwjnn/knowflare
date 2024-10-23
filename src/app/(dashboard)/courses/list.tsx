@@ -7,9 +7,9 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useGetCarts } from '@/features/carts/use-get-carts'
+import { useGetCarts } from '@/features/carts/api/use-get-carts'
 import { useGetCourses } from '@/features/courses/api/use-get-courses'
-import { useGetWishlists } from '@/features/wishlists/use-get-carts'
+import { useGetWishlists } from '@/features/wishlists/api/use-get-carts'
 import { BookOpen } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 import { useMemo, useState } from 'react'

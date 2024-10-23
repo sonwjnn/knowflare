@@ -44,7 +44,7 @@ export const ImageCourseForm = ({
   }
 
   return (
-    <div className="mt-6 rounded-md border bg-slate-100 p-4">
+    <div className="mt-6 rounded-none border bg-slate-100 p-4">
       <div className="flex items-center justify-between font-medium">
         Course Image
         <Button onClick={toggleEdit} variant="ghost">
@@ -65,7 +65,7 @@ export const ImageCourseForm = ({
       </div>
       {!isEditing &&
         (!initialData?.imageUrl ? (
-          <div className="flex h-60 items-center justify-center rounded-md bg-slate-200">
+          <div className="flex h-60 items-center justify-center rounded-none bg-slate-200">
             <ImageIcon className="h-10 w-10 text-slate-500" />
           </div>
         ) : (
@@ -73,7 +73,7 @@ export const ImageCourseForm = ({
             <Image
               alt="Upload"
               fill
-              className="rounded-md object-cover"
+              className="rounded-none object-cover"
               src={initialData.imageUrl}
             />
           </div>

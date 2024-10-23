@@ -15,9 +15,6 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import qs from 'query-string'
 import { useState } from 'react'
 
-import { Input } from './ui/input'
-import { Label } from './ui/label'
-
 export const CourseSidebar = () => {
   const searchParams = useSearchParams()
   const title = searchParams.get('title') || ''
@@ -28,8 +25,6 @@ export const CourseSidebar = () => {
   const router = useRouter()
 
   const [rating, setRating] = useState<number>(0)
-  const [minPrice, setMinPrice] = useState<string>('')
-  const [maxPrice, setMaxPrice] = useState<string>('')
 
   const handleRatingClick = (selectedRating: number) => {
     setRating(selectedRating === rating ? 0 : selectedRating)
@@ -118,10 +113,8 @@ export const CourseSidebar = () => {
             <button
               key={stars}
               onClick={() => handleRatingClick(stars)}
-              className={`flex w-full items-center rounded-md p-2 transition-all ${
-                rating === stars
-                  ? 'border-2 border-blue-500 bg-blue-50'
-                  : 'border border-gray-200 hover:border-blue-300'
+              className={`flex w-full items-center rounded-none p-2 transition-all ${
+                rating === stars && 'border-2 border-blue-500 bg-blue-50'
               }`}
               aria-label={`${stars} stars and up`}
             >

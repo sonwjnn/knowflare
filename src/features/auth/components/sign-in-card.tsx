@@ -63,7 +63,7 @@ export const SignInCard = () => {
         </CardDescription>
       </CardHeader>
       {!!error && (
-        <div className="mb-6 flex items-center gap-x-2 rounded-md bg-destructive/15 p-3 text-sm text-destructive">
+        <div className="mb-6 flex items-center gap-x-2 rounded-none bg-destructive/15 p-3 text-sm text-destructive">
           <TriangleAlert className="size-4" />
           <p className="mx-2">Invalid email or password</p>
         </div>

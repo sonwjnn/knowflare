@@ -5,7 +5,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { useGetWishlists } from '@/features/wishlists/use-get-carts'
+import { useGetWishlists } from '@/features/wishlists/api/use-get-carts'
 import { cn } from '@/lib/utils'
 import { Heart } from 'lucide-react'
 import Image from 'next/image'
@@ -70,7 +70,7 @@ export const Wishlist = () => {
 
           {!!wishlists?.length && (
             <>
-              <ScrollArea className="h-[300px] rounded-md border p-4">
+              <ScrollArea className="h-[300px] rounded-none border p-4">
                 {wishlists?.map(item => (
                   <div
                     key={item.id}
@@ -83,7 +83,7 @@ export const Wishlist = () => {
                         width={0}
                         height={0}
                         sizes="100vw"
-                        className="h-full w-auto rounded-md object-cover"
+                        className="h-full w-auto rounded-none object-cover"
                       />
                     </div>
                     <div className="flex-1">

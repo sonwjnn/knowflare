@@ -82,9 +82,9 @@ export const ChaptersCourseForm = ({
   }
 
   return (
-    <div className="relative mt-6 rounded-md border bg-slate-100 p-4">
+    <div className="relative mt-6 rounded-none border bg-slate-100 p-4">
       {isLoading && (
-        <div className="absolute right-0 top-0 flex h-full w-full items-center justify-center rounded-md bg-slate-500/20">
+        <div className="absolute right-0 top-0 flex h-full w-full items-center justify-center rounded-none bg-slate-500/20">
           <Loader2 className="h-6 w-6 animate-spin text-sky-700" />
         </div>
       )}

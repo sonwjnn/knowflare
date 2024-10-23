@@ -1,8 +1,8 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { useCreateCart } from '@/features/carts/use-create-cart'
+import { useCreateCart } from '@/features/carts/api/use-create-cart'
 import { cn } from '@/lib/utils'
-import { Star } from 'lucide-react'
+import { Eye, Star } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -47,7 +47,7 @@ export const Item = ({
             width={0}
             height={0}
             sizes="100vw"
-            className="aspect-video w-full object-cover p-2"
+            className="aspect-video w-full object-cover"
           />
           <div
             className={cn(
@@ -74,7 +74,10 @@ export const Item = ({
             </span>
             {isInCart ? (
               <Link href="/cart">
-                <Button>Go to cart</Button>
+                <Button className="bg-sky-100 text-sky-800 hover:bg-sky-50 hover:text-sky-800">
+                  <Eye className="mr-1 size-4" />
+                  View cart
+                </Button>
               </Link>
             ) : (
               <Button onClick={onCreateCart} disabled={createCartLoading}>

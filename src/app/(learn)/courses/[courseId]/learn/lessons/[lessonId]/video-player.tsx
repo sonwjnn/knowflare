@@ -143,7 +143,7 @@ function VideoPlayer({
   return (
     <div
       ref={playerContainerRef}
-      className={`relative overflow-hidden rounded-lg bg-gray-900 shadow-2xl transition-all duration-300 ease-in-out ${isFullScreen ? 'h-screen w-screen' : ''} `}
+      className={`relative overflow-hidden rounded-none bg-gray-900 shadow-2xl transition-all duration-300 ease-in-out ${isFullScreen ? 'h-screen w-screen' : ''} `}
       style={{ width, height }}
       onMouseMove={handleMouseMove}
       onMouseLeave={() => setShowControls(false)}

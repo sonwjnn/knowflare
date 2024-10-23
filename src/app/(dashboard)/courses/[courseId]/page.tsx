@@ -10,14 +10,14 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useCreateCart } from '@/features/carts/use-create-cart'
-import { useGetCartByCourseId } from '@/features/carts/use-get-cart-by-course-id'
+import { useCreateCart } from '@/features/carts/api/use-create-cart'
+import { useGetCartByCourseId } from '@/features/carts/api/use-get-cart-by-course-id'
 import { useGetCourse } from '@/features/courses/api/use-get-course'
 import { useGetCurrentPurchase } from '@/features/purchases/api/use-get-current-purchases'
 import { useGetReviews } from '@/features/reviews/api/use-get-reviews'
-import { useCreateWishlist } from '@/features/wishlists/use-create-wishlist'
-import { useDeleteWishlist } from '@/features/wishlists/use-delete-wishlist'
-import { useGetWishlistByCourseId } from '@/features/wishlists/use-wishlist-cart-by-course-id'
+import { useCreateWishlist } from '@/features/wishlists/api/use-create-wishlist'
+import { useDeleteWishlist } from '@/features/wishlists/api/use-delete-wishlist'
+import { useGetWishlistByCourseId } from '@/features/wishlists/api/use-wishlist-cart-by-course-id'
 import { useCourseId } from '@/hooks/use-course-id'
 import { format } from 'date-fns'
 import {
@@ -125,7 +125,7 @@ export default function CourseDetail() {
             width={0}
             height={0}
             sizes="100vw"
-            className="mb-6 aspect-video h-auto w-full rounded-lg object-cover"
+            className="mb-6 aspect-video h-auto w-full rounded-none object-cover"
           />
           <h1 className="mb-4 text-3xl font-bold">{courseDetails.title}</h1>
 

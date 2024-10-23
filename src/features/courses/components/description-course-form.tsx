@@ -50,7 +50,7 @@ export const DescriptionCourseForm = ({
   }
 
   return (
-    <div className="mt-6 rounded-md border bg-slate-100 p-4">
+    <div className="mt-6 rounded-none border bg-slate-100 p-4">
       <div className="flex items-center justify-between font-medium">
         Course Description
         <Button onClick={toggleEdit} variant="ghost">

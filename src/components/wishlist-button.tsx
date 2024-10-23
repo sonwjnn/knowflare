@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
-import { useCreateWishlist } from '@/features/wishlists/use-create-wishlist'
-import { useDeleteWishlist } from '@/features/wishlists/use-delete-wishlist'
+import { useCreateWishlist } from '@/features/wishlists/api/use-create-wishlist'
+import { useDeleteWishlist } from '@/features/wishlists/api/use-delete-wishlist'
 import { Heart } from 'lucide-react'
 
 type Props = {

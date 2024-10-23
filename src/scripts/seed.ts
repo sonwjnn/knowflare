@@ -58,7 +58,7 @@ async function main() {
     await db.delete(chapters).execute()
     await db.delete(courses).execute()
 
-    const userId = '5de91ee5-3c49-4819-a2ad-b921cbf61d00'
+    const userId = '9c0ca8ce-12ab-4d0f-8faf-1e5a6afeafed'
 
     const SEED_CATEGORIES = [
       { id: uuidv4(), name: 'IT' },

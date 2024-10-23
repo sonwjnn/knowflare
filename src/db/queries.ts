@@ -1,10 +1,11 @@
-import { and, count, eq, sql } from 'drizzle-orm'
+import { and, asc, count, eq, sql } from 'drizzle-orm'
 
 import { db } from './drizzle'
 import {
   chapters,
+  lessons,
   passwordResetTokens,
-  userProgress,
+  userLessonProgress,
   verificationTokens,
 } from './schema'
 
@@ -20,28 +21,90 @@ export const getProgress = async (
         and(eq(chapters.courseId, courseId), eq(chapters.isPublished, true))
       )
 
-    const publishedChapterIds = publishedChapters?.map(chapter => chapter.id)
+    const chaptersWithLessons = await Promise.all(
+      publishedChapters.map(async chapter => {
+        const lessonsData = await db
+          .select()
+          .from(lessons)
+          .where(eq(lessons.chapterId, chapter.id))
+          .groupBy(lessons.id)
 
-    const [validCompletedChapters] = await db
-      .select({
-        count: count(userProgress.id),
+        return {
+          ...chapter,
+          lessons: lessonsData,
+        }
       })
-      .from(userProgress)
+    )
+
+    const lessonIds = chaptersWithLessons.flatMap(chapter =>
+      chapter.lessons.map(lesson => lesson.id)
+    )
+
+    const [validCompletedLessons] = await db
+      .select({
+        count: count(userLessonProgress.id),
+      })
+      .from(userLessonProgress)
       .where(
         and(
-          userId ? eq(userProgress.userId, userId) : undefined,
-          eq(userProgress.isCompleted, true),
-          sql`${userProgress.chapterId} = ANY(${publishedChapterIds})`
+          userId ? eq(userLessonProgress.userId, userId) : undefined,
+          eq(userLessonProgress.isCompleted, true),
+          sql`${userLessonProgress.lessonId} = ANY(${lessonIds})`
         )
       )
 
     const progressPercentage =
-      (validCompletedChapters.count / publishedChapterIds.length) * 100 || 0
+      (validCompletedLessons.count / lessonIds.length) * 100 || 0
     return progressPercentage
   } catch (error) {
     console.log('GET_PROGRESS', error)
     return 0
   }
+}
+export const getChapters = async (userId: string | null, courseId: string) => {
+  const data = await db
+    .select()
+    .from(chapters)
+    .where(eq(chapters.courseId, courseId))
+    .orderBy(asc(chapters.position))
+
+  const chaptersWithLessons = await Promise.all(
+    data.map(async chapter => {
+      const lessonsData = await db
+        .select({
+          id: lessons.id,
+          chapterId: lessons.chapterId,
+          title: lessons.title,
+          description: lessons.description,
+          lessonType: lessons.lessonType,
+          position: lessons.position,
+          isPublished: lessons.isPublished,
+          isFree: lessons.isFree,
+          videoUrl: lessons.videoUrl,
+          duration: lessons.duration,
+          question: lessons.question,
+          questionType: lessons.questionType,
+          isCompleted: sql`CASE WHEN ${userLessonProgress.id} IS NOT NULL THEN true ELSE false END`,
+        })
+        .from(lessons)
+        .leftJoin(
+          userLessonProgress,
+          and(
+            eq(userLessonProgress.lessonId, lessons.id),
+            userId ? eq(userLessonProgress.userId, userId) : undefined
+          )
+        )
+        .where(eq(lessons.chapterId, chapter.id))
+        .groupBy(lessons.id)
+        .orderBy(asc(lessons.position))
+
+      return {
+        ...chapter,
+        lessons: lessonsData,
+      }
+    })
+  )
+  return chaptersWithLessons
 }
 
 export const getPasswordResetTokenByToken = async (token: string) => {

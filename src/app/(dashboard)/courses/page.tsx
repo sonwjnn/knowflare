@@ -13,10 +13,10 @@ export default function CoursesPage() {
 
         <div className="flex flex-col gap-8 md:flex-row">
           <div className="md:w-1/4">
-            <div className="rounded-lg bg-white p-6 shadow-sm md:hidden">
+            <div className="bg-white p-6 shadow-sm md:hidden">
               <FiltersMobile />
             </div>
-            <div className="hidden rounded-lg bg-white p-6 shadow-sm md:block">
+            <div className="hidden bg-white p-6 shadow-sm md:block">
               <CourseSidebar />
             </div>
           </div>

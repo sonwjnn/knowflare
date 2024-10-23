@@ -1,22 +1,17 @@
 import { db } from '@/db/drizzle'
+import { getChapters } from '@/db/queries'
 import {
   chapters,
   courses,
   insertChaptersSchema,
-  muxData,
-  userProgress,
+  lessons,
+  userLessonProgress,
 } from '@/db/schema'
 import { verifyAuth } from '@hono/auth-js'
 import { zValidator } from '@hono/zod-validator'
-import Mux from '@mux/mux-node'
-import { and, asc, desc, eq } from 'drizzle-orm'
+import { and, asc, desc, eq, sql } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { z } from 'zod'
-
-const { video } = new Mux({
-  tokenId: process.env['MUX_TOKEN_ID'], // This is the default and can be omitted
-  tokenSecret: process.env['MUX_TOKEN_SECRET'], // This is the default and can be omitted
-})
 
 const app = new Hono().get(
   '/',
@@ -40,15 +35,11 @@ const app = new Hono().get(
       return c.json({ error: 'Missing id' }, 400)
     }
 
-    const data = await db
-      .select()
-      .from(chapters)
-      .where(eq(chapters.courseId, courseId))
-      .orderBy(asc(chapters.position))
+    const data = await getChapters(auth.token.id, courseId)
 
     return c.json({
       data,
-    })
+    } as const)
   }
 )
 // .get(

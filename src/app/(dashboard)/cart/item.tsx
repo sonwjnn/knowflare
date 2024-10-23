@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { useDeleteCart } from '@/features/carts/use-delete-cart'
+import { useDeleteCart } from '@/features/carts/api/use-delete-cart'
 import { Trash2 } from 'lucide-react'
 import Image from 'next/image'
 
@@ -35,7 +35,7 @@ export const Item = ({
         alt={title}
         width={120}
         height={80}
-        className="mr-6 aspect-video rounded-lg object-cover"
+        className="mr-6 aspect-video rounded-none object-cover"
       />
       <div className="flex-grow">
         <h3 className="mb-1 text-lg font-semibold">{title}</h3>

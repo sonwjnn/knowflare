@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { useGetCarts } from '@/features/carts/use-get-carts'
+import { useGetCarts } from '@/features/carts/api/use-get-carts'
 import { ChevronLeft, Loader, ShoppingCart } from 'lucide-react'
 import Link from 'next/link'
 
@@ -18,7 +18,7 @@ export const List = () => {
 
   if (!carts || carts?.length === 0) {
     return (
-      <div className="rounded-lg bg-white p-6 text-center shadow">
+      <div className="rounded-none bg-white p-6 text-center shadow">
         <ShoppingCart className="mx-auto mb-4 h-12 w-12 text-gray-400" />
         <h2 className="mb-2 text-xl font-semibold">Your cart is empty</h2>
         <p className="mb-4 text-gray-600">
@@ -34,7 +34,7 @@ export const List = () => {
   }
 
   return (
-    <div className="overflow-hidden rounded-lg bg-white shadow">
+    <div className="overflow-hidden rounded-none bg-white shadow">
       {carts?.map(item => (
         <Item
           key={item.courseId}

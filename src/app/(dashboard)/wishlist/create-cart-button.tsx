@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
-import { useCreateCart } from '@/features/carts/use-create-cart'
-import { useGetCartByCourseId } from '@/features/carts/use-get-cart-by-course-id'
-import { useDeleteWishlist } from '@/features/wishlists/use-delete-wishlist'
+import { useCreateCart } from '@/features/carts/api/use-create-cart'
+import { useGetCartByCourseId } from '@/features/carts/api/use-get-cart-by-course-id'
+import { useDeleteWishlist } from '@/features/wishlists/api/use-delete-wishlist'
 import { cn } from '@/lib/utils'
 import { useRouter } from 'next/navigation'
 
