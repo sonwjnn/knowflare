@@ -14,6 +14,7 @@ import lessons from './lessons'
 import purchases from './purchases'
 import reviews from './reviews'
 import subscriptions from './subscriptions'
+import userProgress from './user-progress'
 import users from './users'
 import wishlists from './wishlists'
 
@@ -38,7 +39,7 @@ const routes = app
   // .route('/attachments', attachments)
   .route('/purchases', purchases)
   // .route('/teachers', teachers)
-  // .route('/userProgress', userProgress)
+  .route('/userProgress', userProgress)
   .route('/carts', carts)
   .route('/wishlists', wishlists)
   .route('/reviews', reviews)

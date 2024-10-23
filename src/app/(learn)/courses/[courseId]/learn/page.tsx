@@ -14,10 +14,13 @@ const LearnPage = () => {
     return <div>Loading ...</div>
   }
 
-  if (!chapters || !chapters?.[0]?.lessons?.[0]) redirect(`/courses`)
+  if (!chapters || !chapters?.[0]?.lessons) redirect(`/courses`)
 
+  console.log(
+    `/courses/${courseId}/learn/lessons/${chapters?.[0]?.lessons?.[0].id}`
+  )
   return redirect(
-    `/courses/${courseId}/learn/lessons/${chapters?.[0]?.lessons?.[0]?.id}`
+    `/courses/${courseId}/learn/lessons/${chapters?.[0]?.lessons?.[0].id}`
   )
 }
 

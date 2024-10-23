@@ -42,7 +42,7 @@ export const getProgress = async (
 
     const [validCompletedLessons] = await db
       .select({
-        count: count(userLessonProgress.id),
+        count: count(userLessonProgress.lessonId),
       })
       .from(userLessonProgress)
       .where(
@@ -84,7 +84,7 @@ export const getChapters = async (userId: string | null, courseId: string) => {
           duration: lessons.duration,
           question: lessons.question,
           questionType: lessons.questionType,
-          isCompleted: sql`CASE WHEN ${userLessonProgress.id} IS NOT NULL THEN true ELSE false END`,
+          isCompleted: sql`CASE WHEN ${userLessonProgress.lessonId} IS NOT NULL THEN true ELSE false END`,
         })
         .from(lessons)
         .leftJoin(

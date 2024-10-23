@@ -285,17 +285,12 @@ export default function CourseDetail() {
                   <span>Certificate</span>
                 </div>
               </div>
-              {!!currentPurchase && (
-                <Link href={`/courses/${courseId}/learn`} className="w-full">
-                  <Button
-                    variant="outline"
-                    className="w-full px-4 py-6 text-lg"
-                  >
-                    Learn now
-                    <ArrowRight className="ml-2 size-5" />
-                  </Button>
-                </Link>
-              )}
+              <Link href={`/courses/${courseId}/learn`} className="w-full">
+                <Button variant="outline" className="w-full px-4 py-6 text-lg">
+                  {!!currentPurchase ? 'Learn continue' : 'Try learn'}
+                  <ArrowRight className="ml-2 size-5" />
+                </Button>
+              </Link>
             </CardFooter>
           </Card>
         </div>

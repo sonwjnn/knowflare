@@ -298,23 +298,28 @@ export const quizAnswers = mysqlTable('quiz_answer', {
   explanation: varchar('explanation', { length: 255 }),
 })
 
-export const userLessonProgress = mysqlTable('user_lesson_progress', {
-  id: varchar('id', { length: 255 })
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  userId: varchar('user_id', { length: 255 })
-    .notNull()
-    .references(() => users.id, {
-      onDelete: 'cascade',
+export const userLessonProgress = mysqlTable(
+  'user_lesson_progress',
+  {
+    userId: varchar('user_id', { length: 255 })
+      .notNull()
+      .references(() => users.id, {
+        onDelete: 'cascade',
+      }),
+    lessonId: varchar('lesson_id', { length: 255 })
+      .notNull()
+      .references(() => lessons.id, {
+        onDelete: 'cascade',
+      }),
+    isCompleted: boolean('is_completed').default(false),
+    date: timestamp('date', { mode: 'date' }).default(sql`CURRENT_TIMESTAMP`),
+  },
+  userLessonProgress => ({
+    compositePk: primaryKey({
+      columns: [userLessonProgress.userId, userLessonProgress.lessonId],
     }),
-  lessonId: varchar('lesson_id', { length: 255 })
-    .notNull()
-    .references(() => lessons.id, {
-      onDelete: 'cascade',
-    }),
-  isCompleted: boolean('is_completed').default(false),
-  date: timestamp('date', { mode: 'date' }).default(sql`CURRENT_TIMESTAMP`),
-})
+  })
+)
 
 export const purchases = mysqlTable('purchases', {
   id: varchar('id', { length: 255 })

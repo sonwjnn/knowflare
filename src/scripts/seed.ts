@@ -58,7 +58,7 @@ async function main() {
     await db.delete(chapters).execute()
     await db.delete(courses).execute()
 
-    const userId = '9c0ca8ce-12ab-4d0f-8faf-1e5a6afeafed'
+    const userId = '9ef9f0b1-1754-448b-afb8-db5fdd85953c'
 
     const SEED_CATEGORIES = [
       { id: uuidv4(), name: 'IT' },
@@ -102,7 +102,7 @@ async function main() {
       const SEED_CHAPTERS = chapterIds.map((id, index) => ({
         id,
         courseId,
-        title: `Chapter Title ${index + 1} for Course ${courseId}`,
+        title: `Chapter Title ${index + 1} for Course`,
         description: `Description for Chapter Title ${index + 1}`,
         position: index + 1,
         isPublished: Math.random() < 0.5,
@@ -120,7 +120,7 @@ async function main() {
           return {
             id,
             chapterId,
-            title: `Lesson Title ${index + 1} for Chapter ${chapterId}`,
+            title: `Lesson Title ${index + 1} for Chapter`,
             description: `Description for Lesson Title ${index + 1}`,
             lessonType: isVideo ? LessonType.VIDEO : LessonType.QUIZ,
             position: index + 1,
@@ -144,7 +144,7 @@ async function main() {
             const SEED_ANSWERS = answerIds.map((id, index) => ({
               id,
               lessonId: lesson.id,
-              content: `Answer ${index + 1} for Quiz Lesson ${lesson.id}`,
+              content: `Answer ${index + 1} for Quiz Lesson`,
               isCorrect: index === 0, // First answer is correct
               explanation: `Explanation for Answer ${index + 1}`,
             }))
