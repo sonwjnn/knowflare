@@ -12,7 +12,6 @@ import {
   purchases,
   quizAnswers,
   reviews,
-  subCategories,
   subscriptions,
   users,
   wishlists,
@@ -57,28 +56,24 @@ async function main() {
     await db.delete(carts).execute()
     await db.delete(purchases).execute()
     await db.delete(wishlists).execute()
-    await db.delete(subCategories).execute()
     await db.delete(categories).execute()
     await db.delete(chapters).execute()
     await db.delete(courses).execute()
 
-    const userId = 'f3cbc864-0757-468a-8182-7a7ab6923c84'
+    const userId = '234b900e-9551-405c-998f-1a599aaa3cb3'
 
     // Seed categories
     await db.insert(categories).values(SEED_CATEGORIES).execute()
 
-    // Seed sub-categories
-    await db.insert(subCategories).values(SEED_SUB_CATEGORIES).execute()
-
     // Get all sub-category IDs
-    const subCategoryIds = SEED_SUB_CATEGORIES.map(subCat => subCat.id)
+    const categoryIds = SEED_CATEGORIES.map(cat => cat.id)
 
     // Create courses
     const courseIds = Array.from({ length: 30 }, () => uuidv4())
     const SEED_COURSES = courseIds.map((id, index) => ({
       id,
       userId,
-      subCategoryId: subCategoryIds[index % subCategoryIds.length],
+      categoryId: categoryIds[index % categoryIds.length],
       title: `Course Title ${index + 1}`,
       description: `Description for Course Title ${index + 1}`,
       imageUrl: getRandomImageUrl(),

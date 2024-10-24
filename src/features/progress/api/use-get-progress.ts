@@ -10,7 +10,7 @@ export type ResponseType = InferResponseType<
 export const useGetUserProgress = (lessonId?: string) => {
   const query = useQuery({
     enabled: !!lessonId,
-    queryKey: ['progress'],
+    queryKey: ['progress', { lessonId }],
     queryFn: async () => {
       const response = await client.api.userProgress[':lessonId'].$get({
         param: {

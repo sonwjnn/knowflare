@@ -1,7 +1,8 @@
 import { Button } from '@/components/ui/button'
 import { useCreateWishlist } from '@/features/wishlists/api/use-create-wishlist'
 import { useDeleteWishlist } from '@/features/wishlists/api/use-delete-wishlist'
-import { Heart } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { GoHeartFill } from 'react-icons/go'
 
 type Props = {
   courseId: string
@@ -33,8 +34,11 @@ export const WishlistButton = ({ courseId, isInWishlist }: Props) => {
       variant="ghost"
       className="rounded-full"
     >
-      <Heart
-        className={`h-4 w-4 ${isInWishlist ? 'fill-red-500 text-red-500' : 'text-foreground'}`}
+      <GoHeartFill
+        className={cn(
+          `size-5 transition`,
+          isInWishlist ? 'fill-red-500 text-red-500' : 'text-muted-foreground'
+        )}
       />
     </Button>
   )

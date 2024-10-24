@@ -1,7 +1,7 @@
-const HeartIcon = ({ className = '' }) => {
+export const HeartIcon = ({ className = '' }) => {
   return (
     <svg
-      className={`${className} heart-icon`}
+      className={` heart-icon ${className}`}
       enableBackground="new 467 392 58 57"
       viewBox="467 392 58 57"
       xmlns="http://www.w3.org/2000/svg"

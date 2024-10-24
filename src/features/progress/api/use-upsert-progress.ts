@@ -30,7 +30,7 @@ export const useUpsertProgressLesson = (id: string) => {
     onSuccess: () => {
       toast.success('Lesson progress updated')
       queryClient.invalidateQueries({ queryKey: ['chapters', { courseId }] })
-      queryClient.invalidateQueries({ queryKey: ['progress'] })
+      queryClient.invalidateQueries({ queryKey: ['progress', { id }] })
     },
     onError: () => {
       toast.error('Failed to edit chapter')

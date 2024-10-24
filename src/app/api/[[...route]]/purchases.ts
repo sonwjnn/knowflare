@@ -65,7 +65,7 @@ const app = new Hono()
           )
         )
 
-      return c.json({ data })
+      return c.json({ data: data ?? null })
     }
   )
 

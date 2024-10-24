@@ -90,7 +90,7 @@ export const ChaptersList = () => {
                     title={lesson.title}
                     lessonType={lesson.lessonType}
                     isActive={lesson.id === lessonId}
-                    isCompleted={lesson.isCompleted}
+                    isCompleted={!!lesson.isCompleted}
                     isLocked={!purchase && !lesson.isFree}
                   />
                 ))}

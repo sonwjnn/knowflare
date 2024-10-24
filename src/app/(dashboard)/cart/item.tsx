@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { useDeleteCart } from '@/features/carts/api/use-delete-cart'
-import { Trash2 } from 'lucide-react'
+import { Trash, Trash2 } from 'lucide-react'
 import Image from 'next/image'
 
 type Props = {
@@ -21,10 +21,6 @@ export const Item = ({
   const { mutate: deleteCart, isPending: deleteCartLoading } =
     useDeleteCart(courseId)
 
-  const onRemove = () => {
-    deleteCart()
-  }
-
   return (
     <div
       key={courseId}
@@ -43,13 +39,14 @@ export const Item = ({
       </div>
       <div className="text-right">
         <p className="mb-2 text-lg font-semibold">${price.toFixed(2)}</p>
+
         <Button
+          size="icon"
+          onClick={() => deleteCart()}
+          className="rounded-full bg-slate-200 text-muted-foreground hover:bg-rose-500 hover:text-white"
           disabled={deleteCartLoading}
-          variant="ghost"
-          size="sm"
-          onClick={onRemove}
         >
-          <Trash2 className="size-4 text-rose-500" />
+          <Trash className="size-4" />
         </Button>
       </div>
     </div>

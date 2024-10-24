@@ -84,7 +84,7 @@ export const getChapters = async (userId: string | null, courseId: string) => {
           duration: lessons.duration,
           question: lessons.question,
           questionType: lessons.questionType,
-          isCompleted: sql`CASE WHEN ${userLessonProgress.lessonId} IS NOT NULL THEN true ELSE false END`,
+          isCompleted: sql`CASE WHEN ${userLessonProgress.isCompleted} IS NULL THEN false ELSE ${userLessonProgress.isCompleted} END`,
         })
         .from(lessons)
         .leftJoin(
