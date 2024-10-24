@@ -25,7 +25,7 @@ export default function EnhancedPurchasedCourses() {
 
   if (courses?.length === 0) {
     return (
-      <div className="flex h-[50vh] items-center justify-center">
+      <div className="mt-16 flex h-[50vh] items-center justify-center">
         <div className="flex w-2/3 flex-col items-center justify-center">
           <BookOpen className="mb-4 h-12 w-12 text-muted-foreground" />
           <h2 className="mb-2 text-2xl font-semibold">No Purchased Courses</h2>
@@ -39,7 +39,7 @@ export default function EnhancedPurchasedCourses() {
   }
 
   return (
-    <div className="min-h-screen px-4 py-12 sm:px-6 lg:px-8">
+    <div className="mt-16 min-h-screen px-4 py-12 sm:px-6 lg:px-8">
       <div className="max-w-8xl mx-auto">
         <h1 className="mb-8 text-center text-4xl font-extrabold text-gray-900">
           My Learning Journey

@@ -12,6 +12,7 @@ import {
   purchases,
   quizAnswers,
   reviews,
+  subCategories,
   subscriptions,
   users,
   wishlists,
@@ -21,6 +22,8 @@ import { config } from 'dotenv'
 import { drizzle } from 'drizzle-orm/mysql2'
 import mysql from 'mysql2/promise'
 import { v4 as uuidv4 } from 'uuid'
+
+import { SEED_CATEGORIES, SEED_SUB_CATEGORIES } from './data'
 
 config({ path: '.env.local' })
 
@@ -54,37 +57,28 @@ async function main() {
     await db.delete(carts).execute()
     await db.delete(purchases).execute()
     await db.delete(wishlists).execute()
+    await db.delete(subCategories).execute()
     await db.delete(categories).execute()
     await db.delete(chapters).execute()
     await db.delete(courses).execute()
 
-    const userId = '9ef9f0b1-1754-448b-afb8-db5fdd85953c'
-
-    const SEED_CATEGORIES = [
-      { id: uuidv4(), name: 'IT' },
-      { id: uuidv4(), name: 'Health' },
-      { id: uuidv4(), name: 'Language' },
-      { id: uuidv4(), name: 'Business' },
-      { id: uuidv4(), name: 'Management' },
-      { id: uuidv4(), name: 'English' },
-      { id: uuidv4(), name: 'Personal Development' },
-      { id: uuidv4(), name: 'Sales & Marketing' },
-      { id: uuidv4(), name: 'Engineering & Construction' },
-      { id: uuidv4(), name: 'Teaching & Academics' },
-    ]
+    const userId = 'f3cbc864-0757-468a-8182-7a7ab6923c84'
 
     // Seed categories
     await db.insert(categories).values(SEED_CATEGORIES).execute()
 
-    // Retrieve inserted category IDs
-    const categoryIds = SEED_CATEGORIES.map(cat => cat.id)
+    // Seed sub-categories
+    await db.insert(subCategories).values(SEED_SUB_CATEGORIES).execute()
+
+    // Get all sub-category IDs
+    const subCategoryIds = SEED_SUB_CATEGORIES.map(subCat => subCat.id)
 
     // Create courses
     const courseIds = Array.from({ length: 30 }, () => uuidv4())
     const SEED_COURSES = courseIds.map((id, index) => ({
       id,
       userId,
-      categoryId: categoryIds[index % categoryIds.length], // Ensure valid category ID
+      subCategoryId: subCategoryIds[index % subCategoryIds.length],
       title: `Course Title ${index + 1}`,
       description: `Description for Course Title ${index + 1}`,
       imageUrl: getRandomImageUrl(),
@@ -153,6 +147,8 @@ async function main() {
         }
       }
     }
+
+    console.log('Seeding completed successfully!')
   } catch (error) {
     console.log('Error during seed:', error)
     await connection.end()

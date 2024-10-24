@@ -53,50 +53,6 @@ export default function KnowflareHomepage() {
   }
 
   const { data: categories, isPending: categoriesLoading } = useGetCategories()
-  const [cartItems, setCartItems] = useState<Course[]>([])
-
-  const featuredCourses = [
-    {
-      id: 1,
-      title: 'Machine Learning',
-      institution: 'Stanford University',
-      rating: 4.8,
-      students: '3.8M',
-      image: '/placeholder.svg?height=400&width=600',
-      price: 49.99,
-    },
-    {
-      id: 2,
-      title: 'The Science of Well-Being',
-      institution: 'Yale University',
-      rating: 4.9,
-      students: '3.6M',
-      image: '/placeholder.svg?height=400&width=600',
-      price: 39.99,
-    },
-    {
-      id: 3,
-      title: 'Financial Markets',
-      institution: 'Yale University',
-      rating: 4.7,
-      students: '1.2M',
-      image: '/placeholder.svg?height=400&width=600',
-      price: 59.99,
-    },
-    {
-      id: 4,
-      title: 'Programming for Everybody (Getting Started with Python)',
-      institution: 'University of Michigan',
-      rating: 4.8,
-      students: '2.3M',
-      image: '/placeholder.svg?height=400&width=600',
-      price: 49.99,
-    },
-  ]
-
-  const addToCart = (course: Course) => {
-    setCartItems([...cartItems, course])
-  }
 
   return (
     <main>
@@ -143,51 +99,6 @@ export default function KnowflareHomepage() {
         </div>
       </section>
 
-      {/* <section className="py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <h2 className="mb-8 text-3xl font-bold">Featured Courses</h2>
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
-            {featuredCourses.map(course => (
-              <div
-                key={course.id}
-                className="overflow-hidden rounded-none bg-white shadow-md transition-transform duration-300 hover:scale-105"
-              >
-                <Image
-                  src={course.image}
-                  alt={course.title}
-                  width={600}
-                  height={400}
-                  className="h-48 w-full object-cover"
-                />
-                <div className="p-4">
-                  <h3 className="mb-2 text-lg font-semibold">{course.title}</h3>
-                  <p className="mb-2 text-sm text-gray-600">
-                    {course.institution}
-                  </p>
-                  <div className="mb-2 flex items-center">
-                    <Star className="mr-1 h-4 w-4 text-yellow-400" />
-                    <span className="text-sm text-gray-600">
-                      {course.rating}
-                    </span>
-                    <span className="ml-2 text-sm text-gray-400">
-                      ({course.students} students)
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-lg font-bold">
-                      ${course.price.toFixed(2)}
-                    </span>
-                    <Button onClick={() => addToCart(course)}>
-                      Add to cart
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section> */}
-
       <section className="mx-auto max-w-6xl py-16">
         <h2 className="mb-8 text-center text-3xl font-bold text-gray-800">
           Top Categories
@@ -198,7 +109,7 @@ export default function KnowflareHomepage() {
           </div>
         )}
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
-          {categories?.slice(0, 10).map(item => {
+          {categories?.map(item => {
             const Icon = iconMap[item.name]
 
             return (

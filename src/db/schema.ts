@@ -146,8 +146,8 @@ export const courses = mysqlTable('course', {
     .references(() => users.id, {
       onDelete: 'cascade',
     }),
-  categoryId: varchar('category_id', { length: 255 }).references(
-    () => categories.id,
+  subCategoryId: varchar('sub_category_id', { length: 255 }).references(
+    () => subCategories.id,
     {
       onDelete: 'set null',
     }
@@ -162,8 +162,8 @@ export const courses = mysqlTable('course', {
 })
 
 export const coursesRelations = relations(courses, ({ many, one }) => ({
-  category: one(categories, {
-    fields: [courses.categoryId],
+  subCategory: one(categories, {
+    fields: [courses.subCategoryId],
     references: [categories.id],
   }),
   user: one(users, {
@@ -184,6 +184,19 @@ export const categories = mysqlTable('category', {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   name: varchar('name', { length: 255 }).notNull(),
+})
+
+export const subCategories = mysqlTable('sub_category', {
+  id: varchar('id', { length: 255 })
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: varchar('name', { length: 255 }).notNull(),
+  parentId: varchar('parent_id', { length: 255 }).references(
+    () => categories.id,
+    {
+      onDelete: 'set null',
+    }
+  ),
 })
 
 export const attachments = mysqlTable('attachment', {

@@ -116,7 +116,7 @@ export default function CourseDetail() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl p-6">
+    <div className="mx-auto mt-16 max-w-7xl p-6">
       <div className="grid gap-6 md:grid-cols-3">
         <div className="bg-white p-4 md:col-span-2">
           <Image
@@ -225,7 +225,7 @@ export default function CourseDetail() {
         </div>
 
         <div className="md:col-span-1">
-          <Card className="sticky top-6">
+          <Card className="sticky top-20">
             <CardHeader>
               <CardTitle className="text-3xl font-bold">
                 ${courseDetails.price}

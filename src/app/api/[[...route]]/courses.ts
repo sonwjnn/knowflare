@@ -8,6 +8,7 @@ import {
   courses,
   insertCoursesSchema,
   purchases,
+  subCategories,
   users,
 } from '@/db/schema'
 import { verifyAuth } from '@hono/auth-js'
@@ -43,17 +44,17 @@ const app = new Hono()
           isPublished: courses.isPublished,
           date: courses.date,
           category: {
-            id: categories.id,
-            name: categories.name,
+            id: subCategories.id,
+            name: subCategories.name,
           },
         })
         .from(courses)
-        .innerJoin(categories, eq(categories.id, courses.categoryId))
+        .innerJoin(subCategories, eq(subCategories.id, courses.subCategoryId))
         .where(
           and(
             eq(courses.isPublished, true),
             title ? like(courses.title, `%${title}%`) : undefined,
-            categoryId ? eq(courses.categoryId, categoryId) : undefined,
+            categoryId ? eq(courses.subCategoryId, categoryId) : undefined,
             level ? eq(courses.level, level as CourseLevel) : undefined
           )
         )

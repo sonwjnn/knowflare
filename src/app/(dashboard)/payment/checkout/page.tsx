@@ -35,7 +35,7 @@ export default async function CheckoutResult({ searchParams }: Props) {
   const isError = searchParams?.error
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
+    <div className="mt-16 flex min-h-screen items-center justify-center bg-gray-50 p-4">
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg transition-all duration-500 ease-out">
         <div className="flex flex-col items-center text-center">
           {isSuccess ? (

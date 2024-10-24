@@ -7,7 +7,7 @@ import { List } from './list'
 
 export default function CoursesPage() {
   return (
-    <main className="px-4 py-8 sm:px-6 lg:px-8">
+    <main className="mt-16 px-4 py-8 sm:px-6 lg:px-8">
       <div className="max-w-8xl mx-auto">
         <h1 className="mb-8 text-3xl font-bold">Courses</h1>
 
