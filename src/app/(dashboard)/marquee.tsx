@@ -1,15 +1,41 @@
 import { motion } from 'framer-motion'
-import { Star } from 'lucide-react'
+import { BookOpen, Lightbulb, Rocket, Star, Trophy } from 'lucide-react'
+
+const MarqueeItem = ({
+  text,
+  icon: Icon,
+}: {
+  text: string
+  icon: React.ElementType
+}) => (
+  <div className="mx-8 flex items-center space-x-2">
+    <Icon className="h-6 w-6 text-primary" />
+    <span className="text-xl font-semibold text-white">{text}</span>
+  </div>
+)
+
+const marqueeItems = [
+  { text: 'Learn', icon: BookOpen },
+  { text: 'Discover', icon: Lightbulb },
+  { text: 'Achieve', icon: Trophy },
+  { text: 'Innovate', icon: Rocket },
+  { text: 'Excel', icon: Star },
+  { text: 'Learn', icon: BookOpen },
+  { text: 'Discover', icon: Lightbulb },
+  { text: 'Achieve', icon: Trophy },
+  { text: 'Innovate', icon: Rocket },
+  { text: 'Excel', icon: Star },
+]
 
 export const Marquee = () => {
   const marqueeVariants = {
     animate: {
-      x: [0, -1035],
+      x: [0, -1800],
       transition: {
         x: {
           repeat: Infinity,
           repeatType: 'loop',
-          duration: 15,
+          duration: 30,
           ease: 'linear',
         },
       },
@@ -17,23 +43,25 @@ export const Marquee = () => {
   }
 
   return (
-    <section className="relative overflow-hidden bg-gray-900 py-8">
-      <motion.div
-        className="whitespace-nowrap"
-        variants={marqueeVariants}
-        animate="animate"
-      >
-        <div className="inline-block">
-          {[...Array(20)].map((_, i) => (
-            <span
-              key={i}
-              className="mx-4 gap-x-1 text-3xl capitalize text-white opacity-50"
-            >
-              Knowflare
-            </span>
-          ))}
-        </div>
-      </motion.div>
-    </section>
+    <div className="relative overflow-hidden bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 py-4">
+      <div className="absolute inset-0 bg-black opacity-20"></div>
+      <div className="relative flex">
+        <motion.div
+          className="flex items-center whitespace-nowrap"
+          variants={marqueeVariants}
+          animate="animate"
+        >
+          {[...Array(3)].flatMap(() =>
+            marqueeItems.map((item, index) => (
+              <MarqueeItem
+                key={`${index}-${item.text}`}
+                text={item.text}
+                icon={item.icon}
+              />
+            ))
+          )}
+        </motion.div>
+      </div>
+    </div>
   )
 }

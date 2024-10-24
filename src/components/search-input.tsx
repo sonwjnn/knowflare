@@ -1,6 +1,7 @@
 'use client'
 
 import { useDebounce } from '@/hooks/use-debounce'
+import { cn } from '@/lib/utils'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Search, X } from 'lucide-react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -9,12 +10,16 @@ import { useCallback, useEffect, useState } from 'react'
 
 import { Input } from './ui/input'
 
-const AnimatedSearchInput = () => {
+interface AnimatedSearchInputProps {
+  className?: string
+}
+
+const AnimatedSearchInput = ({ className }: AnimatedSearchInputProps) => {
   const pathname = usePathname()
   const [value, setValue] = useState('')
   const searchParams = useSearchParams()
   const router = useRouter()
-  const [isFocused, setIsFocused] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(false)
 
   const currentyCategoryId = searchParams.get('categoryId')
 
@@ -54,58 +59,72 @@ const AnimatedSearchInput = () => {
     }
   }, [currentyCategoryId, router, pathname])
 
+  const handleBlur = useCallback(() => {
+    if (!value) {
+      setIsExpanded(false)
+    }
+  }, [value])
+
   return (
-    <form onSubmit={onClick}>
-      <div className="flex flex-1 items-center justify-center px-2 lg:ml-6 lg:justify-end">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+    <form onSubmit={onClick} className="relative">
+      <motion.div
+        className="relative flex items-center"
+        initial={{ width: '40px' }}
+        animate={{ width: isExpanded ? '300px' : '40px' }}
+        transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+      >
+        <motion.button
+          type="button"
+          className={cn(
+            `absolute left-0 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-transparent ${
+              isExpanded ? 'pointer-events-none' : ''
+            }`,
+            className
+          )}
+          onClick={() => setIsExpanded(true)}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
         >
-          <label htmlFor="search" className="sr-only">
-            Search
-          </label>
-          <motion.div
-            className="relative"
-            initial={{ width: '200px' }}
-            animate={{ width: isFocused ? '400px' : '200px' }}
-            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          >
+          <Search className={cn('h-5 w-5', className)} />
+        </motion.button>
+        <AnimatePresence>
+          {isExpanded && (
             <motion.div
-              className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
-              whileHover={{ scale: 1.1 }}
+              initial={{ opacity: 0, width: 0 }}
+              animate={{ opacity: 1, width: '100%' }}
+              exit={{ opacity: 0, width: 0 }}
+              transition={{ duration: 0.2 }}
+              className="w-full"
             >
-              <Search className="h-5 w-5 text-gray-400" />
-            </motion.div>
-            <Input
-              id="search"
-              name="search"
-              onChange={e => setValue(e.target.value)}
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => setIsFocused(false)}
-              value={value}
-              className="block w-full rounded-none border border-gray-300 bg-white py-2 pl-10 pr-3 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-transparent focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              placeholder="Search for a course"
-              type="text"
-            />
-            <AnimatePresence>
+              <Input
+                id="search"
+                name="search"
+                onChange={e => setValue(e.target.value)}
+                onBlur={handleBlur}
+                value={value}
+                className={cn(
+                  'h-10 w-full rounded-full border bg-transparent pl-12 pr-10 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-transparent focus-visible:ring-offset-2',
+                  className
+                )}
+                placeholder="Search for a course"
+                type="text"
+                autoFocus
+              />
               {value && (
-                <motion.div
+                <motion.button
+                  type="button"
                   className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center"
                   onClick={onClear}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                 >
-                  <X className="size-4 text-gray-400" />
-                </motion.div>
+                  <X className={cn('h-4 w-4', className)} />
+                </motion.button>
               )}
-            </AnimatePresence>
-          </motion.div>
-        </motion.div>
-      </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
     </form>
   )
 }
