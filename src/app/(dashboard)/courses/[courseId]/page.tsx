@@ -1,5 +1,6 @@
 'use client'
 
+import { BorderButton } from '@/components/custom/border-button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -19,6 +20,7 @@ import { useCreateWishlist } from '@/features/wishlists/api/use-create-wishlist'
 import { useDeleteWishlist } from '@/features/wishlists/api/use-delete-wishlist'
 import { useGetWishlistByCourseId } from '@/features/wishlists/api/use-wishlist-cart-by-course-id'
 import { useCourseId } from '@/hooks/use-course-id'
+import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import {
   ArrowRight,
@@ -35,6 +37,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useCallback } from 'react'
+import { GoHeartFill } from 'react-icons/go'
 
 import { Reviews } from './reviews'
 
@@ -243,14 +246,20 @@ export default function CourseDetail() {
                       <ShoppingCart className="mr-2 h-5 w-5" />
                       {cart ? 'Go to cart' : 'Add to cart'}
                     </Button>
+
                     <Button
                       variant="outline"
                       disabled={isWishlistLoading}
                       className="px-4 py-6 text-lg"
                       onClick={onClickWishlist}
                     >
-                      <Heart
-                        className={`size-5 ${wishlist ? 'fill-rose-500 text-rose-500' : ''}`}
+                      <GoHeartFill
+                        className={cn(
+                          `size-5 transition`,
+                          wishlist
+                            ? 'fill-red-500 text-red-500'
+                            : 'text-muted-foreground'
+                        )}
                       />
                     </Button>
                   </div>

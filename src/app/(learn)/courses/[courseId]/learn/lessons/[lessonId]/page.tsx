@@ -94,14 +94,16 @@ export default function CourseInterface() {
             <h2 className="text-2xl font-bold">{lesson?.title}</h2>
             <p className="text-gray-600">Updated 2 months ago</p>
           </div>
-          <div className="ml-auto">
-            <ProgressButton
-              courseId={courseId}
-              lessonId={lessonId}
-              isCompleted={!!userLessonProgress?.isCompleted}
-              disabled={userLessonProgressLoading}
-            />
-          </div>
+          {!!purchase && (
+            <div className="ml-auto">
+              <ProgressButton
+                courseId={courseId}
+                lessonId={lessonId}
+                isCompleted={!!userLessonProgress?.isCompleted}
+                disabled={userLessonProgressLoading}
+              />
+            </div>
+          )}
         </div>
         <div className="mb-6 flex justify-between">
           <Button

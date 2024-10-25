@@ -1,3 +1,4 @@
+import { BorderButton } from '@/components/custom/border-button'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { useCreateCart } from '@/features/carts/api/use-create-cart'
@@ -29,8 +30,7 @@ export const Item = ({
 }: Props) => {
   const { mutate: createCart, isPending: createCartLoading } = useCreateCart()
 
-  const onCreateCart = (e: any) => {
-    e.preventDefault()
+  const onCreateCart = () => {
     createCart({ courseId: id })
   }
 
@@ -40,14 +40,14 @@ export const Item = ({
         key={id}
         className="group overflow-hidden transition-all duration-300 hover:shadow-lg"
       >
-        <div className="relative">
+        <div className="relative overflow-hidden">
           <Image
             src={imageUrl || '/placeholder.svg?height=400&width=600'}
             alt={title}
             width={0}
             height={0}
             sizes="100vw"
-            className="aspect-video w-full object-cover"
+            className="aspect-video w-full object-cover transition ease-out group-hover:scale-105"
           />
           <div
             className={cn(
@@ -75,14 +75,15 @@ export const Item = ({
             {isInCart ? (
               <Link href="/cart">
                 <Button className="bg-sky-100 text-sky-800 hover:bg-sky-50 hover:text-sky-800">
-                  <Eye className="mr-1 size-4" />
                   View cart
                 </Button>
               </Link>
             ) : (
-              <Button onClick={onCreateCart} disabled={createCartLoading}>
-                Add to cart
-              </Button>
+              <BorderButton
+                onClick={onCreateCart}
+                disabled={createCartLoading}
+                label="Add to cart"
+              />
             )}
           </div>
         </CardContent>
