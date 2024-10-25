@@ -74,6 +74,7 @@ export const getChapters = async (userId: string | null, courseId: string) => {
         .select({
           id: lessons.id,
           chapterId: lessons.chapterId,
+          courseId: lessons.courseId,
           title: lessons.title,
           description: lessons.description,
           lessonType: lessons.lessonType,
@@ -94,7 +95,9 @@ export const getChapters = async (userId: string | null, courseId: string) => {
             userId ? eq(userLessonProgress.userId, userId) : undefined
           )
         )
-        .where(eq(lessons.chapterId, chapter.id))
+        .where(
+          and(eq(lessons.chapterId, chapter.id), eq(lessons.isPublished, true))
+        )
         .groupBy(lessons.id)
         .orderBy(asc(lessons.position))
 

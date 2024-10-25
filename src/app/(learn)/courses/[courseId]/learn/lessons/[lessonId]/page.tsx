@@ -32,13 +32,13 @@ export default function CourseInterface() {
 
   const { data: purchase, isPending: purchaseLoading } =
     useGetCurrentPurchase(courseId)
-  const { data: lesson, isPending: lessonLoading } = useGetLesson(lessonId)
+  const { data: lesson, isPending: lessonLoading } = useGetLesson({
+    lessonId,
+    courseId,
+  })
   const { data: userLessonProgress, isPending: userLessonProgressLoading } =
     useGetUserProgress(lessonId)
   const [open, setOpen] = useCommentsSheet()
-
-  const nextChapter = { id: null }
-  const prevChapter = { id: null }
 
   const isLocked = !lesson?.isFree && !purchase
 
@@ -106,10 +106,10 @@ export default function CourseInterface() {
         <div className="mb-6 flex justify-between">
           <Button
             variant="outline"
-            disabled={lessonLoading || !!prevChapter?.id === false}
+            disabled={lessonLoading || !lesson?.prevLesson}
             onClick={() =>
               router.push(
-                `/courses/${courseId}/learn/chapters/${prevChapter?.id}`
+                `/courses/${courseId}/learn/lessons/${lesson?.prevLesson?.id}`
               )
             }
           >
@@ -117,10 +117,10 @@ export default function CourseInterface() {
           </Button>
           <Button
             variant="outline"
-            disabled={lessonLoading || !!nextChapter?.id === false}
+            disabled={lessonLoading || !lesson?.nextLesson}
             onClick={() =>
               router.push(
-                `/courses/${courseId}/learn/chapters/${nextChapter?.id}`
+                `/courses/${courseId}/learn/lessons/${lesson?.nextLesson?.id}`
               )
             }
           >

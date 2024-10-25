@@ -7,14 +7,23 @@ export type ResponseType = InferResponseType<
   200
 >
 
-export const useGetLesson = (id?: string) => {
+export const useGetLesson = ({
+  lessonId,
+  courseId,
+}: {
+  lessonId: string
+  courseId: string
+}) => {
   const query = useQuery({
-    enabled: !!id,
-    queryKey: ['lesson', { id }],
+    enabled: !!lessonId,
+    queryKey: ['lesson', { lessonId }],
     queryFn: async () => {
       const response = await client.api.lessons[':id'].$get({
         param: {
-          id: id,
+          id: lessonId,
+        },
+        query: {
+          courseId,
         },
       })
 

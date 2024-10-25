@@ -60,7 +60,7 @@ async function main() {
     await db.delete(chapters).execute()
     await db.delete(courses).execute()
 
-    const userId = '234b900e-9551-405c-998f-1a599aaa3cb3'
+    const userId = 'ddd4c3d9-1dba-4448-9297-c4ade42f7d45'
 
     // Seed categories
     await db.insert(categories).values(SEED_CATEGORIES).execute()
@@ -88,6 +88,7 @@ async function main() {
 
     for (const courseId of courseIds) {
       const chapterIds = Array.from({ length: 5 }, () => uuidv4())
+
       const SEED_CHAPTERS = chapterIds.map((id, index) => ({
         id,
         courseId,
@@ -102,17 +103,21 @@ async function main() {
       await db.insert(chapters).values(SEED_CHAPTERS).execute()
 
       // Create lessons for each chapter
-      for (const chapterId of chapterIds) {
+      let accumulatedPosition = 0
+
+      for (const chapter of SEED_CHAPTERS) {
         const lessonIds = Array.from({ length: 3 }, () => uuidv4())
         const SEED_LESSONS = lessonIds.map((id, index) => {
           const isVideo = Math.random() < 0.7 // 70% chance of being a video lesson
+          accumulatedPosition += 1
           return {
             id,
-            chapterId,
+            courseId: chapter.courseId,
+            chapterId: chapter.id,
             title: `Lesson Title ${index + 1} for Chapter`,
             description: `Description for Lesson Title ${index + 1}`,
             lessonType: isVideo ? LessonType.VIDEO : LessonType.QUIZ,
-            position: index + 1,
+            position: accumulatedPosition,
             isPublished: Math.random() < 0.5,
             isFree: Math.random() < 0.5,
             videoUrl: isVideo

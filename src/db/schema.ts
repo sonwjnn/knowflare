@@ -256,6 +256,11 @@ export const lessons = mysqlTable('lesson', {
   id: varchar('id', { length: 255 })
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
+  courseId: varchar('course_id', { length: 255 })
+    .notNull()
+    .references(() => courses.id, {
+      onDelete: 'cascade',
+    }),
   chapterId: varchar('chapter_id', { length: 255 })
     .notNull()
     .references(() => chapters.id, {
