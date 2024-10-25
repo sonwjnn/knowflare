@@ -5,6 +5,7 @@ import {
   courses,
   insertChaptersSchema,
   lessons,
+  purchases,
   userLessonProgress,
 } from '@/db/schema'
 import { verifyAuth } from '@hono/auth-js'
@@ -42,6 +43,7 @@ const app = new Hono().get(
     } as const)
   }
 )
+
 // .get(
 //   '/published/list',
 //   verifyAuth(),

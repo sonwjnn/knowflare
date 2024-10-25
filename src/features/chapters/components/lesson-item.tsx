@@ -63,13 +63,6 @@ export const LessonItem = ({
             <BsCheckCircleFill className="size-4 text-emerald-600" />
           </div>
         )}
-        {/* <div className="flex items-center space-x-2">
-                        <span className="text-xs text-muted-foreground">
-                        </span>
-                        {isCompleted && (
-                          <Check className="h-4 w-4 text-green-500" />
-                        )}
-                      </div> */}
       </div>
     </button>
   )

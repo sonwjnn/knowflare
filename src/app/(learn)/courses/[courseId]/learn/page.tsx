@@ -1,27 +1,29 @@
 'use client'
 
-import { useGetChapters } from '@/features/chapters/api/use-get-chapters'
+import { useGetFirstLesson } from '@/features/lessons/api/use-get-first-lesson'
 import { useCourseId } from '@/hooks/use-course-id'
+import { Loader2 } from 'lucide-react'
 import { redirect } from 'next/navigation'
 
 const LearnPage = () => {
   const courseId = useCourseId()
 
-  const { data: chapters, isPending: chaptersLoading } =
-    useGetChapters(courseId)
+  const { data: firstLesson, isPending: firstLessonLoading } =
+    useGetFirstLesson({ courseId })
 
-  if (chaptersLoading) {
-    return <div>Loading ...</div>
+  if (firstLessonLoading) {
+    return (
+      <div className="h-screen w-full">
+        <div className="flex h-full items-center justify-center">
+          <Loader2 className="size-6 animate-spin text-muted-foreground" />
+        </div>
+      </div>
+    )
   }
 
-  if (!chapters || !chapters?.[0]?.lessons) redirect(`/courses`)
+  if (!firstLesson) return redirect(`/courses/${courseId}`)
 
-  console.log(
-    `/courses/${courseId}/learn/lessons/${chapters?.[0]?.lessons?.[0].id}`
-  )
-  return redirect(
-    `/courses/${courseId}/learn/lessons/${chapters?.[0]?.lessons?.[0].id}`
-  )
+  return redirect(`/courses/${courseId}/learn/lessons/${firstLesson.id}`)
 }
 
 export default LearnPage

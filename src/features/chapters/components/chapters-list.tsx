@@ -90,12 +90,16 @@ export const ChaptersList = () => {
                 <span className="line-clamp-1 text-left font-medium">
                   {chapterIndex + 1}. {chapter.title}
                 </span>
-                <ChevronUp
-                  className={cn(
-                    'size-8 transition',
-                    !expandedChapters.includes(chapter.id) && 'rotate-180'
-                  )}
-                />
+                {chapter.lessons.length !== 0 ? (
+                  <ChevronUp
+                    className={cn(
+                      'size-8 transition',
+                      !expandedChapters.includes(chapter.id) && 'rotate-180'
+                    )}
+                  />
+                ) : (
+                  <div className="size-8" />
+                )}
               </CollapsibleTrigger>
               <CollapsibleContent
                 className={cn(
