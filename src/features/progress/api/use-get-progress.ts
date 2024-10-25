@@ -19,7 +19,7 @@ export const useGetUserProgress = (lessonId?: string) => {
       })
 
       if (!response.ok) {
-        throw new Error('Failed to fetch course')
+        throw new Error('Failed to fetch progress')
       }
 
       const { data } = await response.json()

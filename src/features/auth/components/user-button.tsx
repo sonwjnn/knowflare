@@ -13,7 +13,7 @@ import {
   BookHeart,
   BrainCog,
   CreditCard,
-  Loader,
+  Loader2,
   LogOut,
   TvMinimalPlay,
 } from 'lucide-react'
@@ -30,7 +30,7 @@ export const UserButton = () => {
   }
 
   if (session.status === 'loading') {
-    return <Loader className="size-4 animate-spin text-muted-foreground" />
+    return <Loader2 className="size-4 animate-spin text-muted-foreground" />
   }
 
   if (session.status === 'unauthenticated' || !session.data) {

@@ -7,13 +7,11 @@ import { Progress } from '@/components/ui/progress'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useGetChapters } from '@/features/chapters/api/use-get-chapters'
 import { useGetCurrentPurchase } from '@/features/purchases/api/use-get-current-purchases'
-import { useChapterId } from '@/hooks/use-chapter-id'
 import { useCourseId } from '@/hooks/use-course-id'
 import { useLessonId } from '@/hooks/use-lesson-id'
 import { cn } from '@/lib/utils'
-import { Check, ChevronUp, FileText, Loader2, Video } from 'lucide-react'
-import Link from 'next/link'
-import { useMemo, useState } from 'react'
+import { ChevronUp } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
 import { LessonItem } from './lesson-item'
 
@@ -36,6 +34,17 @@ export const ChaptersList = () => {
         : [...prev, chapterId]
     )
   }
+  useEffect(() => {
+    if (lessonId && chapters) {
+      const activeChapter = chapters.find(chapter =>
+        chapter.lessons.some(lesson => lesson.id === lessonId)
+      )
+      if (activeChapter && !expandedChapters.includes(activeChapter.id)) {
+        toggleChapter(activeChapter.id)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chapters])
 
   if (!chapters) return null
 
@@ -71,7 +80,13 @@ export const ChaptersList = () => {
               open={expandedChapters.includes(chapter.id)}
               onOpenChange={() => toggleChapter(chapter.id)}
             >
-              <CollapsibleTrigger className="flex w-full items-center justify-between rounded-none px-4 py-2 hover:bg-accent hover:text-accent-foreground">
+              <CollapsibleTrigger
+                className={cn(
+                  'flex w-full items-center justify-between rounded-none px-4 py-2 hover:bg-accent hover:text-accent-foreground',
+                  chapter.lessons.some(lesson => lesson.id === lessonId) &&
+                    'bg-accent text-accent-foreground'
+                )}
+              >
                 <span className="line-clamp-1 text-left font-medium">
                   {chapterIndex + 1}. {chapter.title}
                 </span>
@@ -82,7 +97,11 @@ export const ChaptersList = () => {
                   )}
                 />
               </CollapsibleTrigger>
-              <CollapsibleContent>
+              <CollapsibleContent
+                className={cn(
+                  'outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2'
+                )}
+              >
                 {chapter.lessons.map(lesson => (
                   <LessonItem
                     key={lesson.id}

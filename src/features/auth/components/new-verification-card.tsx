@@ -3,7 +3,7 @@
 import { FormError } from '@/components/form-error'
 import { FormSuccess } from '@/components/form-success'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Loader } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
@@ -53,7 +53,7 @@ export const NewVerificationCard = () => {
       <CardContent className="space-y-5 px-0 pb-0">
         <div className="flex w-full items-center justify-center">
           {!success && !error && !newVerificationLoading && (
-            <Loader className="size-4 animate-spin text-muted-foreground" />
+            <Loader2 className="size-4 animate-spin text-muted-foreground" />
           )}
           <FormSuccess message={success} />
           {!success && <FormError message={error} />}

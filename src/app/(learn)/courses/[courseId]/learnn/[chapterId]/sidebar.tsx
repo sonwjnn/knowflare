@@ -2,7 +2,7 @@ import CourseProgress from '@/components/course-progress'
 import { useGetChapters } from '@/features/chapters/api/use-get-chapters'
 import { useGetCourse } from '@/features/courses/api/use-get-course'
 import { useCourseId } from '@/hooks/use-course-id'
-import { Loader } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 
 import CourseSidebarItem from './sidebar-item'
 
@@ -17,7 +17,7 @@ const CourseSidebar = () => {
   if (courseLoading || chaptersLoading) {
     return (
       <div className="flex h-full items-center justify-center">
-        <Loader className="size-6 animate-spin text-muted-foreground" />
+        <Loader2 className="size-6 animate-spin text-muted-foreground" />
       </div>
     )
   }

@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils'
 import { CheckCircle, FileText, Lock, PlayCircle, Video } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { BsCheckCircleFill } from 'react-icons/bs'
 
 type Props = {
   id: string
@@ -42,7 +43,7 @@ export const LessonItem = ({
     >
       <div
         className={cn(
-          'flex items-center justify-between p-2 pl-6 text-sm hover:bg-accent hover:text-accent-foreground',
+          'flex items-center justify-between p-2 pl-6 text-sm transition hover:bg-accent hover:text-accent-foreground',
           isActive &&
             'bg-sky-200 text-accent-foreground hover:bg-sky-200 hover:text-accent-foreground'
         )}
@@ -57,6 +58,11 @@ export const LessonItem = ({
           />
           <span className="line-clamp-1">{title}</span>
         </div>
+        {isCompleted && (
+          <div className="ml-auto mr-3">
+            <BsCheckCircleFill className="size-4 text-emerald-600" />
+          </div>
+        )}
         {/* <div className="flex items-center space-x-2">
                         <span className="text-xs text-muted-foreground">
                         </span>

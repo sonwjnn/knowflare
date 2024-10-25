@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils'
 import { Slot } from '@radix-ui/react-slot'
 import { type VariantProps, cva } from 'class-variance-authority'
-import { Loader } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import * as React from 'react'
 
 const buttonVariants = cva(
@@ -81,13 +81,13 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {((leftSection && loading) ||
           (!leftSection && !rightSection && loading)) && (
-          <Loader className="mr-2 h-4 w-4 animate-spin" />
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
         )}
         {!loading && leftSection && <div className="mr-2">{leftSection}</div>}
         {children}
         {!loading && rightSection && <div className="ml-2">{rightSection}</div>}
         {rightSection && loading && (
-          <Loader className="ml-2 h-4 w-4 animate-spin" />
+          <Loader2 className="ml-2 h-4 w-4 animate-spin" />
         )}
       </button>
     )

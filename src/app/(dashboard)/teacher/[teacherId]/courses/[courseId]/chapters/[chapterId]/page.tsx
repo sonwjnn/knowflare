@@ -6,7 +6,7 @@ import { useGetChapter } from '@/features/chapters/api/use-get-chapter'
 import { useChapterId } from '@/hooks/use-chapter-id'
 import { useCourseId } from '@/hooks/use-course-id'
 import { useTeacherId } from '@/hooks/use-teacher-id'
-import { ArrowLeft, Eye, LayoutDashboard, Loader, Video } from 'lucide-react'
+import { ArrowLeft, Eye, LayoutDashboard, Loader2, Video } from 'lucide-react'
 import Link from 'next/link'
 
 import ChapterAccessForm from './access-form'
@@ -38,7 +38,7 @@ const ChapterIdPage = ({
 
   if (chapterLoading) {
     ;<div className="flex h-full items-center justify-center">
-      <Loader className="size-6 animate-spin text-muted-foreground" />
+      <Loader2 className="size-6 animate-spin text-muted-foreground" />
     </div>
   }
 

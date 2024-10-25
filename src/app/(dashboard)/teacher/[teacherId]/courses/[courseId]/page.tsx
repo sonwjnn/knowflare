@@ -19,7 +19,7 @@ import {
   File,
   LayoutDashboard,
   ListChecks,
-  Loader,
+  Loader2,
 } from 'lucide-react'
 
 import Actions from './actions'
@@ -68,7 +68,7 @@ const CourseIdPage = () => {
   if (isLoading) {
     return (
       <div className="flex h-full items-center justify-center">
-        <Loader className="size-6 animate-spin text-muted-foreground" />
+        <Loader2 className="size-6 animate-spin text-muted-foreground" />
       </div>
     )
   }

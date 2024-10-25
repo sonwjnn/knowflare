@@ -5,7 +5,7 @@ import { FormSuccess } from '@/components/form-success'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { Loader } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 
@@ -58,7 +58,7 @@ export const ResetCard = () => {
           <FormSuccess message={success} />
           <Button type="submit" disabled={resetLoading} className="w-full">
             {resetLoading ? (
-              <Loader className="mr-2 size-4 animate-spin text-muted-foreground" />
+              <Loader2 className="mr-2 size-4 animate-spin text-muted-foreground" />
             ) : null}
             Send reset email
           </Button>

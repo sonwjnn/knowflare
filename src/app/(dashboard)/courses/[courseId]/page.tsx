@@ -25,7 +25,7 @@ import {
   BarChart,
   Clock,
   Heart,
-  Loader,
+  Loader2,
   Play,
   ShoppingCart,
   Star,
@@ -110,7 +110,7 @@ export default function CourseDetail() {
   if (courseLoading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader className="size-5 animate-spin" />
+        <Loader2 className="size-5 animate-spin" />
       </div>
     )
   }

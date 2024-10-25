@@ -1,32 +1,11 @@
 'use client'
 
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { useGetCategories } from '@/features/categories/api/use-get-categories'
-import {
-  BarChart,
-  Book,
-  BookOpen,
-  Briefcase,
-  Building2,
-  Computer,
-  Globe,
-  GraduationCap,
-  Heart,
-  Icon,
-  Loader,
-  LucideIcon,
-  MessageCircle,
-  User,
-  Zap,
-} from 'lucide-react'
-import 'lucide-react'
-import Link from 'next/link'
-import { useState } from 'react'
+import { Book, Globe, GraduationCap, Zap } from 'lucide-react'
 
 import { Hero } from './hero'
 import { Marquee } from './marquee'
+import { TopCategories } from './top-categories'
 
 interface Course {
   id: number
@@ -39,21 +18,6 @@ interface Course {
 }
 
 export default function KnowflareHomepage() {
-  const iconMap: { [key: string]: LucideIcon } = {
-    'Teaching & Academics': GraduationCap,
-    'Sales & Marketing': BarChart,
-    'Personal Development': User,
-    Management: Briefcase,
-    Language: Globe,
-    IT: Computer,
-    Health: Heart,
-    English: MessageCircle,
-    'Engineering & Construction': Building2,
-    Business: BookOpen,
-  }
-
-  const { data: categories, isPending: categoriesLoading } = useGetCategories()
-
   return (
     <main>
       <Hero />
@@ -99,37 +63,7 @@ export default function KnowflareHomepage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl py-16">
-        <h2 className="mb-8 text-center text-3xl font-bold text-gray-800">
-          Top Categories
-        </h2>
-        {categoriesLoading && (
-          <div className="flex h-full min-h-64 w-full items-center justify-center">
-            <Loader className="h-6 w-6 animate-spin" />
-          </div>
-        )}
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
-          {categories?.map(item => {
-            const Icon = iconMap[item.name]
-
-            return (
-              <Link href={`/courses?categoryId=${item.id}`} key={item.id}>
-                <Card className="transform transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-                  <CardContent className="flex flex-col items-center justify-center p-4 text-center">
-                    <div className="mb-4 rounded-full bg-slate-100 p-3">
-                      <Icon className="h-8 w-8 text-slate-500" />
-                    </div>
-                    <h3 className="mb-2 line-clamp-2 h-12 font-semibold text-gray-800">
-                      {item.name}
-                    </h3>
-                    <Badge variant="secondary">{10} courses</Badge>
-                  </CardContent>
-                </Card>
-              </Link>
-            )
-          })}
-        </div>
-      </section>
+      <TopCategories />
 
       <section className="bg-gray-100 py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

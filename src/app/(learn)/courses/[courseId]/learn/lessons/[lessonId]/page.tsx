@@ -99,6 +99,7 @@ export default function CourseInterface() {
               courseId={courseId}
               lessonId={lessonId}
               isCompleted={!!userLessonProgress?.isCompleted}
+              disabled={userLessonProgressLoading}
             />
           </div>
         </div>

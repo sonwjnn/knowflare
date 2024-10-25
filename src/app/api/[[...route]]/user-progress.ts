@@ -72,7 +72,7 @@ const app = new Hono()
       })
     }
   )
-  .patch(
+  .post(
     '/upsert/:lessonId',
     verifyAuth(),
     zValidator(
@@ -110,7 +110,7 @@ const app = new Hono()
           .onDuplicateKeyUpdate({ set: { isCompleted } })
 
         return c.json({
-          data,
+          data: data ?? null,
         })
       }
 

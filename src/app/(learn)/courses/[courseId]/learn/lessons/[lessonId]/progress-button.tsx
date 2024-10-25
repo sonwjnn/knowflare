@@ -14,6 +14,7 @@ interface ProgressButtonProps {
   courseId: string
   isCompleted?: boolean
   nextLessonId?: string
+  disabled: boolean
 }
 
 export const ProgressButton = ({
@@ -21,6 +22,7 @@ export const ProgressButton = ({
   courseId,
   isCompleted,
   nextLessonId,
+  disabled,
 }: ProgressButtonProps) => {
   const { mutate: progressChapter, isPending: progressChapterLoading } =
     useUpsertProgressLesson(lessonId)
@@ -52,7 +54,7 @@ export const ProgressButton = ({
   return (
     <Button
       onClick={onClick}
-      disabled={progressChapterLoading}
+      disabled={disabled || progressChapterLoading}
       type="button"
       variant={isCompleted ? 'outline' : 'success'}
       className="w-full md:w-auto"

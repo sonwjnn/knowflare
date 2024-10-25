@@ -5,32 +5,33 @@ import { InferRequestType, InferResponseType } from 'hono'
 import { toast } from 'sonner'
 
 type ResponseType = InferResponseType<
-  (typeof client.api.userProgress)['upsert'][':lessonId']['$patch']
+  (typeof client.api.userProgress)['upsert'][':lessonId']['$post']
 >
 
 type RequestType = InferRequestType<
-  (typeof client.api.userProgress)['upsert'][':lessonId']['$patch']
+  (typeof client.api.userProgress)['upsert'][':lessonId']['$post']
 >['json']
 
-export const useUpsertProgressLesson = (id: string) => {
+export const useUpsertProgressLesson = (lessonId: string) => {
   const queryClient = useQueryClient()
   const courseId = useCourseId()
 
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async json => {
       const response = await client.api.userProgress['upsert'][':lessonId'][
-        '$patch'
+        '$post'
       ]({
-        param: { lessonId: id },
+        param: { lessonId },
         json,
       })
 
       return await response.json()
     },
     onSuccess: () => {
-      toast.success('Lesson progress updated')
+      queryClient.invalidateQueries({
+        queryKey: ['progress', { lessonId }],
+      })
       queryClient.invalidateQueries({ queryKey: ['chapters', { courseId }] })
-      queryClient.invalidateQueries({ queryKey: ['progress', { id }] })
     },
     onError: () => {
       toast.error('Failed to edit chapter')

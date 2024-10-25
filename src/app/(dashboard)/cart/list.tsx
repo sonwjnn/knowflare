@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { useGetCarts } from '@/features/carts/api/use-get-carts'
-import { ChevronLeft, Loader, ShoppingCart } from 'lucide-react'
+import { ChevronLeft, Loader2, ShoppingCart } from 'lucide-react'
 import Link from 'next/link'
 
 import { Item } from './item'
@@ -11,7 +11,7 @@ export const List = () => {
   if (cartsLoading) {
     return (
       <div className="flex h-full items-center justify-center">
-        <Loader className="size-6 animate-spin text-muted-foreground" />
+        <Loader2 className="size-6 animate-spin text-muted-foreground" />
       </div>
     )
   }
