@@ -4,14 +4,11 @@ import {
   Sheet,
   SheetContent,
   SheetDescription,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
 import { useGetCarts } from '@/features/carts/api/use-get-carts'
 import { useCartSheet } from '@/features/carts/store/use-cart-sheet'
-import { Trash } from 'lucide-react'
-import Image from 'next/image'
 import Link from 'next/link'
 
 import { CartItem } from './cart-item'
@@ -27,7 +24,12 @@ export const CartSheet = () => {
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetContent className="w-full space-y-4 p-0 md:w-[50%]">
         <SheetHeader className="border-default-100 flex flex-none flex-col items-start space-y-1 border-b px-6 py-4 text-center sm:text-left">
-          <SheetTitle>Cart</SheetTitle>
+          <SheetTitle>
+            Cart{' '}
+            <span className="text-base font-semibold">
+              ({(carts ?? []).length})
+            </span>
+          </SheetTitle>
           <SheetDescription>Total price: ${total}</SheetDescription>
         </SheetHeader>
         {!!carts?.length && (

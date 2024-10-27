@@ -15,16 +15,16 @@ const MarqueeItem = ({
 )
 
 const marqueeItems = [
-  { text: 'Learn', icon: BookOpen },
-  { text: 'Discover', icon: Lightbulb },
-  { text: 'Achieve', icon: Trophy },
-  { text: 'Innovate', icon: Rocket },
-  { text: 'Excel', icon: Star },
-  { text: 'Learn', icon: BookOpen },
-  { text: 'Discover', icon: Lightbulb },
-  { text: 'Achieve', icon: Trophy },
-  { text: 'Innovate', icon: Rocket },
-  { text: 'Excel', icon: Star },
+  { id: 1, text: 'Learn', icon: BookOpen },
+  { id: 2, text: 'Discover', icon: Lightbulb },
+  { id: 3, text: 'Achieve', icon: Trophy },
+  { id: 4, text: 'Innovate', icon: Rocket },
+  { id: 5, text: 'Excel', icon: Star },
+  { id: 6, text: 'Learn', icon: BookOpen },
+  { id: 7, text: 'Discover', icon: Lightbulb },
+  { id: 8, text: 'Achieve', icon: Trophy },
+  { id: 9, text: 'Innovate', icon: Rocket },
+  { id: 10, text: 'Excel', icon: Star },
 ]
 
 export const Marquee = () => {
@@ -51,12 +51,12 @@ export const Marquee = () => {
           variants={marqueeVariants}
           animate="animate"
         >
-          {[...Array(3)].flatMap(() =>
-            marqueeItems.map((item, index) => (
+          {[...Array(3)].flatMap((_, index) =>
+            marqueeItems.map(item => (
               <MarqueeItem
-                key={`${index}-${item.text}`}
-                text={item.text}
+                key={`${item.id}-${index}`}
                 icon={item.icon}
+                text={item.text}
               />
             ))
           )}
