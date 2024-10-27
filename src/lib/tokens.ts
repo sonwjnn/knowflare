@@ -7,49 +7,59 @@ import { eq } from 'drizzle-orm'
 import { v4 as uuidv4 } from 'uuid'
 
 export const generatePasswordResetToken = async (email: string) => {
-  const token = uuidv4()
-  const expires = new Date(new Date().getTime() + 3600 * 1000)
+  try {
+    const token = uuidv4()
+    const expires = new Date(new Date().getTime() + 3600 * 1000)
 
-  const existingToken = await getPasswordResetTokenByEmail(email)
+    const existingToken = await getPasswordResetTokenByEmail(email)
 
-  if (existingToken) {
-    await db
-      .delete(passwordResetTokens)
-      .where(eq(passwordResetTokens.token, existingToken.token))
-  }
+    if (existingToken) {
+      await db
+        .delete(passwordResetTokens)
+        .where(eq(passwordResetTokens.token, existingToken.token))
+    }
 
-  const [data] = await db
-    .insert(passwordResetTokens)
-    .values({
+    const [data] = await db.insert(passwordResetTokens).values({
       email,
       token,
       expires,
     })
-    .returning()
 
-  return data
+    if (!data) {
+      return null
+    }
+
+    return { token, email }
+  } catch {
+    return null
+  }
 }
 
 export const generateVerificationToken = async (email: string) => {
-  const token = uuidv4()
-  const expires = new Date(new Date().getTime() + 3600 * 1000)
+  try {
+    const token = uuidv4()
+    const expires = new Date(new Date().getTime() + 3600 * 1000)
 
-  const existingToken = await getVerificationTokenByEmail(email)
+    const existingToken = await getVerificationTokenByEmail(email)
 
-  if (existingToken) {
-    await db
-      .delete(verificationTokens)
-      .where(eq(verificationTokens.token, existingToken.token))
-  }
+    if (existingToken) {
+      await db
+        .delete(verificationTokens)
+        .where(eq(verificationTokens.token, existingToken.token))
+    }
 
-  const [data] = await db
-    .insert(verificationTokens)
-    .values({
+    const [data] = await db.insert(verificationTokens).values({
       email,
       token,
       expires,
     })
-    .returning()
 
-  return data
+    if (!data) {
+      return null
+    }
+
+    return { email, token }
+  } catch {
+    return null
+  }
 }

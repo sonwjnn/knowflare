@@ -2,6 +2,7 @@ import { db } from '@/db/drizzle'
 import { getVerificationTokenByToken } from '@/db/queries'
 import {
   accounts,
+  insertUsersSchema,
   passwordResetTokens,
   users,
   verificationTokens,
@@ -11,6 +12,7 @@ import {
   generatePasswordResetToken,
   generateVerificationToken,
 } from '@/lib/tokens'
+import { verifyAuth } from '@hono/auth-js'
 import { zValidator } from '@hono/zod-validator'
 import bcrypt from 'bcryptjs'
 import { eq } from 'drizzle-orm'
@@ -73,9 +75,14 @@ const app = new Hono()
         email,
         name,
         password: hashedPassword,
+        emailVerified: null,
       })
 
       const verificationToken = await generateVerificationToken(email)
+
+      if (!verificationToken) {
+        return c.json({ error: 'Error when generate verification token!' }, 400)
+      }
 
       await sendVerificationEmail(
         verificationToken.email,
@@ -129,6 +136,13 @@ const app = new Hono()
         const verificationToken = await generateVerificationToken(
           existingUser.email
         )
+
+        if (!verificationToken) {
+          return c.json(
+            { error: 'Error when generate verification token!' },
+            400
+          )
+        }
 
         await sendVerificationEmail(
           verificationToken.email,
@@ -219,6 +233,13 @@ const app = new Hono()
 
       const passwordResetToken = await generatePasswordResetToken(email)
 
+      if (!passwordResetToken) {
+        return c.json(
+          { error: 'Error when generate password reset token!' },
+          400
+        )
+      }
+
       await sendPasswordResetEmail(
         passwordResetToken.email,
         passwordResetToken.token
@@ -277,6 +298,54 @@ const app = new Hono()
         .where(eq(passwordResetTokens.token, existingToken.token))
 
       return c.json(null, 200)
+    }
+  )
+  .patch(
+    '/:id',
+    zValidator(
+      'param',
+      z.object({
+        id: z.string(),
+      })
+    ),
+    zValidator(
+      'json',
+      z.object({
+        emailVerified: z.string().optional(),
+      })
+    ),
+    async c => {
+      const values = c.req.valid('json')
+      const { id } = c.req.valid('param')
+
+      if (!id) {
+        return c.json({ error: 'Id is required!' }, 400)
+      }
+
+      const [existingUser] = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, id))
+
+      if (!existingUser) {
+        return c.json({ error: 'User does not exist!' }, 400)
+      }
+
+      const [data] = await db
+        .update(users)
+        .set({
+          ...values,
+          emailVerified: values.emailVerified
+            ? new Date(values.emailVerified)
+            : null,
+        })
+        .where(eq(users.id, id))
+
+      if (!data) {
+        return c.json({ error: 'Error when update user' }, 404)
+      }
+
+      return c.json({ data })
     }
   )
 

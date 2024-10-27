@@ -63,6 +63,15 @@ export default {
   session: {
     strategy: 'jwt',
   },
+  events: {
+    async linkAccount({ user }) {
+      await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/users/${user.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ emailVerified: new Date() }),
+      })
+    },
+  },
   callbacks: {
     session({ session, token }) {
       if (token.id) {

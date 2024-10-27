@@ -2,6 +2,7 @@ import { relations } from 'drizzle-orm'
 import { sql } from 'drizzle-orm'
 import {
   boolean,
+  datetime,
   int,
   mysqlEnum,
   mysqlTable,
@@ -32,14 +33,18 @@ export const users = mysqlTable('user', {
     .$defaultFn(() => crypto.randomUUID()),
   name: varchar('name', { length: 255 }),
   email: varchar('email', { length: 255 }).unique(),
-  emailVerified: timestamp('emailVerified', {
+  emailVerified: datetime('emailVerified', {
     mode: 'date',
     fsp: 3,
-  }),
+  })
+    .$type<Date | null>()
+    .default(null),
   role: roleEnum.default(UserRole.USER).notNull(),
   image: varchar('image', { length: 255 }),
   password: varchar('password', { length: 255 }),
 })
+
+export const insertUsersSchema = createInsertSchema(users)
 
 export const accounts = mysqlTable(
   'account',
