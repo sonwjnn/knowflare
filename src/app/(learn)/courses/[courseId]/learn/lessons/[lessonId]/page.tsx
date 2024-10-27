@@ -25,7 +25,6 @@ const ReactPlayer = dynamic(() => import('react-player/lazy'), { ssr: false })
 export default function CourseInterface() {
   const isMobile = useMedia('(max-width: 1024px)', false)
   const courseId = useCourseId()
-  const chapterId = useChapterId()
   const lessonId = useLessonId()
 
   const router = useRouter()

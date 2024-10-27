@@ -1,5 +1,5 @@
 import { db } from '@/db/drizzle'
-import { getProgress } from '@/db/queries'
+import { getCourses, getProgress } from '@/db/queries'
 import {
   CourseLevel,
   carts,
@@ -19,96 +19,32 @@ import { z } from 'zod'
 const app = new Hono()
   .get(
     '/',
+    verifyAuth(),
     zValidator(
       'query',
       z.object({
         categoryId: z.string().optional(),
         title: z.string().optional(),
         level: z.string().optional(),
+        pageNumber: z.string().optional(),
       })
     ),
     async c => {
-      const { title, categoryId, level } = c.req.valid('query')
+      const { title, categoryId, level, pageNumber } = c.req.valid('query')
 
-      console.log(level, categoryId, title)
+      const auth = c.get('authUser')
 
-      const data = await db
-        .select({
-          id: courses.id,
-          title: courses.title,
-          description: courses.description,
-          imageUrl: courses.imageUrl,
-          price: courses.price,
-          level: courses.level,
-          isPublished: courses.isPublished,
-          date: courses.date,
-          category: {
-            id: categories.id,
-            name: categories.name,
-          },
-        })
-        .from(courses)
-        .innerJoin(categories, eq(categories.id, courses.categoryId))
-        .where(
-          and(
-            eq(courses.isPublished, true),
-            title ? like(courses.title, `%${title}%`) : undefined,
-            categoryId ? eq(courses.categoryId, categoryId) : undefined,
-            level ? eq(courses.level, level as CourseLevel) : undefined
-          )
-        )
-        .orderBy(desc(courses.date))
-
-      // const coursesWithChapters = await Promise.all(
-      //   data.map(async course => {
-      //     const courseChapters = await db
-      //       .select({
-      //         id: chapters.id,
-      //       })
-      //       .from(chapters)
-      //       .where(
-      //         and(
-      //           eq(chapters.courseId, course.id),
-      //           eq(chapters.isPublished, true)
-      //         )
-      //       )
-
-      //     return {
-      //       ...course,
-      //       chapters: courseChapters,
-      //     }
-      //   })
-      // )
-
-      // const progresses: { courseId: string; progress: number }[] = []
-
-      // for (let course of coursesWithChapters) {
-      //   const progress = await getProgress(auth.token?.id, course.id)
-      //   progresses.push({
-      //     courseId: course.id,
-      //     progress,
-      //   })
-      // }
-
-      // const finalCoursesData = coursesWithChapters.map(course => {
-      //   // if (!course?.purchase) {
-      //   //   return {
-      //   //     ...course,
-      //   //     progress: 0,
-      //   //   }
-      //   // }
-
-      //   const foundProgress = progresses.find(
-      //     progress => progress.courseId === course.id
-      //   )
-      //   return {
-      //     ...course,
-      //     progress: foundProgress ? foundProgress.progress : 0,
-      //   }
-      // })
+      const { data, pageCount } = await getCourses({
+        title,
+        categoryId,
+        level,
+        pageNumber: +(pageNumber || 1),
+        userId: auth.token?.id,
+      })
 
       return c.json({
         data,
+        pageCount,
       })
     }
   )

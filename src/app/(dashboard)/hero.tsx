@@ -34,7 +34,7 @@ export const Hero = () => {
           href={`${currentUser ? '/courses' : '/sign-up'}`}
           className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-indigo-600 p-4 px-6 py-3 font-semibold text-white shadow-md transition duration-300 ease-out"
         >
-          <span className="ease absolute inset-0 flex h-full w-full -translate-x-full items-center justify-center bg-white text-indigo-600 duration-300 group-hover:translate-x-0">
+          <span className="ease absolute inset-0 flex h-full w-full -translate-x-[calc(100%+1px)] items-center justify-center bg-white text-indigo-600 duration-300 group-hover:translate-x-0">
             <svg
               className="h-6 w-6"
               fill="none"

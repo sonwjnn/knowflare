@@ -35,7 +35,7 @@ const app = new Hono()
         .where(eq(comments.courseId, courseId))
         .orderBy(desc(comments.createdAt))
 
-      return c.json({ data })
+      return c.json({ data: data ?? null })
     }
   )
   .post(

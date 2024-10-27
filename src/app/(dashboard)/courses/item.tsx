@@ -1,17 +1,17 @@
 import { BorderButton } from '@/components/custom/border-button'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { WishlistButton } from '@/components/wishlist-button'
 import { useCreateCart } from '@/features/carts/api/use-create-cart'
 import { cn } from '@/lib/utils'
-import { Eye, Star } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-
-import { WishlistButton } from '../../../components/wishlist-button'
+import { MdStar, MdStarHalf } from 'react-icons/md'
 
 type Props = {
   id: string
   title: string
+  author: string
   imageUrl: string | null
   description: string | null
   price: number
@@ -22,6 +22,7 @@ type Props = {
 export const Item = ({
   id,
   title,
+  author,
   imageUrl,
   description,
   price,
@@ -49,6 +50,7 @@ export const Item = ({
             sizes="100vw"
             className="aspect-video w-full object-cover transition ease-out group-hover:scale-105"
           />
+          <div className="absolute inset-0 bg-black/20 opacity-0 transition-all group-hover:opacity-100" />
           <div
             className={cn(
               'absolute right-2.5 top-2.5 rounded-full bg-white opacity-0 transition group-hover:opacity-100',
@@ -58,15 +60,21 @@ export const Item = ({
             <WishlistButton courseId={id} isInWishlist={isInWishlist} />
           </div>
         </div>
-        <CardContent className="p-4">
-          <h3 className="mb-2 line-clamp-2 text-lg font-bold text-gray-800">
+        <CardContent className="space-y-2 px-4 py-2 pb-4">
+          <h3 className="line-clamp-2 text-lg font-bold text-gray-800">
             {title}
           </h3>
-          <p className="mb-4 text-sm text-gray-600">{description}</p>
-          <div className="mb-4 flex items-center">
-            <Star className="mr-1 h-5 w-5 fill-yellow-400 text-yellow-400" />
-            <span className="mr-2 text-sm font-medium text-gray-800">{5}</span>
-            <span className="text-sm text-gray-500">(0 students)</span>
+          <p className="mb-1 text-sm text-gray-600">{author}</p>
+          <div className="flex items-center">
+            <MdStar className="mr-1 size-4 fill-yellow-600 text-yellow-600" />
+            <MdStar className="mr-1 size-4 fill-yellow-600 text-yellow-600" />
+            <MdStar className="mr-1 size-4 fill-yellow-600 text-yellow-600" />
+            <MdStar className="mr-1 size-4 fill-yellow-600 text-yellow-600" />
+            <MdStarHalf className="mr-1 size-4 fill-yellow-600 text-yellow-600" />
+            <span className="mr-2 text-sm font-medium text-gray-800">
+              {4.7}
+            </span>
+            {/* <span className="text-sm text-gray-500">(0 students)</span> */}
           </div>
           <div className="flex items-center justify-between">
             <span className="text-lg font-bold text-gray-900">

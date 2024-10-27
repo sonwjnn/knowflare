@@ -33,7 +33,7 @@ export const CartItem = ({ id, imageUrl, title, price }: Props) => {
       <Button
         size="icon"
         onClick={() => deleteCart()}
-        className="rounded-full bg-slate-200 text-muted-foreground hover:bg-rose-500 hover:text-white"
+        className="rounded-full bg-slate-200 text-muted-foreground hover:bg-rose-500 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-transparent focus-visible:ring-offset-2"
         disabled={deleteCartPending}
       >
         <Trash className="size-4" />

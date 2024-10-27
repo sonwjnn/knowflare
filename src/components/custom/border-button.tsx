@@ -42,7 +42,7 @@ export const BorderButton = ({
       ></span>
       <span
         className={cn(
-          'relative text-black group-hover/button:text-white',
+          'relative line-clamp-1 text-black group-hover/button:text-white',
           disabled && 'text-white'
         )}
       >

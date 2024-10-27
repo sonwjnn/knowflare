@@ -1,25 +1,25 @@
-import { and, asc, count, eq, sql } from 'drizzle-orm'
+import { and, asc, count, desc, eq, inArray, like, sql } from 'drizzle-orm'
 
 import { db } from './drizzle'
 import {
+  CourseLevel,
+  categories,
   chapters,
+  courses,
   lessons,
   passwordResetTokens,
+  purchases,
   userLessonProgress,
+  users,
   verificationTokens,
 } from './schema'
 
-export const getProgress = async (
-  userId: string | null,
-  courseId: string
-): Promise<number> => {
+export const getProgress = async (userId: string | null, courseId: string) => {
   try {
     const publishedChapters = await db
       .select({ id: chapters.id })
       .from(chapters)
-      .where(
-        and(eq(chapters.courseId, courseId), eq(chapters.isPublished, true))
-      )
+      .where(and(eq(chapters.courseId, courseId)))
 
     const chaptersWithLessons = await Promise.all(
       publishedChapters.map(async chapter => {
@@ -49,16 +49,24 @@ export const getProgress = async (
         and(
           userId ? eq(userLessonProgress.userId, userId) : undefined,
           eq(userLessonProgress.isCompleted, true),
-          sql`${userLessonProgress.lessonId} = ANY(${lessonIds})`
+          inArray(userLessonProgress.lessonId, lessonIds)
         )
       )
 
     const progressPercentage =
       (validCompletedLessons.count / lessonIds.length) * 100 || 0
-    return progressPercentage
+    return {
+      progressPercentage: +progressPercentage.toFixed(0),
+      completedLessons: validCompletedLessons.count,
+      totalLessons: lessonIds.length,
+    }
   } catch (error) {
     console.log('GET_PROGRESS', error)
-    return 0
+    return {
+      progressPercentage: null,
+      completedLessons: null,
+      totalLessons: null,
+    }
   }
 }
 export const getChapters = async (userId: string | null, courseId: string) => {
@@ -108,6 +116,76 @@ export const getChapters = async (userId: string | null, courseId: string) => {
     })
   )
   return chaptersWithLessons
+}
+
+const PAGE_SIZE = 12
+
+export const getCourses = async ({
+  userId,
+  categoryId,
+  level,
+  title,
+  pageNumber = 1,
+}: {
+  userId: string | null | undefined
+  categoryId?: string
+  level?: string
+  title?: string
+  pageNumber?: number
+}) => {
+  const offset = (pageNumber - 1) * PAGE_SIZE
+
+  const [totalCountResult] = await db
+    .select({ count: count(courses.id) })
+    .from(courses)
+    .where(
+      and(
+        eq(courses.isPublished, true),
+        title ? like(courses.title, `%${title}%`) : undefined,
+        categoryId ? eq(courses.categoryId, categoryId) : undefined,
+        level ? eq(courses.level, level as CourseLevel) : undefined
+      )
+    )
+    .limit(1)
+
+  const coursesData = await db
+    .select({
+      id: courses.id,
+      title: courses.title,
+      description: courses.description,
+      imageUrl: courses.imageUrl,
+      price: courses.price,
+      level: courses.level,
+      isPublished: courses.isPublished,
+      date: courses.date,
+      category: {
+        id: categories.id,
+        name: categories.name,
+      },
+      author: {
+        id: users.id,
+        name: users.name,
+      },
+    })
+    .from(courses)
+    .innerJoin(categories, eq(categories.id, courses.categoryId))
+    .innerJoin(users, eq(users.id, courses.userId))
+    .where(
+      and(
+        eq(courses.isPublished, true),
+        title ? like(courses.title, `%${title}%`) : undefined,
+        categoryId ? eq(courses.categoryId, categoryId) : undefined,
+        level ? eq(courses.level, level as CourseLevel) : undefined
+      )
+    )
+    .orderBy(desc(courses.date))
+    .limit(PAGE_SIZE)
+    .offset(offset)
+
+  const totalCount = totalCountResult.count || 0
+  const pageCount = Math.ceil(totalCount / PAGE_SIZE)
+
+  return { data: coursesData, pageCount }
 }
 
 export const getPasswordResetTokenByToken = async (token: string) => {

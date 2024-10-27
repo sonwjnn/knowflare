@@ -60,7 +60,7 @@ async function main() {
     await db.delete(chapters).execute()
     await db.delete(courses).execute()
 
-    const userId = 'ddd4c3d9-1dba-4448-9297-c4ade42f7d45'
+    const userId = 'f669b609-f13a-44fe-b75a-0a5b22fb87ca'
 
     // Seed categories
     await db.insert(categories).values(SEED_CATEGORIES).execute()

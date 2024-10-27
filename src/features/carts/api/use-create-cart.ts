@@ -21,8 +21,6 @@ export const useCreateCart = () => {
       return await response.json()
     },
     onSuccess: data => {
-      toast.success('Added cart.')
-
       queryClient.invalidateQueries({ queryKey: ['carts'] })
     },
     onError: () => {

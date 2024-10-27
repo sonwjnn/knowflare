@@ -54,7 +54,7 @@ export const TopCategories = () => {
           Top Categories
         </h2>
         <div className="flex h-full min-h-48 w-full items-center justify-center">
-          <p>No categories found.</p>:
+          <p>No categories found.</p>
         </div>
       </section>
     )

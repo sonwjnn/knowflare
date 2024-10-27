@@ -1,3 +1,4 @@
+import Paginator from '@/components/paginator'
 import { Card, CardContent } from '@/components/ui/card'
 import {
   Select,
@@ -11,7 +12,8 @@ import { useGetCarts } from '@/features/carts/api/use-get-carts'
 import { useGetCourses } from '@/features/courses/api/use-get-courses'
 import { useGetWishlists } from '@/features/wishlists/api/use-get-carts'
 import { BookOpen } from 'lucide-react'
-import { useSearchParams } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import qs from 'query-string'
 import { useMemo, useState } from 'react'
 
 import { Item } from './item'
@@ -23,9 +25,12 @@ const sortOptions = [
 ]
 
 export const List = () => {
+  const router = useRouter()
+  const pathname = usePathname()
   const searchParams = useSearchParams()
   const title = searchParams.get('title') || ''
   const categoryId = searchParams.get('categoryId') || ''
+  const pageNumber = searchParams.get('pageNumber') || ''
   const level = searchParams.get('level') || ''
 
   const [sortOption, setSortOption] = useState<string | null>(null)
@@ -33,11 +38,15 @@ export const List = () => {
   const { data: carts, isPending: cartsLoading } = useGetCarts()
   const { data: wishlists, isPending: wishlistsLoading } = useGetWishlists()
 
-  const { data: courses, isPending: coursesLoading } = useGetCourses({
+  const { data: coursesData, isPending: coursesLoading } = useGetCourses({
     categoryId: categoryId === 'all' ? '' : categoryId,
     title,
     level,
+    pageNumber,
   })
+
+  const courses = useMemo(() => coursesData?.courses, [coursesData])
+  const pageCount = useMemo(() => coursesData?.pageCount, [coursesData])
 
   const isPending = coursesLoading
 
@@ -57,6 +66,24 @@ export const List = () => {
       }
     })
   }, [courses, sortOption])
+
+  const onPageChange = (value: number) => {
+    const isSelected = value === +pageNumber
+
+    const url = qs.stringifyUrl(
+      {
+        url: pathname,
+        query: {
+          level: level,
+          title: title,
+          categoryId: categoryId,
+          pageNumber: isSelected ? null : value,
+        },
+      },
+      { skipNull: true, skipEmptyString: true }
+    )
+    router.push(url)
+  }
 
   if (isPending) {
     return (
@@ -125,11 +152,22 @@ export const List = () => {
               description={item.description}
               imageUrl={item.imageUrl}
               price={item.price}
+              author={item.author.name!}
               isInCart={isInCart}
               isInWishlist={isInWishlist}
             />
           )
         })}
+      </div>
+      <div className="my-8 flex justify-end">
+        {pageCount !== 1 && (
+          <Paginator
+            currentPage={+pageNumber || 1}
+            totalPages={pageCount || 0}
+            onPageChange={value => onPageChange(value)}
+            showPreviousNext
+          />
+        )}
       </div>
     </div>
   )

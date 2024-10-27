@@ -12,28 +12,34 @@ export const useGetCourses = ({
   categoryId,
   title,
   level,
+  pageNumber,
 }: {
   categoryId?: string
   title?: string
   level?: string
+  pageNumber?: string
 }) => {
   const query = useQuery({
-    queryKey: ['courses', title, categoryId, level],
+    queryKey: ['courses', title, categoryId, level, pageNumber],
     queryFn: async () => {
       const response = await client.api.courses.$get({
         query: {
           categoryId,
           title,
           level,
+          pageNumber,
         },
       })
 
       if (!response.ok) {
         throw new Error('Failed to fetch course')
       }
-      const { data } = await response.json()
+      const { data, pageCount } = await response.json()
 
-      return data
+      return {
+        courses: data,
+        pageCount,
+      }
     },
   })
 

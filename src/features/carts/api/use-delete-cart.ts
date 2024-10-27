@@ -20,7 +20,6 @@ export const useDeleteCart = (id?: string) => {
       return await response.json()
     },
     onSuccess: () => {
-      toast.success('Cart deleted')
       queryClient.invalidateQueries({ queryKey: ['carts', { id }] })
 
       queryClient.invalidateQueries({ queryKey: ['carts'] })

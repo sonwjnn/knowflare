@@ -1,3 +1,4 @@
+import { useLessonId } from '@/hooks/use-lesson-id'
 import { client } from '@/lib/hono'
 import { useQuery } from '@tanstack/react-query'
 import { InferResponseType } from 'hono'
@@ -8,7 +9,10 @@ export type ResponseType = InferResponseType<
 >
 
 export const useGetComments = (courseId: string) => {
+  const lessonId = useLessonId()
+
   const query = useQuery({
+    enabled: !!lessonId,
     queryKey: ['comments'],
     queryFn: async () => {
       const response = await client.api.comments.$get({

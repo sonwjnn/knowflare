@@ -32,6 +32,7 @@ export const useUpsertProgressLesson = (lessonId: string) => {
         queryKey: ['progress', { lessonId }],
       })
       queryClient.invalidateQueries({ queryKey: ['chapters', { courseId }] })
+      queryClient.invalidateQueries({ queryKey: ['purchases'] })
     },
     onError: () => {
       toast.error('Failed to edit chapter')

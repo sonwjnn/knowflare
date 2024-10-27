@@ -1,6 +1,9 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import { useGetLesson } from '@/features/lessons/api/use-get-lesson'
+import { useCourseId } from '@/hooks/use-course-id'
+import { useLessonId } from '@/hooks/use-lesson-id'
 import { Check } from 'lucide-react'
 import { useState } from 'react'
 
@@ -17,6 +20,13 @@ const quizOptions: QuizOption[] = [
 ]
 
 export default function QuizComponent() {
+  const courseId = useCourseId()
+  const lessonId = useLessonId()
+
+  const { data: lesson, isPending: lessonLoading } = useGetLesson({
+    lessonId,
+    courseId,
+  })
   const [selectedOption, setSelectedOption] = useState<string | null>(null)
 
   const handleOptionClick = (optionId: string) => {

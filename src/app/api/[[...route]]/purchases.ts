@@ -1,4 +1,5 @@
 import { db } from '@/db/drizzle'
+import { getProgress } from '@/db/queries'
 import { categories, courses, purchases } from '@/db/schema'
 import { verifyAuth } from '@hono/auth-js'
 import { zValidator } from '@hono/zod-validator'
@@ -22,12 +23,24 @@ const app = new Hono()
         imageUrl: courses.imageUrl,
         price: courses.price,
         date: courses.date,
+        currentUserId: purchases.userId,
       })
       .from(purchases)
       .innerJoin(courses, eq(courses.id, purchases.courseId))
       .where(eq(purchases.userId, auth.token.id))
 
-    return c.json({ data })
+    const coursesWithProgress = await Promise.all(
+      data.map(async course => {
+        const data = await getProgress(course.currentUserId, course.courseId)
+
+        return {
+          ...course,
+          progress: data,
+        }
+      })
+    )
+
+    return c.json({ data: coursesWithProgress })
   })
   .get(
     '/:courseId',
