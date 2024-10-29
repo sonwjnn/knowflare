@@ -1,6 +1,7 @@
 import { db } from '@/db/drizzle'
 import { getVerificationTokenByToken } from '@/db/queries'
 import {
+  UserRole,
   accounts,
   insertUsersSchema,
   passwordResetTokens,
@@ -350,6 +351,9 @@ const app = new Hono()
     zValidator(
       'json',
       z.object({
+        name: z.string().optional(),
+        role: z.string().optional(),
+        image: z.string().optional(),
         emailVerified: z.string().optional(),
       })
     ),
@@ -374,6 +378,7 @@ const app = new Hono()
         .update(users)
         .set({
           ...values,
+          role: values.role ? (values.role as UserRole) : undefined,
           emailVerified: values.emailVerified
             ? new Date(values.emailVerified)
             : null,

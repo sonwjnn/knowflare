@@ -9,37 +9,59 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { useEditUser } from '@/features/admin/users/api/use-edit-user'
 import { useGetUser } from '@/features/admin/users/api/use-get-user'
+import { useUserId } from '@/features/admin/users/hooks/use-user-id'
 import {
   ArrowLeft,
   Loader2,
   Mail,
   Shield,
   Upload,
-  User,
   UserRound,
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useRef, useState } from 'react'
-
-import { useUserId } from '../hooks/use-user-id'
 
 export const EditForm = () => {
   const router = useRouter()
   const userId = useUserId()
   const [isLoading, setIsLoading] = useState(false)
   const { data: user, isPending: userLoading } = useGetUser(userId)
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
+  const { mutate: editUser, isPending: editUserLoading } = useEditUser(userId)
+  const [name, setName] = useState(user?.name || '')
+  const [email] = useState(user?.email || '')
+  const [role, setRole] = useState(user?.role || '')
+  const [image, setImage] = useState<string | null>(user?.image || '')
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setImage(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    setIsLoading(false)
-    router.push('/users')
+
+    editUser(
+      {
+        name,
+        role,
+        image: image as string | undefined,
+      },
+      {
+        onSuccess: () => {
+          router.push('/admin/users')
+        },
+      }
+    )
   }
 
   if (userLoading) {
@@ -58,8 +80,10 @@ export const EditForm = () => {
         <div>
           <div className="flex items-center space-x-5">
             <Avatar className="h-24 w-24">
-              <AvatarImage src={user.image!} alt={user.name!} />
-              <AvatarFallback>{user.name!.charAt(0)}</AvatarFallback>
+              <AvatarImage src={image || ''} alt={name} />
+              <AvatarFallback className="flex items-center justify-center bg-blue-500 text-2xl font-medium text-white">
+                {name.charAt(0)}
+              </AvatarFallback>
             </Avatar>
             <Button
               type="button"
@@ -75,7 +99,7 @@ export const EditForm = () => {
               type="file"
               accept="image/*"
               className="hidden"
-              onChange={() => {}}
+              onChange={handleImageChange}
             />
           </div>
         </div>
@@ -96,8 +120,8 @@ export const EditForm = () => {
                 <Input
                   id="name"
                   name="name"
-                  value={user.name || ''}
-                  onChange={() => {}}
+                  value={name}
+                  onChange={e => setName(e.target.value)}
                   className="pl-10"
                   required
                 />
@@ -119,8 +143,7 @@ export const EditForm = () => {
                   id="email"
                   name="email"
                   type="email"
-                  value={user.email || ''}
-                  onChange={() => {}}
+                  value={email}
                   className="pl-10"
                   disabled={true}
                 />
@@ -138,7 +161,7 @@ export const EditForm = () => {
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                   <Shield className="h-5 w-5 text-gray-400" />
                 </div>
-                <Select name="role" value={user.role} onValueChange={() => {}}>
+                <Select name="role" value={role} onValueChange={setRole}>
                   <SelectTrigger className="pl-10">
                     <SelectValue placeholder="Select a role" />
                   </SelectTrigger>
@@ -155,8 +178,12 @@ export const EditForm = () => {
 
       <div className="pt-5">
         <div className="flex justify-end">
-          <Button type="submit" disabled={isLoading}>
-            Save Changes
+          <Button type="submit" disabled={editUserLoading}>
+            {editUserLoading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              'Save Changes'
+            )}
           </Button>
         </div>
       </div>
