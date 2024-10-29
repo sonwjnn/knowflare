@@ -7,6 +7,7 @@ import {
   users,
   verificationTokens,
 } from '@/db/schema'
+import { isAdmin } from '@/features/admin/utils'
 import { sendPasswordResetEmail, sendVerificationEmail } from '@/lib/mail'
 import {
   generatePasswordResetToken,
@@ -20,6 +21,20 @@ import { Hono } from 'hono'
 import { z } from 'zod'
 
 const app = new Hono()
+  .get('/', async c => {
+    const data = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        role: users.role,
+        emailVerified: users.emailVerified,
+        image: users.image,
+      })
+      .from(users)
+
+    return c.json({ data })
+  })
   .get(
     '/:id',
     zValidator(

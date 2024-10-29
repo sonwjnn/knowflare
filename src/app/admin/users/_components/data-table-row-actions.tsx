@@ -12,11 +12,12 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { insertUsersSchema, users } from '@/db/schema'
 import { Row } from '@tanstack/react-table'
 import { Ellipsis } from 'lucide-react'
+import z from 'zod'
 
 import { labels } from '../_data/data'
-import { taskSchema } from '../_data/schema'
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>
@@ -25,7 +26,7 @@ interface DataTableRowActionsProps<TData> {
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
-  const task = taskSchema.parse(row.original)
+  const user = insertUsersSchema.parse(row.original)
 
   return (
     <DropdownMenu>
@@ -46,7 +47,7 @@ export function DataTableRowActions<TData>({
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>Labels</DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
-            <DropdownMenuRadioGroup value={task.label}>
+            <DropdownMenuRadioGroup value={user.name!}>
               {labels.map(label => (
                 <DropdownMenuRadioItem key={label.value} value={label.value}>
                   {label.label}

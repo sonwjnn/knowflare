@@ -20,7 +20,9 @@ import { useMedia } from 'react-use'
 import { ProgressButton } from './progress-button'
 import QuizComponent from './quiz'
 
-const ReactPlayer = dynamic(() => import('react-player/lazy'), { ssr: false })
+const ReactPlayer = dynamic(() => import('react-player/youtube'), {
+  ssr: false,
+})
 
 export default function CourseInterface() {
   const isMobile = useMedia('(max-width: 1024px)', false)
@@ -52,7 +54,7 @@ export default function CourseInterface() {
   }
 
   return (
-    <ScrollArea className="flex-1 p-6">
+    <ScrollArea className="flex-1 pr-2">
       <div className="relative mx-auto w-full">
         {/* {isLocked && (
           <Banner
@@ -63,7 +65,7 @@ export default function CourseInterface() {
 
         {lesson?.lessonType === LessonType.VIDEO && (
           <div className="mb-6 rounded-none bg-black">
-            <div className="relative mx-auto aspect-video max-w-5xl">
+            <div className="relative mx-auto aspect-video max-h-[80dvh]">
               {/* {!isLocked && (
                 <div className="absolute inset-0 flex items-center justify-center bg-slate-800">
                   <Loader2 className="h-8 w-8 animate-spin text-secondary" />
@@ -77,7 +79,7 @@ export default function CourseInterface() {
               )}
               {!isLocked && (
                 <ReactPlayer
-                  url="https://utfs.io/f/4e0834ac-eb2a-4e9f-8ae0-11522785c3ca-oz682y.mp4"
+                  url={lesson?.videoUrl || ''}
                   width="100%"
                   height="100%"
                   controls
@@ -88,45 +90,47 @@ export default function CourseInterface() {
         )}
 
         {lesson?.lessonType === LessonType.QUIZ && <QuizComponent />}
-        <div className="mb-6 flex">
-          <div className="flex-1">
-            <h2 className="text-2xl font-bold">{lesson?.title}</h2>
-            <p className="text-gray-600">Updated 2 months ago</p>
-          </div>
-          {!!purchase && (
-            <div className="ml-auto">
-              <ProgressButton
-                courseId={courseId}
-                lessonId={lessonId}
-                isCompleted={!!userLessonProgress?.isCompleted}
-                disabled={userLessonProgressLoading}
-              />
+        <div className="px-8">
+          <div className="mb-6 flex">
+            <div className="flex-1">
+              <h2 className="text-2xl font-bold">{lesson?.title}</h2>
+              <p className="text-gray-600">Updated 2 months ago</p>
             </div>
-          )}
-        </div>
-        <div className="mb-6 flex justify-between">
-          <Button
-            variant="outline"
-            disabled={lessonLoading || !lesson?.prevLesson}
-            onClick={() =>
-              router.push(
-                `/courses/${courseId}/learn/lessons/${lesson?.prevLesson?.id}`
-              )
-            }
-          >
-            <ChevronLeft className="mr-2 h-4 w-4" /> Previous Lesson
-          </Button>
-          <Button
-            variant="outline"
-            disabled={lessonLoading || !lesson?.nextLesson}
-            onClick={() =>
-              router.push(
-                `/courses/${courseId}/learn/lessons/${lesson?.nextLesson?.id}`
-              )
-            }
-          >
-            Next Lesson <ChevronRight className="ml-2 h-4 w-4" />
-          </Button>
+            {!!purchase && (
+              <div className="ml-auto">
+                <ProgressButton
+                  courseId={courseId}
+                  lessonId={lessonId}
+                  isCompleted={!!userLessonProgress?.isCompleted}
+                  disabled={userLessonProgressLoading}
+                />
+              </div>
+            )}
+          </div>
+          <div className="mb-6 flex justify-between">
+            <Button
+              variant="outline"
+              disabled={lessonLoading || !lesson?.prevLesson}
+              onClick={() =>
+                router.push(
+                  `/courses/${courseId}/learn/lessons/${lesson?.prevLesson?.id}`
+                )
+              }
+            >
+              <ChevronLeft className="mr-2 h-4 w-4" /> Previous Lesson
+            </Button>
+            <Button
+              variant="outline"
+              disabled={lessonLoading || !lesson?.nextLesson}
+              onClick={() =>
+                router.push(
+                  `/courses/${courseId}/learn/lessons/${lesson?.nextLesson?.id}`
+                )
+              }
+            >
+              Next Lesson <ChevronRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
         </div>
 
         <Button

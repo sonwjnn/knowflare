@@ -1,13 +1,6 @@
 'use client'
 
 import { Checkbox } from '@/components/ui/checkbox'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { CourseLevel } from '@/db/schema'
 import { useGetCategories } from '@/features/categories/api/use-get-categories'
 import { Star } from 'lucide-react'
@@ -46,7 +39,7 @@ export const CourseSidebar = () => {
       },
       { skipNull: true, skipEmptyString: true }
     )
-    router.push(url)
+    router.push(url, { scroll: false })
   }
 
   const onLevelClick = (value: string) => {
@@ -63,7 +56,7 @@ export const CourseSidebar = () => {
       },
       { skipNull: true, skipEmptyString: true }
     )
-    router.push(url)
+    router.push(url, { scroll: false })
   }
 
   return (

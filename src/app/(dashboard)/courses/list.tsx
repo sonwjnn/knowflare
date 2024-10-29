@@ -82,7 +82,12 @@ export const List = () => {
       },
       { skipNull: true, skipEmptyString: true }
     )
-    router.push(url)
+    router.push(url, { scroll: false })
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'smooth',
+    })
   }
 
   if (isPending) {

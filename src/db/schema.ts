@@ -229,7 +229,6 @@ export const chapters = mysqlTable('chapter', {
   description: varchar('description', { length: 255 }),
   position: int('position').notNull(),
   isPublished: boolean('is_published').default(false),
-  isFree: boolean('is_free').default(false),
 })
 
 export const insertChaptersSchema = createInsertSchema(chapters)
