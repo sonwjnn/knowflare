@@ -31,12 +31,19 @@ export default {
 
         const { email, password } = validateFields.data
 
-        const query = await db
-          .select()
-          .from(users)
-          .where(eq(users.email, email))
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_APP_URL}/api/users/user/by-email`,
+          {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email }),
+          }
+        )
+        if (!res.ok) return null
 
-        const user = query[0]
+        const { data: user } = (await res.json()) as {
+          data: typeof users.$inferSelect
+        }
 
         if (!user || !user.password) return null
 
@@ -81,7 +88,6 @@ export default {
         session.user.email = token.email as string
         session.user.role = token.role as UserRole
       }
-
       return session
     },
     async jwt({ token, user }) {
@@ -90,16 +96,23 @@ export default {
       }
 
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_APP_URL}/api/users/${token.id}`
+        `${process.env.NEXT_PUBLIC_APP_URL}/api/users/${token.id}`,
+        {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+        }
       )
 
       if (!res.ok) return token
 
-      const existingUser = await res.json()
-      token.name = existingUser.name as string
+      const { data: existingUser } = (await res.json()) as {
+        data: typeof users.$inferSelect
+      }
+
+      token.name = existingUser.name
       token.image = existingUser.image as string
-      token.email = existingUser.email as string
-      token.role = existingUser.role as UserRole
+      token.email = existingUser.email
+      token.role = existingUser.role
 
       return token
     },

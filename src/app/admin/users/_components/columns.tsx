@@ -1,9 +1,17 @@
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import { users } from '@/db/schema'
+import { cn } from '@/lib/utils'
 import { ColumnDef } from '@tanstack/react-table'
 
-import { labels, priorities, statuses } from '../_data/data'
+import {
+  labels,
+  priorities,
+  roleOptions,
+  statusOptions,
+  statuses,
+} from '../_data/data'
 import { DataTableColumnHeader } from './data-table-column-header'
 import { DataTableRowActions } from './data-table-row-actions'
 
@@ -40,10 +48,17 @@ export const columns: ColumnDef<Omit<typeof users.$inferSelect, 'password'>>[] =
       ),
       cell: ({ row }) => {
         const label = labels.find(label => label.value === row.original.name)
+        const image = row.original.image as string
+        const name = row.getValue('name') as string
 
         return (
-          <div className="flex space-x-2">
-            {label && <Badge variant="outline">{label.label}</Badge>}
+          <div className="flex items-center space-x-2">
+            <Avatar className="size-6 cursor-pointer transition hover:opacity-75">
+              <AvatarImage alt={name} src={image} />
+              <AvatarFallback className="flex items-center justify-center bg-blue-500 font-medium text-white">
+                {name.charAt(0).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
             <span className="max-w-32 truncate font-medium sm:max-w-72 md:max-w-[31rem]">
               {row.getValue('name')}
             </span>
@@ -57,14 +72,6 @@ export const columns: ColumnDef<Omit<typeof users.$inferSelect, 'password'>>[] =
         <DataTableColumnHeader column={column} title="Email" />
       ),
       cell: ({ row }) => {
-        // const status = statuses.find(
-        //   status => status.value === row.getValue('email')
-        // )
-
-        // if (!status) {
-        //   return null
-        // }
-
         return (
           <div className="line-clamp-1 flex items-center">
             <span className="truncate">{row.getValue('email')}</span>
@@ -72,7 +79,9 @@ export const columns: ColumnDef<Omit<typeof users.$inferSelect, 'password'>>[] =
         )
       },
       filterFn: (row, id, value) => {
-        return value.includes(row.getValue(id))
+        const rowValue = row.getValue(id) as string
+
+        return rowValue.includes(value)
       },
     },
     {
@@ -81,13 +90,13 @@ export const columns: ColumnDef<Omit<typeof users.$inferSelect, 'password'>>[] =
         <DataTableColumnHeader column={column} title="Role" />
       ),
       cell: ({ row }) => {
-        // const priority = priorities.find(
-        //   priority => priority.value === row.getValue('priority')
-        // )
+        const role = roleOptions.find(
+          role => role.value === row.getValue('role')
+        )
 
-        // if (!priority) {
-        //   return null
-        // }
+        if (!role) {
+          return null
+        }
 
         return (
           <div className="flex items-center">
@@ -102,31 +111,42 @@ export const columns: ColumnDef<Omit<typeof users.$inferSelect, 'password'>>[] =
         return value.includes(row.getValue(id))
       },
     },
+
     {
-      accessorKey: 'emailVerified',
+      accessorKey: 'status',
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Status" />
       ),
       cell: ({ row }) => {
-        // const priority = priorities.find(
-        //   priority => priority.value === row.getValue('priority')
-        // )
+        const value = !!row.original.emailVerified ? 'active' : 'inactive'
+        const active = !!row.original.emailVerified
 
-        // if (!priority) {
-        //   return null
-        // }
+        const status = statusOptions.find(status => status.value === value)
+
+        if (!status) {
+          return null
+        }
 
         return (
           <div className="flex items-center">
-            {/* {priority.icon && (
-              <priority.icon className="mr-2 h-4 w-4 text-muted-foreground" />
-            )} */}
-            <span>{`${!!row.getValue('emailVerified')}`}</span>
+            <Badge
+              className={cn(
+                'py-1 text-xs font-semibold',
+                active &&
+                  'bg-emerald-200 text-emerald-700 hover:bg-emerald-200 hover:text-emerald-700',
+                !active &&
+                  'bg-rose-200 text-rose-700 hover:bg-rose-200 hover:text-rose-700'
+              )}
+            >
+              {active ? 'Active' : 'Inactive'}
+            </Badge>
           </div>
         )
       },
       filterFn: (row, id, value) => {
-        return value.includes(row.getValue(id))
+        return value.includes(
+          row.original.emailVerified ? 'active' : 'inactive'
+        )
       },
     },
     {

@@ -34,7 +34,7 @@ const Layout = ({ className, fixed = false, ...props }: LayoutProps) => {
         ref={divRef}
         data-layout="layout"
         className={cn(
-          'h-full overflow-auto',
+          'h-full overflow-auto bg-gray-50',
           fixed && 'flex flex-col',
           className
         )}

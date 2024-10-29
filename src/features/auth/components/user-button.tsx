@@ -36,9 +36,8 @@ export const UserButton = () => {
   if (session.status === 'unauthenticated' || !session.data) {
     return null
   }
-
-  const name = session.data?.user?.name!
-  const imageUrl = session.data?.user?.image
+  const name = session.data?.user?.name || ''
+  const imageUrl = session.data?.user?.image || ''
 
   return (
     <DropdownMenu>

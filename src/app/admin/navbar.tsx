@@ -91,10 +91,11 @@ function NavLink({
       onClick={closeNav}
       className={cn(
         buttonVariants({
-          variant: checkActiveNav(href) ? 'secondary' : 'ghost',
+          // variant: checkActiveNav(href) ? 'secondary' : 'ghost',
           size: 'sm',
         }),
-        'h-12 justify-start text-wrap rounded-none px-6',
+        'h-12 justify-start text-wrap rounded-md bg-transparent px-6 text-neutral-400 transition hover:bg-[#1a2835] hover:text-neutral-300',
+        checkActiveNav(href) && 'bg-[#1a2835] text-neutral-300',
         subLink && 'h-10 w-full border-l border-l-slate-500 px-2'
       )}
       aria-current={checkActiveNav(href) ? 'page' : undefined}
@@ -122,7 +123,7 @@ function NavLinkDropdown({ title, icon, label, sub, closeNav }: NavLinkProps) {
       <CollapsibleTrigger
         className={cn(
           buttonVariants({ variant: 'ghost', size: 'sm' }),
-          'group h-12 w-full justify-start rounded-none px-6'
+          'group h-12 w-full justify-start rounded-md bg-transparent px-6 text-neutral-400 transition hover:bg-[#1a2835] hover:text-neutral-300'
         )}
       >
         <div className="mr-2">{icon}</div>
@@ -164,10 +165,11 @@ function NavLinkIcon({ title, icon, label, href }: NavLinkProps) {
           href={href}
           className={cn(
             buttonVariants({
-              variant: checkActiveNav(href) ? 'secondary' : 'ghost',
+              // variant: checkActiveNav(href) ? 'secondary' : 'ghost',
               size: 'icon',
             }),
-            'h-12 w-12'
+            'h-12 w-12 rounded-md bg-transparent text-neutral-400 transition hover:bg-[#1a2835] hover:text-neutral-300',
+            checkActiveNav(href) && 'bg-[#1a2835] text-neutral-300'
           )}
         >
           {icon}
@@ -199,7 +201,7 @@ function NavLinkIconDropdown({ title, icon, label, sub }: NavLinkProps) {
             <Button
               variant={isChildActive ? 'secondary' : 'ghost'}
               size="icon"
-              className="h-12 w-12"
+              className={cn('h-12 w-12')}
             >
               {icon}
             </Button>

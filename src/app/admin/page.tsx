@@ -14,6 +14,7 @@ import { Search } from '@/features/admin/components/search'
 // import ThemeSwitch from '@/components/theme-switch'
 import { TopNav } from '@/features/admin/components/top-nav'
 import { UserNav } from '@/features/admin/components/user-nav'
+import { UserButton } from '@/features/auth/components/user-button'
 
 import { Overview } from './overview'
 import { RecentSales } from './recent-sales'
@@ -27,7 +28,7 @@ const DashboardPage = () => {
         <div className="ml-auto flex items-center space-x-4">
           <Search />
           {/* <ThemeSwitch /> */}
-          <UserNav />
+          <UserButton />
         </div>
       </Layout.Header>
 

@@ -1,11 +1,15 @@
 import {
   CheckCircleIcon,
+  CircleCheck,
   CircleHelp,
   CircleIcon,
+  CircleX,
   MoveDownIcon,
   MoveRightIcon,
   MoveUpIcon,
+  Shield,
   Timer,
+  UserRound,
   X,
 } from 'lucide-react'
 
@@ -67,5 +71,31 @@ export const priorities = [
     label: 'High',
     value: 'high',
     icon: MoveUpIcon,
+  },
+]
+
+export const roleOptions = [
+  {
+    label: 'Admin',
+    value: 'admin',
+    icon: Shield,
+  },
+  {
+    label: 'User',
+    value: 'user',
+    icon: UserRound,
+  },
+]
+
+export const statusOptions = [
+  {
+    label: 'Active',
+    value: 'active',
+    icon: CircleCheck,
+  },
+  {
+    label: 'Inactive',
+    value: 'inactive',
+    icon: CircleX,
   },
 ]
