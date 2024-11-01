@@ -117,44 +117,6 @@ const app = new Hono()
       return c.json({ data })
     }
   )
-  // .patch(
-  //   '/:id',
-  //   verifyAuth(),
-  //   zValidator('param', z.object({ id: z.string() })),
-  //   zValidator(
-  //     'json',
-  //     insertCartsSchema.pick({
-  //       courseId: true,
-  //       quantity: true,
-  //     })
-  //   ),
-  //   async c => {
-  //     const auth = c.get('authUser')
-  //     if (!auth.token?.id) {
-  //       return c.json({ error: 'Unauthorized' }, 401)
-  //     }
-
-  //     const { id } = c.req.valid('param')
-  //     const { courseId } = c.req.valid('json')
-
-  //     const [data] = await db
-  //       .update(carts)
-  //       .set()
-  //       .where(
-  //         and(
-  //           eq(carts.id, id),
-  //           eq(carts.courseId, courseId),
-  //           eq(carts.userId, auth.token.id)
-  //         )
-  //       )
-
-  //     if (!data) {
-  //       return c.json({ error: 'Not found' }, 404)
-  //     }
-
-  //     return c.json({ data })
-  //   }
-  // )
   .delete(
     '/:id',
     verifyAuth(),

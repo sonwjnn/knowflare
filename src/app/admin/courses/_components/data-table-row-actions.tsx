@@ -3,20 +3,19 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { insertCoursesSchema } from '@/db/schema'
+import { useDeleteCourse } from '@/features/admin/courses/api/use-delete-course'
+import { useConfirm } from '@/hooks/use-confirm'
 import { Row } from '@tanstack/react-table'
 import { Ellipsis } from 'lucide-react'
-
-import { labels } from '../_data/data'
-import { taskSchema } from '../_data/schema'
+import { useRouter } from 'next/navigation'
+import { IoCopyOutline } from 'react-icons/io5'
+import { PiTrashSimpleBold } from 'react-icons/pi'
+import { RiEditBoxLine } from 'react-icons/ri'
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>
@@ -25,42 +24,61 @@ interface DataTableRowActionsProps<TData> {
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
-  const task = taskSchema.parse(row.original)
+  const [ConfirmDialog, confirm] = useConfirm(
+    'Are you sure?',
+    'You are about to delete this course'
+  )
+  const course = insertCoursesSchema.parse(row.original)
+
+  const { mutate: deleteCourse, isPending: deleteCourseLoading } =
+    useDeleteCourse(course?.id)
+
+  const router = useRouter()
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(course?.id || '')
+  }
+
+  const handleDelete = async () => {
+    const ok = await confirm()
+
+    if (!ok) return
+
+    deleteCourse()
+  }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          className="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
-        >
-          <Ellipsis className="h-4 w-4" />
-          <span className="sr-only">Open menu</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[160px]">
-        <DropdownMenuItem>Edit</DropdownMenuItem>
-        <DropdownMenuItem>Make a copy</DropdownMenuItem>
-        <DropdownMenuItem>Favorite</DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger>Labels</DropdownMenuSubTrigger>
-          <DropdownMenuSubContent>
-            <DropdownMenuRadioGroup value={task.label}>
-              {labels.map(label => (
-                <DropdownMenuRadioItem key={label.value} value={label.value}>
-                  {label.label}
-                </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
-          </DropdownMenuSubContent>
-        </DropdownMenuSub>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          Delete
-          <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <>
+      <ConfirmDialog />
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild disabled={deleteCourseLoading}>
+          <Button
+            variant="ghost"
+            className="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
+          >
+            <Ellipsis className="h-4 w-4" />
+            <span className="sr-only">Open menu</span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-[160px]">
+          <DropdownMenuItem
+            onClick={() => router.push(`/admin/courses/edit/${course?.id}`)}
+          >
+            <RiEditBoxLine className="mr-1 h-4 w-4" /> Edit
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleCopy}>
+            <IoCopyOutline className="mr-1 h-4 w-4" /> Copy ID
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={handleDelete}
+            className="hover:bg-rose-200 hover:text-rose-700"
+          >
+            <PiTrashSimpleBold className="mr-1 h-4 w-4" /> Delete
+            <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
   )
 }

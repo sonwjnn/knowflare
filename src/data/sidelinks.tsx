@@ -1,5 +1,6 @@
 import {
   AlertCircle,
+  AlignHorizontalJustifyEnd,
   AppWindow,
   Ban,
   BarChart2,
@@ -18,6 +19,7 @@ import {
   Truck,
   Users,
 } from 'lucide-react'
+import { BsCollectionPlay } from 'react-icons/bs'
 
 export interface NavLink {
   title: string
@@ -38,43 +40,44 @@ export const sidelinks: SideLink[] = [
     icon: <LayoutDashboard size={18} />,
   },
   {
+    title: 'Categories',
+    href: '/admin/categories',
+    icon: <AlignHorizontalJustifyEnd size={18} />,
+  },
+  {
     title: 'Courses',
-    label: '3',
     href: '/admin/courses',
-    icon: <CheckSquare size={18} />,
+    icon: <BsCollectionPlay size={18} />,
   },
   {
     title: 'Users',
-    label: '',
     href: '/admin/users',
     icon: <Users size={18} />,
   },
   {
     title: 'Chats',
-    label: '9',
     href: '/admin/chats',
     icon: <MessageSquare size={18} />,
   },
-  {
-    title: 'Requests',
-    label: '10',
-    href: '/admin/requests',
-    icon: <Route size={18} />,
-    sub: [
-      {
-        title: 'Trucks',
-        label: '9',
-        href: '/trucks',
-        icon: <Truck size={18} />,
-      },
-      {
-        title: 'Cargos',
-        label: '',
-        href: '/admin/cargos',
-        icon: <Package size={18} />,
-      },
-    ],
-  },
+  // {
+  //   title: 'Requests',
+  //   href: '/admin/requests',
+  //   icon: <Route size={18} />,
+  //   sub: [
+  //     {
+  //       title: 'Trucks',
+  //       label: '9',
+  //       href: '/trucks',
+  //       icon: <Truck size={18} />,
+  //     },
+  //     {
+  //       title: 'Cargos',
+  //       label: '',
+  //       href: '/admin/cargos',
+  //       icon: <Package size={18} />,
+  //     },
+  //   ],
+  // },
   {
     title: 'Analysis',
     label: '',

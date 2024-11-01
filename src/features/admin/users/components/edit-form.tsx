@@ -12,25 +12,17 @@ import {
 import { useEditUser } from '@/features/admin/users/api/use-edit-user'
 import { useGetUser } from '@/features/admin/users/api/use-get-user'
 import { useUserId } from '@/features/admin/users/hooks/use-user-id'
-import {
-  ArrowLeft,
-  Loader2,
-  Mail,
-  Shield,
-  Upload,
-  UserRound,
-} from 'lucide-react'
+import { Loader2, Mail, Shield, Upload, UserRound } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export const EditForm = () => {
   const router = useRouter()
   const userId = useUserId()
-  const [isLoading, setIsLoading] = useState(false)
   const { data: user, isPending: userLoading } = useGetUser(userId)
   const { mutate: editUser, isPending: editUserLoading } = useEditUser(userId)
   const [name, setName] = useState(user?.name || '')
-  const [email] = useState(user?.email || '')
+  const [email, setEmail] = useState(user?.email || '')
   const [role, setRole] = useState(user?.role || '')
   const [image, setImage] = useState<string | null>(user?.image || '')
 
@@ -46,6 +38,15 @@ export const EditForm = () => {
       reader.readAsDataURL(file)
     }
   }
+
+  useEffect(() => {
+    if (user) {
+      setName(user.name || '')
+      setEmail(user.email || '')
+      setRole(user.role || '')
+      setImage(user.image || '')
+    }
+  }, [user])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

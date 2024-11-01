@@ -408,6 +408,10 @@ const app = new Hono()
         return c.json({ error: 'Unauthorized' }, 401)
       }
 
+      if (auth.token?.role !== 'admin') {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
       const { id } = c.req.valid('param')
 
       if (!id) {

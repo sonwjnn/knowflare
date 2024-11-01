@@ -1,11 +1,16 @@
+import { CourseLevel } from '@/db/schema'
 import {
   CheckCircleIcon,
+  CircleCheck,
   CircleHelp,
   CircleIcon,
+  CircleX,
   MoveDownIcon,
   MoveRightIcon,
   MoveUpIcon,
+  Shield,
   Timer,
+  UserRound,
   X,
 } from 'lucide-react'
 
@@ -67,5 +72,53 @@ export const priorities = [
     label: 'High',
     value: 'high',
     icon: MoveUpIcon,
+  },
+]
+
+export const roleOptions = [
+  {
+    label: 'Admin',
+    value: 'admin',
+    icon: Shield,
+  },
+  {
+    label: 'User',
+    value: 'user',
+    icon: UserRound,
+  },
+]
+
+export const levelOptions = [
+  {
+    label: 'Beginner',
+    value: CourseLevel.BEGINNER,
+    icon: MoveDownIcon,
+  },
+  {
+    label: 'Intermediate',
+    value: CourseLevel.INTERMEDIATE,
+    icon: MoveRightIcon,
+  },
+  {
+    label: 'Advanced',
+    value: CourseLevel.ADVANCED,
+    icon: MoveUpIcon,
+  },
+  {
+    label: 'All Levels',
+    value: CourseLevel.ALL_LEVEL,
+    icon: CircleIcon,
+  },
+]
+export const publishedOptions = [
+  {
+    label: 'Published',
+    value: 'published',
+    icon: CircleCheck,
+  },
+  {
+    label: 'Unpublished',
+    value: 'unpublished',
+    icon: CircleX,
   },
 ]

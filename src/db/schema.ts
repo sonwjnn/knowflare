@@ -191,6 +191,8 @@ export const categories = mysqlTable('category', {
   name: varchar('name', { length: 255 }).notNull(),
 })
 
+export const insertCategoriesSchema = createInsertSchema(categories)
+
 export const attachments = mysqlTable('attachment', {
   id: varchar('id', { length: 255 })
     .primaryKey()

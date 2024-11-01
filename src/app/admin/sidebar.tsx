@@ -6,7 +6,7 @@ import { ChevronsLeft, Menu, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { GiBurningBook } from 'react-icons/gi'
 
-import Logo from '../(dashboard)/logo'
+import Logo from './logo'
 import { Nav } from './navbar'
 
 interface SidebarProps extends React.HTMLAttributes<HTMLElement> {
@@ -33,31 +33,41 @@ export const Sidebar = ({
   return (
     <aside
       className={cn(
-        `fixed left-0 right-0 top-0 z-50 w-full border-r-2 border-r-muted transition-[width] md:bottom-0 md:right-auto md:h-svh ${isCollapsed ? 'md:w-14' : 'md:w-64'}`,
+        `fixed left-0 right-0 top-0 z-50 w-full border-r-2 border-r-muted transition-[width] md:bottom-0 md:right-auto md:h-svh ${
+          isCollapsed ? 'md:w-14' : 'md:w-64'
+        }`,
         className
       )}
     >
       {/* Overlay in mobile */}
       <div
         onClick={() => setNavOpened(false)}
-        className={`absolute inset-0 transition-[opacity] delay-100 duration-700 ${navOpened ? 'h-svh opacity-50' : 'h-0 opacity-0'} w-full bg-black md:hidden`}
+        className={`absolute inset-0 transition-[opacity] delay-100 duration-700 ${
+          navOpened ? 'h-svh opacity-50' : 'h-0 opacity-0'
+        } w-full bg-black md:hidden`}
       />
 
       <Layout fixed className={navOpened ? 'h-svh' : ''}>
         {/* Header */}
         <Layout.Header
           sticky
-          className="z-50 flex justify-between bg-[#021526] px-4 py-3 shadow-sm md:px-4"
+          className="z-50 flex justify-between bg-[#F0F3F4] px-4 py-3 shadow-sm md:px-4"
         >
           <div
-            className={`flex items-center text-neutral-400 ${!isCollapsed ? 'gap-2' : ''}`}
+            className={`flex items-center text-neutral-400 ${
+              !isCollapsed ? 'gap-2' : ''
+            }`}
           >
             <GiBurningBook
-              className={`transition-all ${isCollapsed ? 'h-6 w-6' : 'h-8 w-8'} `}
+              className={`transition-all ${
+                isCollapsed ? 'h-6 w-6' : 'h-8 w-8'
+              } `}
             />
 
             <div
-              className={`flex flex-col justify-end truncate ${isCollapsed ? 'invisible w-0' : 'visible w-auto'}`}
+              className={`flex flex-col justify-end truncate ${
+                isCollapsed ? 'invisible w-0' : 'visible w-auto'
+              }`}
             >
               <Logo />
             </div>
@@ -80,7 +90,9 @@ export const Sidebar = ({
         {/* Navigation links */}
         <Nav
           id="sidebar-menu"
-          className={`z-40 h-full flex-1 overflow-auto bg-[#021526] text-neutral-400 ${navOpened ? 'max-h-screen' : 'max-h-0 py-0 md:max-h-screen md:p-2'}`}
+          className={`z-40 h-full flex-1 overflow-auto bg-[#F0F3F4] text-neutral-400 ${
+            navOpened ? 'max-h-screen' : 'max-h-0 py-0 md:max-h-screen md:p-2'
+          }`}
           closeNav={() => setNavOpened(false)}
           isCollapsed={isCollapsed}
           links={sidelinks}

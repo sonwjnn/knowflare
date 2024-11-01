@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { useGetCategories } from '@/features/categories/api/use-get-categories'
 import {
   BarChart,
+  Book,
   BookOpen,
   Briefcase,
   Building2,
@@ -67,8 +68,8 @@ export const TopCategories = () => {
       </h2>
 
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
-        {categories?.map(item => {
-          const Icon = iconMap[item.name]
+        {(categories ?? []).map(item => {
+          const Icon = iconMap[item.name] ?? Book
 
           return (
             <Link href={`/courses?categoryId=${item.id}`} key={item.id}>
