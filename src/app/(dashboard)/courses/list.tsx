@@ -195,58 +195,12 @@ export const List = () => {
       </div>
       <div className="my-8 flex justify-center">
         {pageCount !== 1 && (
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => onPageChange(Math.max(1, (+pageNumber || 1) - 1))}
-              disabled={(+pageNumber || 1) <= 1}
-              className="flex h-10 w-10 items-center justify-center rounded-lg border border-input bg-background hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-
-            {Array.from({ length: pageCount }, (_, i) => i + 1).map(page => {
-              const isActive = page === (+pageNumber || 1)
-              // Only show current page, first, last, and 1 page before and after current
-              const shouldShow =
-                page === 1 ||
-                page === pageCount ||
-                Math.abs(page - (+pageNumber || 1)) <= 1
-
-              if (!shouldShow) {
-                if (page === 2 || page === pageCount - 1) {
-                  return (
-                    <span key={page} className="px-2">
-                      ...
-                    </span>
-                  )
-                }
-                return null
-              }
-
-              return (
-                <button
-                  key={page}
-                  onClick={() => onPageChange(page)}
-                  className={cn(
-                    'flex h-10 w-10 items-center justify-center rounded-lg border border-input',
-                    isActive
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-background hover:bg-accent hover:text-accent-foreground'
-                  )}
-                >
-                  {page}
-                </button>
-              )
-            })}
-
-            <button
-              onClick={() => onPageChange((+pageNumber || 1) + 1)}
-              disabled={(+pageNumber || 1) >= (pageCount || 0)}
-              className="flex h-10 w-10 items-center justify-center rounded-lg border border-input bg-background hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </button>
-          </div>
+          <Paginator
+            currentPage={+pageNumber || 1}
+            totalPages={pageCount || 0}
+            onPageChange={value => onPageChange(value)}
+            showPreviousNext
+          />
         )}
       </div>
     </div>

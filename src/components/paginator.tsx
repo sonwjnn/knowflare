@@ -3,7 +3,9 @@ import { generatePaginationLinks } from '@/components/generate-pages'
 import {
   Pagination,
   PaginationContent,
+  PaginationFirst,
   PaginationItem,
+  PaginationLast,
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination'
@@ -25,21 +27,37 @@ export default function Paginator({
     <Pagination>
       <PaginationContent>
         {showPreviousNext && totalPages ? (
-          <PaginationItem>
-            <PaginationPrevious
-              onClick={() => onPageChange(currentPage - 1)}
-              disabled={currentPage - 1 < 1}
-            />
-          </PaginationItem>
+          <>
+            <PaginationItem>
+              <PaginationFirst
+                onClick={() => onPageChange(1)}
+                disabled={currentPage - 1 < 1}
+              />
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={() => onPageChange(currentPage - 1)}
+                disabled={currentPage - 1 < 1}
+              />
+            </PaginationItem>
+          </>
         ) : null}
         {generatePaginationLinks(currentPage, totalPages, onPageChange)}
         {showPreviousNext && totalPages ? (
-          <PaginationItem>
-            <PaginationNext
-              onClick={() => onPageChange(currentPage + 1)}
-              disabled={currentPage > totalPages - 1}
-            />
-          </PaginationItem>
+          <>
+            <PaginationItem>
+              <PaginationNext
+                onClick={() => onPageChange(currentPage + 1)}
+                disabled={currentPage > totalPages - 1}
+              />
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationLast
+                onClick={() => onPageChange(totalPages)}
+                disabled={currentPage > totalPages - 1}
+              />
+            </PaginationItem>
+          </>
         ) : null}
       </PaginationContent>
     </Pagination>

@@ -71,7 +71,7 @@ export const Item = ({
 
         <CardContent className="space-y-2 p-4 pt-2">
           <div className="space-y-1">
-            <h3 className="line-clamp-2 h-12 bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-lg font-bold leading-tight tracking-tight text-transparent">
+            <h3 className="line-clamp-2 h-12 text-pretty bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-lg font-semibold leading-tight tracking-tight text-transparent">
               {title}
             </h3>
             <p className="flex items-center text-sm font-medium text-gray-600">
@@ -107,8 +107,8 @@ export const Item = ({
             <span className="ml-2 font-semibold text-amber-700">4.7</span>
           </div>
 
-          <div className="flex items-center gap-3 pt-2">
-            <div className="rounded-2xl bg-white/95 p-1.5 shadow-lg backdrop-blur-md transition-all duration-300 hover:scale-110 hover:shadow-xl">
+          <div className="flex items-center gap-3">
+            <div className="rounded-2xl bg-white/95 p-1 shadow-lg backdrop-blur-md transition-all duration-300 hover:scale-110 hover:shadow-xl">
               <WishlistButton courseId={id} isInWishlist={isInWishlist} />
             </div>
 
