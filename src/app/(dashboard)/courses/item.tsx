@@ -61,7 +61,7 @@ export const Item = ({
           </div>
         </div>
         <CardContent className="space-y-2 px-4 py-2 pb-4">
-          <h3 className="line-clamp-2 text-lg font-bold text-gray-800">
+          <h3 className="line-clamp-2 h-12 text-lg font-bold text-gray-800">
             {title}
           </h3>
           <p className="mb-1 text-sm text-gray-600">{author}</p>

@@ -1,0 +1,200 @@
+import { v4 as uuidv4 } from 'uuid'
+
+import { SEED_COURSES } from './courses'
+
+export const SEED_CHAPTERS = [
+  {
+    id: uuidv4(),
+    courseId: SEED_COURSES[0].id,
+    title: `Introduction to React with TypeScript`,
+    description: `Introduction to React with TypeScript`,
+    position: 1,
+    isPublished: true,
+  },
+  {
+    id: uuidv4(),
+    courseId: SEED_COURSES[0].id,
+    title: `Understanding Props in React `,
+    description: `Understanding Props in React `,
+    position: 2,
+    isPublished: true,
+  },
+  {
+    id: uuidv4(),
+    courseId: SEED_COURSES[0].id,
+    title: `Handling Events and Styles`,
+    description: `Handling Events and Styles`,
+    position: 3,
+    isPublished: true,
+  },
+  {
+    id: uuidv4(),
+    courseId: SEED_COURSES[0].id,
+    title: `Managing State in React`,
+    description: `Managing State in React`,
+    position: 4,
+    isPublished: true,
+  },
+  {
+    id: uuidv4(),
+    courseId: SEED_COURSES[0].id,
+    title: `Advanced State Management`,
+    description: `Advanced State Management`,
+    position: 5,
+    isPublished: true,
+  },
+  {
+    id: uuidv4(),
+    courseId: SEED_COURSES[0].id,
+    title: `Context API in React`,
+    description: `Context API in React`,
+    position: 6,
+    isPublished: true,
+  },
+  {
+    id: uuidv4(),
+    courseId: SEED_COURSES[0].id,
+    title: `Ref and Class Components`,
+    description: `Ref and Class Components`,
+    position: 7,
+    isPublished: true,
+  },
+  {
+    id: uuidv4(),
+    courseId: SEED_COURSES[0].id,
+    title: `Advanced Props Techniques`,
+    description: `Advanced Props Techniques`,
+    position: 8,
+    isPublished: true,
+  },
+  {
+    id: uuidv4(),
+    courseId: SEED_COURSES[0].id,
+    title: `TypeScript Utility Types and Polymorphism`,
+    description: `TypeScript Utility Types and Polymorphism`,
+    position: 9,
+    isPublished: true,
+  },
+  {
+    id: uuidv4(),
+    courseId: SEED_COURSES[0].id,
+    title: `Conclusion`,
+    description: `Conclusion`,
+    position: 10,
+    isPublished: true,
+  },
+
+  // chapters for courses[1]
+  {
+    id: uuidv4(),
+    courseId: SEED_COURSES[1].id,
+    title: `Introduction`,
+    description: `Overview of Next.js 13 and its new features.`,
+    position: 1,
+    isPublished: true,
+  },
+  {
+    id: uuidv4(),
+    courseId: SEED_COURSES[1].id,
+    title: `Routing and Navigation`,
+    description: `Understanding server-side rendering and server components in Next.js 13.`,
+    position: 2,
+    isPublished: true,
+  },
+  {
+    id: uuidv4(),
+    courseId: SEED_COURSES[1].id,
+    title: `Styling, Data Fetching, and Rendering`,
+    description: `How to set up pages and routes in Next.js 13.`,
+    position: 3,
+    isPublished: true,
+  },
+  {
+    id: uuidv4(),
+    courseId: SEED_COURSES[1].id,
+    title: `Dynamic Routes, Static Rendering, and Error Handling`,
+    description: `Building layouts and linking pages together in Next.js 13.`,
+    position: 4,
+    isPublished: true,
+  },
+  {
+    id: uuidv4(),
+    courseId: SEED_COURSES[1].id,
+    title: `Interactive UI and Loading States`,
+    description: `Applying styles, fonts, and managing images in Next.js 13.`,
+    position: 5,
+    isPublished: true,
+  },
+  {
+    id: uuidv4(),
+    courseId: SEED_COURSES[1].id,
+    title: `Building a Complete Application`,
+    description: `Fetching and revalidating data with Next.js 13.`,
+    position: 6,
+    isPublished: true,
+  },
+  // chapters for courses[2]
+  {
+    id: uuidv4(),
+    courseId: SEED_COURSES[2].id,
+    title: 'Introduction & Fundamentals',
+    description:
+      'Learn the basics of Next.js 14 and set up your first project.',
+    position: 1,
+    isPublished: true,
+  },
+  {
+    id: uuidv4(),
+    courseId: SEED_COURSES[2].id,
+    title: 'Routing and Navigation',
+    description:
+      'Explore the powerful routing features of Next.js, including dynamic routes and nested navigation.',
+    position: 2,
+    isPublished: true,
+  },
+  {
+    id: uuidv4(),
+    courseId: SEED_COURSES[2].id,
+    title: 'Error Handling and User Interface',
+    description:
+      'Build reusable templates, handle loading states gracefully, and implement robust error handling.',
+    position: 3,
+    isPublished: true,
+  },
+  {
+    id: uuidv4(),
+    courseId: SEED_COURSES[2].id,
+    title: 'Advanced Routing and Data Fetching',
+    description:
+      'Dive deeper into advanced routing techniques like parallel routes, conditional routes, and route interception.',
+    position: 4,
+    isPublished: true,
+  },
+  {
+    id: uuidv4(),
+    courseId: SEED_COURSES[2].id,
+    title: 'Rendering and Server Components',
+    description:
+      'Learn how to handle HTTP requests with route handlers and implement various HTTP methods.',
+    position: 5,
+    isPublished: true,
+  },
+  {
+    id: uuidv4(),
+    courseId: SEED_COURSES[2].id,
+    title: 'Data Fetching and Caching',
+    description:
+      'Understand how middleware can enhance your Next.js applications.',
+    position: 6,
+    isPublished: true,
+  },
+  {
+    id: uuidv4(),
+    courseId: SEED_COURSES[2].id,
+    title: 'Next.js 15',
+    description:
+      'Explore different rendering strategies like Client-side, Server-side, and Static rendering.',
+    position: 7,
+    isPublished: true,
+  },
+]

@@ -20,12 +20,10 @@ import { config } from 'dotenv'
 import { drizzle } from 'drizzle-orm/mysql2'
 import mysql from 'mysql2/promise'
 
-import {
-  SEED_CATEGORIES,
-  SEED_CHAPTERS,
-  SEED_COURSES,
-  SEED_LESSONS,
-} from './data'
+import { SEED_CATEGORIES } from './categories'
+import { SEED_CHAPTERS } from './chapters'
+import { SEED_COURSES } from './courses'
+import { SEED_LESSONS } from './lessons'
 
 config({ path: '.env.local' })
 
@@ -63,7 +61,11 @@ async function main() {
     await db.insert(chapters).values(SEED_CHAPTERS).execute()
 
     // Seed lessons
-    await db.insert(lessons).values(SEED_LESSONS).execute()
+    const NORMALIZE_SEED_LESSONS = SEED_LESSONS.map(item => ({
+      ...item,
+      lessonType: item.lessonType as LessonType,
+    }))
+    await db.insert(lessons).values(NORMALIZE_SEED_LESSONS).execute()
 
     console.log('Seeding completed successfully!')
   } catch (error) {

@@ -22,6 +22,7 @@ import axios from 'axios'
 import { Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -68,6 +69,17 @@ export const EditForm = () => {
       price: course?.price || undefined,
     },
   })
+
+  useEffect(() => {
+    if (course) {
+      form.setValue('title', course?.title || '')
+      form.setValue('description', course?.description || '')
+      form.setValue('categoryId', course?.categoryId || '')
+      form.setValue('level', course?.level || '')
+      form.setValue('imageUrl', course?.imageUrl || '')
+      form.setValue('price', course?.price || undefined)
+    }
+  }, [course, form])
 
   const { isValid, isSubmitting } = form.formState
 
@@ -215,7 +227,7 @@ export const EditForm = () => {
             />
           </div>
 
-          {/* <FormField
+          <FormField
             control={form.control}
             name="imageUrl"
             render={({ field }) => (
@@ -225,16 +237,16 @@ export const EditForm = () => {
                 </FormLabel>
                 <FormControl>
                   <FileUpload
-                    value={field.value || ""}
-                    onChange={(url) => field.onChange(url)}
-                    endpoint="courseBanner"
+                    value={field.value || ''}
+                    onChange={url => field.onChange(url)}
+                    endpoint="courseImage"
                     page="Edit Course"
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
-          /> */}
+          />
 
           <FormField
             control={form.control}
