@@ -173,7 +173,7 @@ export const List = () => {
           </Select>
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-6 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-6 xl:grid-cols-3 2xl:grid-cols-4">
         {sortedCourses.map(item => {
           const isInWishlist = !!wishlists?.find(w => w.courseId === item.id)
           const isInCart = !!carts?.find(w => w.courseId === item.id)
