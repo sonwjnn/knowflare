@@ -1,5 +1,11 @@
 import { db } from '@/db/drizzle'
-import { carts, courses, insertWishlistsSchema, wishlists } from '@/db/schema'
+import {
+  carts,
+  courses,
+  insertWishlistsSchema,
+  users,
+  wishlists,
+} from '@/db/schema'
 import { verifyAuth } from '@hono/auth-js'
 import { zValidator } from '@hono/zod-validator'
 import { and, desc, eq } from 'drizzle-orm'
@@ -19,6 +25,7 @@ const app = new Hono()
         title: courses.title,
         description: courses.description,
         imageUrl: courses.imageUrl,
+        userId: courses.userId,
         price: courses.price,
         date: courses.date,
       })
@@ -27,7 +34,23 @@ const app = new Hono()
       .where(eq(wishlists.userId, auth.token.id))
       .orderBy(desc(wishlists.date))
 
-    return c.json({ data })
+    const dataWithAuthor = await Promise.all(
+      data.map(async course => {
+        const [author] = await db
+          .select({
+            name: users.name,
+          })
+          .from(users)
+          .where(eq(users.id, course.userId))
+
+        return {
+          ...course,
+          author: author.name,
+        }
+      })
+    )
+
+    return c.json({ data: dataWithAuthor })
   })
   .get(
     '/:id',

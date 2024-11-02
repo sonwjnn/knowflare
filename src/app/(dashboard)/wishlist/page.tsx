@@ -13,6 +13,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton'
 import { WishlistButton } from '@/components/wishlist-button'
 import { useCreateCart } from '@/features/carts/api/use-create-cart'
+import { useGetCarts } from '@/features/carts/api/use-get-carts'
 import { useAddAllToCart } from '@/features/wishlists/api/use-add-all-to-cart'
 import { useGetWishlists } from '@/features/wishlists/api/use-get-carts'
 import { cn } from '@/lib/utils'
@@ -20,8 +21,11 @@ import { Award, BookOpen, Clock, ShoppingCart, Star } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 
+import { Item } from './item'
+
 export default function EnhancedPurchasedCourses() {
   const { data: courses, isPending: coursesLoading } = useGetWishlists()
+  const { data: carts, isPending: cartsLoading } = useGetCarts()
   const { mutate: addAllToCart, isPending: addAllToCartLoading } =
     useAddAllToCart()
 
@@ -69,57 +73,23 @@ export default function EnhancedPurchasedCourses() {
 
       <div className="flex flex-col gap-8 lg:flex-row">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
-          {courses?.map(course => {
+          {courses?.map(item => {
             const isInWishlist = !!courses.some(
-              c => c.courseId === course.courseId
+              c => c.courseId === item.courseId
             )
+            const isInCart = !!carts?.find(w => w.courseId === item.courseId)
 
             return (
-              <Card
-                key={course.courseId}
-                className="group overflow-hidden border-0 transition-all duration-300 hover:shadow-lg"
-              >
-                <div className="relative">
-                  <Image
-                    src={
-                      course.imageUrl || '/placeholder.svg?height=400&width=600'
-                    }
-                    alt={course.title}
-                    width={0}
-                    height={0}
-                    sizes="100vw"
-                    className="aspect-video w-full object-cover p-2"
-                  />
-                  <div
-                    className={cn(
-                      'absolute right-2.5 top-2.5 rounded-full bg-white opacity-0 transition group-hover:opacity-100',
-                      !!isInWishlist && 'opacity-100'
-                    )}
-                  >
-                    <WishlistButton
-                      courseId={course.courseId}
-                      isInWishlist={isInWishlist}
-                    />
-                  </div>
-                </div>
-                <CardContent className="p-4">
-                  <h3 className="mb-2 line-clamp-2 text-lg font-bold text-gray-800">
-                    {course.title}
-                  </h3>
-                  <p className="mb-4 text-sm text-gray-600">
-                    {course.description}
-                  </p>
-
-                  <div className="flex items-center justify-between">
-                    <span className="text-lg font-bold text-gray-900">
-                      ${course.price.toFixed(2)}
-                    </span>
-                  </div>
-                </CardContent>
-                <CardFooter className="px-3 pb-2">
-                  <CreateCartButton courseId={course.courseId} />
-                </CardFooter>
-              </Card>
+              <Item
+                key={item.courseId}
+                id={item.courseId}
+                title={item.title}
+                imageUrl={item.imageUrl}
+                price={item.price}
+                author={item.author || ''}
+                isInWishlist={isInWishlist}
+                isInCart={isInCart}
+              />
             )
           })}
         </div>

@@ -1,8 +1,9 @@
-'use client'
-
 import { ourFileRouter } from '@/app/api/uploadthing/core'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { UploadDropzone } from '@/lib/uploadthing'
 import Image from 'next/image'
+import { useState } from 'react'
 import { toast } from 'sonner'
 
 interface FileUploadProps {
@@ -18,6 +19,8 @@ export const FileUpload = ({
   endpoint,
   page,
 }: FileUploadProps) => {
+  const [useUrl, setUseUrl] = useState(false)
+
   return (
     <div className="flex flex-col gap-2">
       {page === 'Edit Course' && value !== '' && (
@@ -30,20 +33,30 @@ export const FileUpload = ({
         />
       )}
 
-      {page === 'Edit Section' && value !== '' && (
-        <p className="text-sm font-medium">{value}</p>
-      )}
+      <div className="flex items-center gap-2">
+        <Button variant="outline" onClick={() => setUseUrl(!useUrl)}>
+          {useUrl ? 'Upload Image' : 'Enter URL'}
+        </Button>
+      </div>
 
-      <UploadDropzone
-        endpoint={endpoint}
-        onClientUploadComplete={res => {
-          onChange(res?.[0].url)
-        }}
-        onUploadError={(error: Error) => {
-          toast.error(error.message)
-        }}
-        className="h-[200px] w-[280px]"
-      />
+      {useUrl ? (
+        <Input
+          placeholder="Enter image URL"
+          value={value}
+          onChange={e => onChange(e.target.value)}
+        />
+      ) : (
+        <UploadDropzone
+          endpoint={endpoint}
+          onClientUploadComplete={res => {
+            onChange(res?.[0].url)
+          }}
+          onUploadError={(error: Error) => {
+            toast.error(error.message)
+          }}
+          className="h-[200px] w-[280px]"
+        />
+      )}
     </div>
   )
 }

@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { useGetCarts } from '@/features/carts/api/use-get-carts'
 import { useCheckout } from '@/features/subscriptions/api/use-checkout'
+import { cn } from '@/lib/utils'
 import { Lock, ShieldCheck } from 'lucide-react'
 import Link from 'next/link'
 
@@ -47,19 +48,13 @@ export const Summary = () => {
 
       {/* Checkout Button */}
       <Button
-        className="mt-6 w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white transition-all hover:from-blue-700 hover:to-blue-800"
+        variant="primary"
+        className={cn('mt-6 w-full rounded-md')}
         size="lg"
         onClick={handleCheckout}
         disabled={checkoutLoading || cartsLoading || !carts?.length}
       >
-        {checkoutLoading ? (
-          <div className="flex items-center gap-2">
-            <div className="size-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-            Processing...
-          </div>
-        ) : (
-          'Proceed to Checkout'
-        )}
+        Proceed to Checkout
       </Button>
 
       {/* Security badges */}

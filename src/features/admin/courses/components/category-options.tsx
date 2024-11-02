@@ -20,17 +20,19 @@ interface ComboboxProps {
   options: { label: string; value: string }[]
   value?: string | null
   onChange: (value: string) => void
+  disabled?: boolean
 }
 export const CategoryOptions = ({
   options,
   value,
   onChange,
+  disabled,
 }: ComboboxProps) => {
   const [open, setOpen] = React.useState(false)
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
+      <PopoverTrigger asChild disabled={disabled}>
         <Button
           variant="outline"
           role="combobox"

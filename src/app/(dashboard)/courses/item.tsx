@@ -118,7 +118,11 @@ export const Item = ({
                 className="flex-1"
                 onClick={e => e.stopPropagation()}
               >
-                <button className="group/btn relative w-full overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 px-6 py-4 text-sm font-bold text-white shadow-lg transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/25">
+                <Button
+                  variant="success"
+                  size="lg"
+                  className="group/btn relative w-full overflow-hidden"
+                >
                   <span className="relative z-10 line-clamp-1 flex items-center justify-center gap-2">
                     <svg
                       className="h-5 w-5 transition-transform duration-300 group-hover/btn:-translate-y-0.5"
@@ -135,17 +139,18 @@ export const Item = ({
                     </svg>
                     <span className="truncate">View Cart</span>
                   </span>
-                </button>
+                </Button>
               </Link>
             ) : (
-              <button
+              <Button
+                variant="primary"
+                size="lg"
                 onClick={onCreateCart}
                 disabled={createCartLoading || isAnimating}
                 className={cn(
-                  'group/btn relative flex-1 overflow-hidden rounded-2xl px-6 py-3.5 text-sm font-bold text-white shadow-lg transition-all duration-300 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-70',
-                  isAnimating
-                    ? 'animate-[addToCart_1s_ease-in-out] bg-gradient-to-br from-emerald-500 to-teal-500'
-                    : 'bg-gradient-to-br from-sky-400 to-blue-400 hover:shadow-sky-400/25'
+                  'group/btn relative flex-1 overflow-hidden',
+                  isAnimating &&
+                    'animate-[addToCart_1s_ease-in-out] bg-gradient-to-br from-emerald-500 to-teal-500'
                 )}
               >
                 <span className="relative z-10 line-clamp-1 flex items-center justify-center gap-2">
@@ -186,7 +191,7 @@ export const Item = ({
                     <span className="absolute h-full w-full animate-[ripple_0.8s_ease-in-out] rounded-2xl bg-white opacity-20" />
                   </span>
                 )}
-              </button>
+              </Button>
             )}
           </div>
         </CardContent>

@@ -23,7 +23,7 @@ export const CartItem = ({ id, imageUrl, title, price }: Props) => {
           width={0}
           height={0}
           sizes="100vw"
-          className="h-full w-auto rounded-none object-cover"
+          className="h-full w-auto rounded-md object-cover"
         />
       </div>
       <div className="flex-1">

@@ -13,6 +13,8 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { CourseLevel, insertCoursesSchema } from '@/db/schema'
+import { useDeleteCourse } from '@/features/admin/courses/api/use-delete-course'
+import { useEditCourse } from '@/features/admin/courses/api/use-edit-category'
 import { useGetCategories } from '@/features/categories/api/use-get-categories'
 import { useGetCourse } from '@/features/courses/api/use-get-course'
 import { useConfirm } from '@/hooks/use-confirm'
@@ -26,7 +28,6 @@ import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { useDeleteCourse } from '../api/use-delete-course'
 import { CategoryOptions } from './category-options'
 
 const formSchema = z.object({
@@ -57,6 +58,8 @@ export const EditForm = () => {
   const { data: course, isPending: courseLoading } = useGetCourse(courseId)
   const { mutate: deleteCourse, isPending: deleteCourseLoading } =
     useDeleteCourse(courseId)
+  const { mutate: editCourse, isPending: editCourseLoading } =
+    useEditCourse(courseId)
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -85,12 +88,7 @@ export const EditForm = () => {
 
   // 2. Define a submit handler.
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    // try {
-    //   await axios.patch(`/api/courses/${course.id}`, values)
-    //   router.refresh()
-    // } catch (err) {
-    //   console.log('Failed to update the course', err)
-    // }
+    editCourse(values, { onSuccess: () => {} })
   }
   const onDelete = async () => {
     const ok = await confirm()
@@ -165,8 +163,9 @@ export const EditForm = () => {
                 </FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Ex: Web Development for Beginners"
                     {...field}
+                    placeholder="Ex: Web Development for Beginners"
+                    disabled={editCourseLoading}
                   />
                 </FormControl>
                 <FormMessage />
@@ -177,6 +176,7 @@ export const EditForm = () => {
           <FormField
             control={form.control}
             name="description"
+            disabled={editCourseLoading}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
@@ -184,8 +184,8 @@ export const EditForm = () => {
                 </FormLabel>
                 <FormControl>
                   <RichEditor
-                    placeholder="What is this course about?"
                     {...field}
+                    placeholder="What is this course about?"
                   />
                 </FormControl>
                 <FormMessage />
@@ -203,7 +203,11 @@ export const EditForm = () => {
                     Category <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <CategoryOptions options={categoryOptions} {...field} />
+                    <CategoryOptions
+                      options={categoryOptions}
+                      {...field}
+                      // disabled={editCourseLoading}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -219,7 +223,11 @@ export const EditForm = () => {
                     Level <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <CategoryOptions options={levelOptions} {...field} />
+                    <CategoryOptions
+                      {...field}
+                      options={levelOptions}
+                      disabled={editCourseLoading}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -230,10 +238,11 @@ export const EditForm = () => {
           <FormField
             control={form.control}
             name="imageUrl"
+            disabled={editCourseLoading}
             render={({ field }) => (
               <FormItem className="flex flex-col">
                 <FormLabel>
-                  Couse Banner <span className="text-red-500">*</span>
+                  Course Banner <span className="text-red-500">*</span>
                 </FormLabel>
                 <FormControl>
                   <FileUpload
@@ -261,6 +270,7 @@ export const EditForm = () => {
                     type="number"
                     step="0.01"
                     placeholder="29.99"
+                    disabled={editCourseLoading}
                     {...field}
                   />
                 </FormControl>

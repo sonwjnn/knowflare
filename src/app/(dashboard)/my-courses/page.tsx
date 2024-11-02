@@ -17,6 +17,8 @@ import { Award, BookOpen, Clock } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 
+import { Item } from './item'
+
 export default function EnhancedPurchasedCourses() {
   const { data: courses, isPending: coursesLoading } = useGetPurchases()
 
@@ -45,70 +47,16 @@ export default function EnhancedPurchasedCourses() {
         <h1 className="mb-8 text-3xl font-bold">My Learning</h1>
         <div className="grid grid-cols-2 gap-8 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
           {courses?.map(course => (
-            <Card
+            <Item
               key={course.id}
-              className="flex transform flex-col overflow-hidden transition-all duration-300 hover:shadow-xl"
-            >
-              <div className="relative">
-                <Image
-                  src={course.imageUrl!}
-                  alt={course.title}
-                  width={0}
-                  height={0}
-                  sizes="100vw"
-                  className="aspect-video w-full object-cover"
-                />
-                {/* <Badge className="absolute right-2 top-2 bg-primary text-primary-foreground">
-                  {course.category}
-                </Badge> */}
-              </div>
-
-              <CardContent className="flex-grow px-4 py-2 pb-4">
-                <h3 className="line-clamp-2 text-lg font-bold text-gray-800">
-                  {course.title}
-                </h3>
-                <div className="space-y-2">
-                  <div>
-                    <div className="mb-1 flex justify-between text-sm font-medium">
-                      <span>Progress</span>
-                      <span>{course.progress?.progressPercentage}%</span>
-                    </div>
-                    <Progress
-                      value={course.progress?.progressPercentage}
-                      className="h-2 w-full"
-                    />
-                  </div>
-                  <div className="flex items-center text-sm text-gray-600">
-                    <BookOpen className="mr-2 h-4 w-4 text-primary" />
-                    <span>
-                      {course.progress?.completedLessons} /{' '}
-                      {course.progress?.totalLessons} lessons
-                    </span>
-                  </div>
-                  {/* <div className="flex items-center text-sm text-gray-600">
-                    <Clock className="mr-2 h-4 w-4 text-primary" />
-                    <span>{'20h'}</span>
-                  </div> */}
-                </div>
-              </CardContent>
-              <CardFooter className="px-4">
-                <Link
-                  href={`/courses/${course.courseId}/learn`}
-                  className="w-full"
-                >
-                  <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
-                    {false ? (
-                      <>
-                        <Award className="mr-2 h-4 w-4" />
-                        View Certificate
-                      </>
-                    ) : (
-                      'Continue Learning'
-                    )}
-                  </Button>
-                </Link>
-              </CardFooter>
-            </Card>
+              courseId={course.id}
+              title={course.title}
+              imageUrl={course.imageUrl || ''}
+              author={'author'}
+              completedLessons={course.progress?.completedLessons || 0}
+              totalLessons={course.progress?.totalLessons || 0}
+              progressPercentage={course.progress?.progressPercentage || 0}
+            />
           ))}
         </div>
       </div>

@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button'
 import { useGetCategories } from '@/features/categories/api/use-get-categories'
 import { cn } from '@/lib/utils'
 import { ChevronDown, ChevronRight, Search } from 'lucide-react'
@@ -99,9 +100,9 @@ export const Categories = ({ className }: { className?: string }) => {
                 )
               })}
             </ul>
-            <button className="mt-4 w-full rounded-md bg-blue-500 py-2 text-sm text-white">
+            <Button variant="primary" className="w-full rounded-md">
               Discover All Courses
-            </button>
+            </Button>
           </div>
         </div>
       )}

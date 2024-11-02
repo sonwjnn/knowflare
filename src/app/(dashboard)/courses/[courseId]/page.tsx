@@ -331,8 +331,10 @@ export default function CourseDetail() {
                     {!currentPurchase && (
                       <div className="space-y-3">
                         <Button
-                          className="h-14 w-full bg-blue-600 text-lg font-semibold tracking-wide hover:bg-blue-700"
+                          variant="primary"
+                          size="lg"
                           onClick={onBuyNow}
+                          className="w-full rounded-md"
                         >
                           <ShoppingCart className="mr-2 size-5" />
                           Enroll Now
@@ -458,7 +460,6 @@ export default function CourseDetail() {
           <h3 className="mb-8 text-2xl font-semibold text-gray-900">
             Course Chapters
           </h3>
-          {/* Add your chapters content here */}
         </div>
 
         {/* Reviews Section */}

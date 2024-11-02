@@ -8,19 +8,6 @@ export const Cart = ({ className }: { className?: string }) => {
 
   const [open, setOpen] = useCartSheet()
 
-  // const handleMouseEnter = () => {
-  //   clearTimeout(timeoutRef.current)
-  //   setIsOpen(true)
-  // }
-
-  // const handleMouseLeave = () => {
-  //   timeoutRef.current = setTimeout(() => setIsOpen(false), 200)
-  // }
-
-  // useEffect(() => {
-  //   return () => clearTimeout(timeoutRef.current)
-  // }, [])
-
   return (
     <div
       className={cn(
