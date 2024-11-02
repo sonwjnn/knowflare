@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { useGetCarts } from '@/features/carts/api/use-get-carts'
 import { useCheckout } from '@/features/subscriptions/api/use-checkout'
+import { Lock, ShieldCheck } from 'lucide-react'
 import Link from 'next/link'
 
 export const Summary = () => {
@@ -23,20 +24,55 @@ export const Summary = () => {
   const total = carts?.reduce((total, item) => total + item.price, 0) || 0
 
   return (
-    <div className="mb-6 rounded-none bg-white p-6 shadow">
-      <h2 className="mb-4 text-xl font-semibold">Order Summary</h2>
-      <div className="mt-4 flex justify-between border-t border-gray-200 pt-4 text-lg font-semibold">
-        <span>Total</span>
-        <span>${total.toFixed(2)}</span>
+    <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
+      <h2 className="text-xl font-semibold tracking-tight text-gray-900">
+        Order Summary
+      </h2>
+
+      {/* Total Section with highlight */}
+      <div className="mt-6 flex items-center justify-between border-t border-gray-100 pt-6">
+        <span className="text-lg font-semibold text-gray-900">Total</span>
+        <div className="flex flex-col items-end">
+          <span className="text-2xl font-bold text-gray-900">
+            ${total.toFixed(2)}
+          </span>
+          <span className="text-sm text-gray-500">USD</span>
+        </div>
       </div>
+
+      {/* Items count */}
+      <div className="mt-4 text-sm text-gray-500">
+        {carts?.length || 0} items in cart
+      </div>
+
+      {/* Checkout Button */}
       <Button
-        className="mt-6 w-full"
+        className="mt-6 w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white transition-all hover:from-blue-700 hover:to-blue-800"
         size="lg"
         onClick={handleCheckout}
-        disabled={checkoutLoading}
+        disabled={checkoutLoading || cartsLoading || !carts?.length}
       >
-        Checkout
+        {checkoutLoading ? (
+          <div className="flex items-center gap-2">
+            <div className="size-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+            Processing...
+          </div>
+        ) : (
+          'Proceed to Checkout'
+        )}
       </Button>
+
+      {/* Security badges */}
+      <div className="mt-6 flex items-center justify-center gap-4 text-xs text-gray-500">
+        <div className="flex items-center gap-1">
+          <Lock className="size-4" />
+          Secure checkout
+        </div>
+        <div className="flex items-center gap-1">
+          <ShieldCheck className="size-4" />
+          Money-back guarantee
+        </div>
+      </div>
     </div>
   )
 }

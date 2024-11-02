@@ -66,9 +66,9 @@ export const Categories = ({ className }: { className?: string }) => {
         <div
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
-          className="absolute left-0 z-10 mt-2 flex w-[480px] rounded-md border bg-white shadow-lg"
+          className="absolute left-0 z-10 mt-2 w-[400px] rounded-md border bg-white shadow-lg"
         >
-          <div className="w-3/4 border-r p-4">
+          <div className="p-4">
             <div className="mb-4 flex items-center rounded-md border p-2">
               <Search className="mr-2 h-4 w-4 text-gray-400" />
               <input
@@ -102,22 +102,6 @@ export const Categories = ({ className }: { className?: string }) => {
             <button className="mt-4 w-full rounded-md bg-blue-500 py-2 text-sm text-white">
               Discover All Courses
             </button>
-          </div>
-          <div className="w-1/3 p-4">
-            <h3 className="mb-2 text-xs font-semibold text-gray-500">
-              SUB CATEGORIES
-            </h3>
-            <ul>
-              <li className="mb-2">
-                <Link
-                  href="#"
-                  className="text-sm text-black hover:text-blue-500"
-                >
-                  Generative AI
-                </Link>
-              </li>
-              {/* Them các danh mục phụ khác nếu cần */}
-            </ul>
           </div>
         </div>
       )}

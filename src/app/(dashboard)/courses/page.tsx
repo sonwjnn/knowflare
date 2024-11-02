@@ -28,7 +28,7 @@ export default function CoursesPage() {
             <div className="bg-white p-6 shadow-sm md:hidden">
               <FiltersMobile />
             </div>
-            <div className="hidden bg-white p-6 shadow-sm md:block">
+            <div className="hidden md:block">
               <CourseSidebar />
             </div>
           </div>

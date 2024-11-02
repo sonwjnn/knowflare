@@ -11,7 +11,16 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useGetCarts } from '@/features/carts/api/use-get-carts'
 import { useGetCourses } from '@/features/courses/api/use-get-courses'
 import { useGetWishlists } from '@/features/wishlists/api/use-get-carts'
-import { BookOpen } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import {
+  ArrowDownAZ,
+  ArrowUpAZ,
+  BookOpen,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  DollarSign,
+} from 'lucide-react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import qs from 'query-string'
 import { useMemo, useState } from 'react'
@@ -19,9 +28,21 @@ import { useMemo, useState } from 'react'
 import { Item } from './item'
 
 const sortOptions = [
-  { value: 'newest', label: 'Newest' },
-  { value: 'price-low', label: 'Price: Low to High' },
-  { value: 'price-high', label: 'Price: High to Low' },
+  {
+    value: 'newest',
+    label: 'Newest First',
+    icon: <Clock className="h-4 w-4" />,
+  },
+  {
+    value: 'price-low',
+    label: 'Price: Low to High',
+    icon: <DollarSign className="h-4 w-4" />,
+  },
+  {
+    value: 'price-high',
+    label: 'Price: High to Low',
+    icon: <ArrowUpAZ className="h-4 w-4" />,
+  },
 ]
 
 export const List = () => {
@@ -83,6 +104,11 @@ export const List = () => {
       { skipNull: true, skipEmptyString: true }
     )
     router.push(url, { scroll: false })
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'smooth',
+    })
   }
 
   if (isPending) {
@@ -124,15 +150,23 @@ export const List = () => {
         <p>
           Showing <b>{(courses ?? []).length} courses</b>
         </p>
-        <div>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-muted-foreground">Sort by:</span>
           <Select value={sortOption || ''} onValueChange={setSortOption}>
-            <SelectTrigger className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-transparent">
-              <SelectValue placeholder="Sort courses" />
+            <SelectTrigger className="w-[180px] border-muted bg-white/50 backdrop-blur-sm hover:bg-accent hover:text-accent-foreground">
+              <SelectValue placeholder="Select order" />
             </SelectTrigger>
             <SelectContent>
               {sortOptions.map(option => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
+                <SelectItem
+                  key={option.value}
+                  value={option.value}
+                  className="flex cursor-pointer items-center gap-2 hover:bg-accent"
+                >
+                  <div className="flex items-center gap-2">
+                    {option.icon}
+                    <span>{option.label}</span>
+                  </div>
                 </SelectItem>
               ))}
             </SelectContent>
@@ -159,14 +193,60 @@ export const List = () => {
           )
         })}
       </div>
-      <div className="my-8 flex justify-end">
+      <div className="my-8 flex justify-center">
         {pageCount !== 1 && (
-          <Paginator
-            currentPage={+pageNumber || 1}
-            totalPages={pageCount || 0}
-            onPageChange={value => onPageChange(value)}
-            showPreviousNext
-          />
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => onPageChange(Math.max(1, (+pageNumber || 1) - 1))}
+              disabled={(+pageNumber || 1) <= 1}
+              className="flex h-10 w-10 items-center justify-center rounded-lg border border-input bg-background hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+
+            {Array.from({ length: pageCount }, (_, i) => i + 1).map(page => {
+              const isActive = page === (+pageNumber || 1)
+              // Only show current page, first, last, and 1 page before and after current
+              const shouldShow =
+                page === 1 ||
+                page === pageCount ||
+                Math.abs(page - (+pageNumber || 1)) <= 1
+
+              if (!shouldShow) {
+                if (page === 2 || page === pageCount - 1) {
+                  return (
+                    <span key={page} className="px-2">
+                      ...
+                    </span>
+                  )
+                }
+                return null
+              }
+
+              return (
+                <button
+                  key={page}
+                  onClick={() => onPageChange(page)}
+                  className={cn(
+                    'flex h-10 w-10 items-center justify-center rounded-lg border border-input',
+                    isActive
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-background hover:bg-accent hover:text-accent-foreground'
+                  )}
+                >
+                  {page}
+                </button>
+              )
+            })}
+
+            <button
+              onClick={() => onPageChange((+pageNumber || 1) + 1)}
+              disabled={(+pageNumber || 1) >= (pageCount || 0)}
+              className="flex h-10 w-10 items-center justify-center rounded-lg border border-input bg-background hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
         )}
       </div>
     </div>
