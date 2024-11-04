@@ -2,38 +2,19 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { useCreateCart } from '@/features/carts/api/use-create-cart'
-import { useGetCartByCourseId } from '@/features/carts/api/use-get-cart-by-course-id'
 import { useGetCourse } from '@/features/courses/api/use-get-course'
 import { useGetCurrentPurchase } from '@/features/purchases/api/use-get-current-purchases'
 import { useGetReviews } from '@/features/reviews/api/use-get-reviews'
-import { useCreateWishlist } from '@/features/wishlists/api/use-create-wishlist'
-import { useDeleteWishlist } from '@/features/wishlists/api/use-delete-wishlist'
-import { useGetWishlistByCourseId } from '@/features/wishlists/api/use-wishlist-cart-by-course-id'
 import { useCourseId } from '@/hooks/use-course-id'
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
-import {
-  ArrowRight,
-  Award,
-  BarChart,
-  Check,
-  Clock,
-  FileText,
-  Heart,
-  Loader2,
-  Play,
-  ShoppingCart,
-  Star,
-  Users,
-} from 'lucide-react'
-import Image from 'next/image'
+import { Check, Clock, Loader2, Play, Star, Users } from 'lucide-react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { useCallback } from 'react'
-import { GoHeartFill } from 'react-icons/go'
 
+import { Chapters } from './chapters'
 import { Reviews } from './reviews'
+import { Sidebar } from './sidebar'
 
 const DATE_FORMAT = 'dd/MM/yyyy'
 
@@ -46,33 +27,17 @@ const courseObjectives = [
   'Access to a private community',
   'Lifetime access to the course',
   '30-Day Money-Back Guarantee',
-  'Full refund if you&apos;re not satisfied',
+  "Full refund if you're not satisfied",
   'No commitment, cancel anytime',
-  // Thêm các mục tiêu khác nếu cần
 ]
 
 export default function CourseDetail() {
-  const router = useRouter()
   const courseId = useCourseId()
   const { data: course, isPending: courseLoading } = useGetCourse(courseId)
-
-  const { mutate: createCart, isPending: createCartLoading } = useCreateCart()
-
-  const { data: cart, isPending: cartLoading } = useGetCartByCourseId(courseId)
-  const { mutate: createWishlist, isPending: createWishlistLoading } =
-    useCreateWishlist()
-  const { data: wishlist, isPending: wishlistLoading } =
-    useGetWishlistByCourseId(courseId)
-  const { mutate: deleteWishlist, isPending: deleteWishlistLoading } =
-    useDeleteWishlist(wishlist?.courseId)
 
   const { data: reviews, isPending: reviewsLoading } = useGetReviews(courseId)
   const { data: currentPurchase, isPending: currentPurchaseLoading } =
     useGetCurrentPurchase(courseId)
-
-  const isWishlistLoading =
-    createWishlistLoading || wishlistLoading || deleteWishlistLoading
-  const isCartLoading = createCartLoading || cartLoading
 
   const rating = useCallback(() => {
     if (!reviews || reviews.length === 0) return 0
@@ -92,30 +57,6 @@ export default function CourseDetail() {
     description: course?.description,
     price: course?.price,
     image: course?.imageUrl,
-  }
-
-  const onClickCart = () => {
-    if (cart) {
-      router.push('/cart')
-    } else {
-      createCart({ courseId })
-    }
-  }
-
-  const onClickWishlist = () => {
-    if (wishlist) {
-      deleteWishlist()
-    } else {
-      createWishlist({ courseId })
-    }
-  }
-
-  const onBuyNow = () => {
-    if (!cart) {
-      createCart({ courseId })
-    }
-
-    router.push('/cart')
   }
 
   if (courseLoading) {
@@ -285,184 +226,24 @@ export default function CourseDetail() {
             </div>
 
             {/* Right Column */}
-            <div className="lg:w-[300px]">
-              <div className="sticky top-24 space-y-4">
-                <div className="overflow-hidden rounded-2xl bg-white shadow-lg">
-                  <div className="relative aspect-video">
-                    <Image
-                      src={courseDetails.image!}
-                      alt={courseDetails.title!}
-                      fill
-                      className="object-cover"
-                      priority
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                    <div className="absolute bottom-4 left-4 rounded-lg bg-black/50 px-3 py-1.5 backdrop-blur-sm">
-                      <div className="flex items-center gap-2 text-white">
-                        <Play className="size-4" />
-                        <span className="text-sm font-medium">
-                          Preview Available
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-6 p-6">
-                    {/* Price Section */}
-                    <div className="space-y-2">
-                      <div className="flex items-baseline justify-between">
-                        <div className="text-4xl font-bold text-gray-900">
-                          ${courseDetails.price}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          <s>
-                            ${((courseDetails.price ?? 0) * 1.7).toFixed(2)}
-                          </s>
-                          <span className="ml-2 text-green-600">70% off</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-red-600">
-                        <Clock className="size-4" />
-                        <span>Sale ends in 2 days</span>
-                      </div>
-                    </div>
-
-                    {/* Action Buttons */}
-                    {!currentPurchase && (
-                      <div className="space-y-3">
-                        <Button
-                          variant="primary"
-                          size="lg"
-                          onClick={onBuyNow}
-                          className="w-full rounded-md"
-                        >
-                          <ShoppingCart className="mr-2 size-5" />
-                          Enroll Now
-                        </Button>
-
-                        <div className="flex gap-2">
-                          <Button
-                            variant="outline"
-                            className="flex-1 border-2 py-6 font-medium hover:bg-gray-50"
-                            onClick={onClickCart}
-                            disabled={isCartLoading}
-                          >
-                            {cart ? 'Go to Cart' : 'Add to Cart'}
-                          </Button>
-
-                          <Button
-                            variant="outline"
-                            className="aspect-square border-2 py-6"
-                            onClick={onClickWishlist}
-                            disabled={isWishlistLoading}
-                          >
-                            <GoHeartFill
-                              className={cn(
-                                'size-6 transition-all',
-                                wishlist
-                                  ? 'scale-110 text-red-500'
-                                  : 'text-gray-400 hover:scale-110 hover:text-red-500'
-                              )}
-                            />
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Course Features */}
-                    <div className="space-y-4 rounded-xl bg-gray-50 p-5">
-                      <h4 className="font-medium text-gray-900">
-                        This course includes:
-                      </h4>
-                      <ul className="space-y-3">
-                        {[
-                          {
-                            icon: Play,
-                            text: '12 hours on-demand video',
-                            color: 'text-purple-600',
-                            bg: 'bg-purple-50',
-                          },
-                          {
-                            icon: FileText,
-                            text: 'Downloadable resources',
-                            color: 'text-blue-600',
-                            bg: 'bg-blue-50',
-                          },
-                          {
-                            icon: Clock,
-                            text: 'Lifetime access',
-                            color: 'text-green-600',
-                            bg: 'bg-green-50',
-                          },
-                          {
-                            icon: Award,
-                            text: 'Certificate of completion',
-                            color: 'text-amber-600',
-                            bg: 'bg-amber-50',
-                          },
-                        ].map((feature, index) => (
-                          <li key={index} className="flex items-center gap-3">
-                            <div className={cn('rounded-lg p-2', feature.bg)}>
-                              <feature.icon
-                                className={cn('size-4', feature.color)}
-                              />
-                            </div>
-                            <span className="text-sm font-medium text-gray-600">
-                              {feature.text}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    {/* Money Back Guarantee */}
-                    <div className="flex items-center gap-3 rounded-lg border border-gray-200 p-4">
-                      <div className="rounded-full bg-green-50 p-2 text-green-600">
-                        <Check className="size-5" />
-                      </div>
-                      <div className="space-y-0.5">
-                        <div className="font-medium text-gray-900">
-                          30-Day Money-Back Guarantee
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          Full refund if you&apos;re not satisfied
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <Sidebar
+              imageUrl={courseDetails.image}
+              title={courseDetails.title}
+              price={courseDetails.price}
+              isPurchased={!!currentPurchase}
+            />
           </div>
         </div>
       </div>
 
-      {/* Content Sections */}
       <div className="mx-auto max-w-7xl space-y-12 px-4 py-12 md:px-6">
-        {/* <div className="rounded-3xl bg-white p-8 shadow-lg">
-          <h3 className="mb-8 text-2xl font-semibold text-gray-900">
-            What you&apos;ll learn
-          </h3>
-          <ul className="grid gap-6 md:grid-cols-2">
-            {courseObjectives.map((objective, index) => (
-              <li key={index} className="flex items-start gap-4">
-                <div className="rounded-xl bg-blue-50 p-2 text-blue-600">
-                  <Check className="size-5" />
-                </div>
-                <span className="text-lg text-gray-600">{objective}</span>
-              </li>
-            ))}
-          </ul>
-        </div> */}
-
-        {/* Chapters Section */}
         <div className="rounded-3xl bg-white p-8 shadow-lg">
           <h3 className="mb-8 text-2xl font-semibold text-gray-900">
             Course Chapters
           </h3>
+          <Chapters />
         </div>
 
-        {/* Reviews Section */}
         <div className="rounded-3xl bg-white p-8 shadow-lg">
           <h3 className="mb-8 text-2xl font-semibold text-gray-900">
             Student Reviews

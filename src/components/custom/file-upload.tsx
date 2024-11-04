@@ -1,6 +1,7 @@
 import { ourFileRouter } from '@/app/api/uploadthing/core'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { UploadDropzone } from '@/lib/uploadthing'
 import Image from 'next/image'
 import { useState } from 'react'
@@ -19,11 +20,11 @@ export const FileUpload = ({
   endpoint,
   page,
 }: FileUploadProps) => {
-  const [useUrl, setUseUrl] = useState(false)
+  const isValidUrl = value.startsWith('http') || value.startsWith('/')
 
   return (
-    <div className="flex flex-col gap-2">
-      {page === 'Edit Course' && value !== '' && (
+    <div className="flex flex-col gap-4">
+      {page === 'Edit Course' && value !== '' && isValidUrl && (
         <Image
           src={value}
           alt="image"
@@ -33,30 +34,33 @@ export const FileUpload = ({
         />
       )}
 
-      <div className="flex items-center gap-2">
-        <Button variant="outline" onClick={() => setUseUrl(!useUrl)}>
-          {useUrl ? 'Upload Image' : 'Enter URL'}
-        </Button>
-      </div>
+      <Tabs defaultValue="url" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="url">Enter URL</TabsTrigger>
+          <TabsTrigger value="upload">Upload Image</TabsTrigger>
+        </TabsList>
 
-      {useUrl ? (
-        <Input
-          placeholder="Enter image URL"
-          value={value}
-          onChange={e => onChange(e.target.value)}
-        />
-      ) : (
-        <UploadDropzone
-          endpoint={endpoint}
-          onClientUploadComplete={res => {
-            onChange(res?.[0].url)
-          }}
-          onUploadError={(error: Error) => {
-            toast.error(error.message)
-          }}
-          className="h-[200px] w-[280px]"
-        />
-      )}
+        <TabsContent value="url">
+          <Input
+            placeholder="Enter image URL (utfs.io, images.unsplash.com, picsum.photos, i.ytimg.com)"
+            value={value}
+            onChange={e => onChange(e.target.value)}
+            className="w-full"
+          />
+        </TabsContent>
+        <TabsContent value="upload">
+          <UploadDropzone
+            endpoint={endpoint}
+            onClientUploadComplete={res => {
+              onChange(res?.[0].url)
+            }}
+            onUploadError={(error: Error) => {
+              toast.error(error.message)
+            }}
+            className="h-[200px]"
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }

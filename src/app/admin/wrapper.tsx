@@ -1,5 +1,8 @@
 'use client'
 
+import { Layout } from '@/components/custom/layout'
+import { Search } from '@/features/admin/components/search'
+import { UserButton } from '@/features/auth/components/user-button'
 import { useIsCollapsedStore } from '@/store/use-is-collapsed'
 import { useEffect, useState } from 'react'
 
@@ -23,7 +26,17 @@ export const Wrapper = ({ children }: { children: React.ReactNode }) => {
         id="content"
         className={`overflow-x-hidden pt-16 transition-[margin] md:overflow-y-hidden md:pt-0 ${isCollapsed ? 'md:ml-14' : 'md:ml-64'} h-full`}
       >
-        {children}
+        <Layout>
+          {/* ===== Top Heading ===== */}
+          <Layout.Header sticky>
+            <Search />
+            <div className="ml-auto flex items-center space-x-4">
+              {/* <ThemeSwitch /> */}
+              <UserButton />
+            </div>
+          </Layout.Header>
+          <Layout.Body>{children}</Layout.Body>
+        </Layout>
       </main>
     </div>
   )

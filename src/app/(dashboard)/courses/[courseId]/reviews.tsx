@@ -88,10 +88,7 @@ export const Reviews = () => {
   const canReview = !!currentPurchase && !currentReview
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Student Reviews</CardTitle>
-      </CardHeader>
+    <Card className="border-none shadow-none">
       <CardContent>
         {reviews?.length === 0 && (
           <div className="flex h-10 items-center justify-center">

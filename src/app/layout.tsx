@@ -1,10 +1,8 @@
 import { auth } from '@/auth'
-import { Modals } from '@/components/modals'
 import { Providers } from '@/components/providers'
 import type { Metadata } from 'next'
 import { SessionProvider } from 'next-auth/react'
 import { Poppins } from 'next/font/google'
-import { Toaster } from 'sonner'
 
 import './globals.css'
 
@@ -31,12 +29,7 @@ export default async function RootLayout({
     <SessionProvider session={session}>
       <html lang="en" suppressHydrationWarning>
         <body className={poppins.className}>
-          <Providers>
-            <Toaster />
-            <Modals />
-
-            {children}
-          </Providers>
+          <Providers>{children}</Providers>
         </body>
       </html>
     </SessionProvider>
