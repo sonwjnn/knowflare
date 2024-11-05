@@ -1,5 +1,6 @@
 import { db } from '@/db/drizzle'
 import {
+  carts,
   insertCoursesSchema,
   orders,
   purchases,
@@ -8,7 +9,7 @@ import {
 import { stripe } from '@/lib/stripe'
 import { verifyAuth } from '@hono/auth-js'
 import { zValidator } from '@hono/zod-validator'
-import { eq } from 'drizzle-orm'
+import { and, eq, isNotNull } from 'drizzle-orm'
 import { Hono } from 'hono'
 import Stripe from 'stripe'
 import { z } from 'zod'
@@ -22,12 +23,14 @@ const app = new Hono()
     }
 
     const [order] = await db
-      .select()
+      .select({
+        customerId: orders.customerId,
+      })
       .from(orders)
-      .where(eq(orders.userId, auth.token.id))
+      .where(and(eq(orders.userId, auth.token.id)))
 
     if (!order) {
-      return c.json({ error: 'No subscription found' }, 404)
+      return c.json({ error: 'No payment found' }, 404)
     }
 
     const session = await stripe.billingPortal.sessions.create({
@@ -100,18 +103,43 @@ const app = new Hono()
         },
       }))
 
+      const [existingOrder] = await db
+        .select({
+          customerId: orders.customerId,
+        })
+        .from(orders)
+        .where(
+          and(eq(orders.userId, auth.token.id), isNotNull(orders.customerId))
+        )
+        .limit(1)
+
+      let customerId = existingOrder?.customerId
+
+      if (!customerId) {
+        const customer = await stripe.customers.create({
+          email: auth.token.email || '',
+        })
+        customerId = customer.id
+      }
+
       const session = await stripe.checkout.sessions.create({
+        customer: customerId,
         line_items,
         success_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment/checkout?success=1&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment/checkout?canceled=1`,
         payment_method_types: ['card'],
         mode: 'payment',
         billing_address_collection: 'auto',
-        customer_email: auth.token.email || '',
-        customer_creation: 'always',
+        invoice_creation: {
+          enabled: true,
+        },
         metadata: {
           productIds: JSON.stringify(courses.map(item => item.id)),
           userId: auth.token.id,
+          total_amount: courses.reduce(
+            (acc, item) => acc + (item.price || 0),
+            0
+          ),
         },
       })
 
@@ -156,10 +184,12 @@ const app = new Hono()
         userId: session.metadata.userId,
         paymentId: payment.id,
         customerId: payment.customer as string,
+        totalAmount: +session?.metadata?.total_amount as number,
       })
 
       const courseIds = JSON.parse(session?.metadata?.productIds) as string[]
 
+      // insert owner courses
       const purchasesData = courseIds
         .map(id => ({
           userId: session?.metadata?.userId!,
@@ -168,6 +198,9 @@ const app = new Hono()
         .filter(data => data.userId !== undefined)
 
       await db.insert(purchases).values(purchasesData)
+
+      // clear cart
+      await db.delete(carts).where(eq(carts.userId, session?.metadata?.userId!))
     }
 
     if (event.type === 'invoice.payment_succeeded') {

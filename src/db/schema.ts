@@ -388,7 +388,8 @@ export const orders = mysqlTable('order', {
     }),
   paymentId: varchar('payment_id', { length: 255 }).notNull(),
   customerId: varchar('customer_id', { length: 255 }).notNull(),
-  status: varchar('status', { length: 255 }).notNull(),
+  totalAmount: int('total_amount').default(0).notNull(),
+  status: varchar('status', { length: 255 }),
   createdAt: timestamp('created_at', { mode: 'date' }).default(
     sql`CURRENT_TIMESTAMP`
   ),

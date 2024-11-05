@@ -64,13 +64,8 @@ export default function EditLayout({
             isPublished={course.isPublished}
             page="Course"
           /> */}
-            <Button
-              size="icon"
-              disabled={deleteCourseLoading}
-              onClick={onDelete}
-              className="relative h-10 w-10 overflow-hidden rounded-full border border-gray-200 bg-white text-gray-600 transition-all hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600 disabled:opacity-50"
-            >
-              <Trash2 className="size-4" />
+            <Button disabled={deleteCourseLoading} onClick={onDelete}>
+              Delete Course
             </Button>
           </div>
         </div>

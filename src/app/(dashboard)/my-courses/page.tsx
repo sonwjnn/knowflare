@@ -1,21 +1,9 @@
 'use client'
 
-import { BorderButton } from '@/components/custom/border-button'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import { Progress } from '@/components/ui/progress'
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useGetPurchases } from '@/features/purchases/api/use-get-purchases'
-import { Award, BookOpen, Clock } from 'lucide-react'
-import Image from 'next/image'
-import Link from 'next/link'
+import { BookOpen } from 'lucide-react'
 
 import { Item } from './item'
 
@@ -49,7 +37,7 @@ export default function EnhancedPurchasedCourses() {
           {courses?.map(course => (
             <Item
               key={course.id}
-              courseId={course.id}
+              courseId={course.courseId}
               title={course.title}
               imageUrl={course.imageUrl || ''}
               author={'author'}

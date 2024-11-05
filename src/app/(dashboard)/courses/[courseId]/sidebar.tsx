@@ -211,6 +211,20 @@ export const Sidebar = ({ imageUrl, title, price, isPurchased }: Props) => {
                 </div>
               </div>
             </div>
+
+            {!isPurchased && (
+              <div>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={() => router.push(`/courses/${courseId}/learn`)}
+                  className="w-full"
+                >
+                  Try learn now
+                  <ChevronsRight className="ml-1 size-5" />
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </div>
