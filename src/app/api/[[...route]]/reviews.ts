@@ -1,8 +1,8 @@
 import { db } from '@/db/drizzle'
-import { insertReviewsSchema, reviews, users } from '@/db/schema'
+import { courses, insertReviewsSchema, reviews, users } from '@/db/schema'
 import { verifyAuth } from '@hono/auth-js'
 import { zValidator } from '@hono/zod-validator'
-import { and, desc, eq } from 'drizzle-orm'
+import { and, avg, desc, eq } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { z } from 'zod'
 
@@ -60,7 +60,7 @@ const app = new Hono()
 
       const values = c.req.valid('json')
 
-      const [existingComment] = await db
+      const [existingReview] = await db
         .select()
         .from(reviews)
         .where(
@@ -70,8 +70,8 @@ const app = new Hono()
           )
         )
 
-      if (existingComment) {
-        return c.json({ error: 'Comment exist!' }, 401)
+      if (existingReview) {
+        return c.json({ error: 'Review exist!' }, 401)
       }
 
       const [data] = await db.insert(reviews).values({
@@ -81,6 +81,19 @@ const app = new Hono()
 
       if (!data) {
         return c.json({ error: 'Something went wrong' }, 400)
+      }
+
+      //calculate average rating
+      const [reviewData] = await db
+        .select({ avgRating: avg(reviews.rating) })
+        .from(reviews)
+        .where(eq(reviews.courseId, values.courseId))
+
+      if (reviewData.avgRating) {
+        await db
+          .update(courses)
+          .set({ avgRating: +reviewData.avgRating })
+          .where(eq(courses.id, values.courseId))
       }
 
       return c.json({
@@ -110,18 +123,31 @@ const app = new Hono()
         return c.json({ error: 'Missing id' }, 400)
       }
 
-      const [existingComment] = await db
+      const [existingReview] = await db
         .select()
         .from(reviews)
         .where(and(eq(reviews.userId, auth.token.id), eq(reviews.courseId, id)))
 
-      if (!existingComment) {
-        return c.json({ error: 'Comment not found!' }, 401)
+      if (!existingReview) {
+        return c.json({ error: 'Review not found!' }, 401)
       }
 
       const data = await db
         .delete(reviews)
-        .where(eq(reviews.courseId, existingComment.courseId))
+        .where(eq(reviews.courseId, existingReview.courseId))
+
+      //calculate average rating
+      const [reviewData] = await db
+        .select({ avgRating: avg(reviews.rating) })
+        .from(reviews)
+        .where(eq(reviews.courseId, existingReview.courseId))
+
+      if (reviewData.avgRating) {
+        await db
+          .update(courses)
+          .set({ avgRating: +reviewData.avgRating })
+          .where(eq(courses.id, existingReview.courseId))
+      }
 
       return c.json({ data })
     }

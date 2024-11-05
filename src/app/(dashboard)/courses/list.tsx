@@ -11,16 +11,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useGetCarts } from '@/features/carts/api/use-get-carts'
 import { useGetCourses } from '@/features/courses/api/use-get-courses'
 import { useGetWishlists } from '@/features/wishlists/api/use-get-carts'
-import { cn } from '@/lib/utils'
-import {
-  ArrowDownAZ,
-  ArrowUpAZ,
-  BookOpen,
-  ChevronLeft,
-  ChevronRight,
-  Clock,
-  DollarSign,
-} from 'lucide-react'
+import { ArrowUpAZ, BookOpen, Clock, DollarSign } from 'lucide-react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import qs from 'query-string'
 import { useMemo, useState } from 'react'
@@ -187,6 +178,9 @@ export const List = () => {
               imageUrl={item.imageUrl}
               price={item.price}
               author={item.author.name!}
+              totalChapters={item.totalChapters}
+              rating={item.avgRating}
+              isPurchased={!!item.isPurchased}
               isInCart={isInCart}
               isInWishlist={isInWishlist}
             />

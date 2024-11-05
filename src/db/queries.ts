@@ -9,6 +9,7 @@ import {
   lessons,
   passwordResetTokens,
   purchases,
+  reviews,
   userLessonProgress,
   users,
   verificationTokens,
@@ -158,6 +159,7 @@ export const getCourses = async ({
       level: courses.level,
       isPublished: courses.isPublished,
       date: courses.date,
+      avgRating: courses.avgRating,
       category: {
         id: categories.id,
         name: categories.name,
@@ -166,10 +168,20 @@ export const getCourses = async ({
         id: users.id,
         name: users.name,
       },
+      totalChapters: count(chapters.id),
+      isPurchased: sql<boolean>`
+        EXISTS (
+          SELECT 1 FROM purchases 
+          WHERE purchases.course_id = ${courses.id} 
+          AND purchases.user_id = ${userId}
+        )
+      `,
     })
     .from(courses)
     .innerJoin(categories, eq(categories.id, courses.categoryId))
     .innerJoin(users, eq(users.id, courses.userId))
+    .leftJoin(chapters, eq(chapters.courseId, courses.id))
+
     .where(
       and(
         eq(courses.isPublished, true),
@@ -178,6 +190,7 @@ export const getCourses = async ({
         level ? eq(courses.level, level as CourseLevel) : undefined
       )
     )
+    .groupBy(courses.id)
     .orderBy(desc(courses.date))
     .limit(PAGE_SIZE)
     .offset(offset)

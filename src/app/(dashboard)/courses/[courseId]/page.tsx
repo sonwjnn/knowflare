@@ -39,19 +39,10 @@ export default function CourseDetail() {
   const { data: currentPurchase, isPending: currentPurchaseLoading } =
     useGetCurrentPurchase(courseId)
 
-  const rating = useCallback(() => {
-    if (!reviews || reviews.length === 0) return 0
-    const totalRating = reviews.reduce(
-      (acc, comment) => acc + comment.rating,
-      0
-    )
-    return totalRating / reviews.length
-  }, [reviews])
-
   const courseDetails = {
     title: course?.title,
     instructor: course?.user?.name,
-    rating: rating(),
+    rating: course?.avgRating || 0,
     students: 12345,
     lastUpdated: course?.date,
     description: course?.description,

@@ -18,7 +18,7 @@ const buttonVariants = cva(
         ghost: 'hover:bg-accent hover:text-accent-foreground',
         link: 'text-primary underline-offset-4 hover:underline',
         success:
-          'rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 px-6 py-3.5 text-sm font-bold text-white shadow-lg transition-all duration-300 hover:shadow-xl hover:shadow-sky-400/25',
+          'rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 px-6 py-3.5 text-sm font-bold text-white shadow-lg transition-all duration-300 hover:shadow-xl hover:shadow-emerald-400/25',
         primary:
           'rounded-2xl bg-gradient-to-br from-sky-400 to-blue-400 px-6 py-3.5 text-sm font-bold text-white shadow-sm hover:shadow-lg transition-all duration-300 hover:shadow-xl hover:shadow-sky-400/25',
       },

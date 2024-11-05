@@ -43,6 +43,7 @@ const app = new Hono()
 
     return c.json({ data: coursesWithProgress })
   })
+
   .get(
     '/:courseId',
     verifyAuth(),

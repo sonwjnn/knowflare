@@ -71,6 +71,7 @@ const app = new Hono()
           isPublished: courses.isPublished,
           categoryId: courses.categoryId,
           level: courses.level,
+          avgRating: courses.avgRating,
           user: {
             id: users.id,
             name: users.name,

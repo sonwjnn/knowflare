@@ -3,6 +3,7 @@ import { sql } from 'drizzle-orm'
 import {
   boolean,
   datetime,
+  float,
   int,
   mysqlEnum,
   mysqlTable,
@@ -162,6 +163,7 @@ export const courses = mysqlTable('course', {
   description: varchar('description', { length: 255 }),
   imageUrl: varchar('image_url', { length: 255 }),
   price: int('price').default(0).notNull(),
+  avgRating: float('avg_rating').default(0).notNull(),
   isPublished: boolean('is_published').default(false).notNull(),
   date: timestamp('date', { mode: 'date' }).notNull(),
 })
