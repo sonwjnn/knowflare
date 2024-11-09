@@ -297,6 +297,8 @@ export const lessonsRelations = relations(lessons, ({ one, many }) => ({
   userProgress: many(userLessonProgress),
 }))
 
+export const insertLessonsSchema = createInsertSchema(lessons)
+
 export const quizAnswers = mysqlTable('quiz_answer', {
   id: varchar('id', { length: 255 })
     .primaryKey()

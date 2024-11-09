@@ -3,7 +3,7 @@
 import { Checkbox } from '@/components/ui/checkbox'
 import { CourseLevel } from '@/db/schema'
 import { useGetCategories } from '@/features/categories/api/use-get-categories'
-import { LucideIcon, Star } from 'lucide-react'
+import { LucideIcon, Rows3, Star } from 'lucide-react'
 import {
   BookOpen,
   Filter as FilterIcon,
@@ -16,14 +16,13 @@ import {
 } from 'lucide-react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import qs from 'query-string'
-import { useState } from 'react'
 
 const LevelIcon = ({ level }: { level: CourseLevel }) => {
   const icons = {
     beginner: <BookOpen className="h-4 w-4" />,
     intermediate: <GraduationCap className="h-4 w-4" />,
     advanced: <Rocket className="h-4 w-4" />,
-    'all level': <Rocket className="h-4 w-4" />,
+    'all level': <Rows3 className="h-4 w-4" />,
   }
 
   return icons[level] || <BookOpen className="h-4 w-4" />
