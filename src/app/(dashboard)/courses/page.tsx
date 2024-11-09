@@ -1,23 +1,9 @@
-'use client'
-
 import { CourseSidebar } from '@/components/courses-sidebar'
-import { useParams, usePathname } from 'next/navigation'
-import { useEffect } from 'react'
 
 import { FiltersMobile } from './filters-mobile'
 import { List } from './list'
 
 export default function CoursesPage() {
-  const params = useParams()
-
-  useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: 'smooth',
-    })
-  }, [params])
-
   return (
     <main className="mt-16 px-4 py-8 sm:px-6 lg:px-8">
       <div className="max-w-8xl mx-auto">

@@ -34,15 +34,10 @@ export const CourseSidebar = () => {
   const title = searchParams.get('title') || ''
   const categoryId = searchParams.get('categoryId') || ''
   const level = searchParams.get('level') || ''
+  const rating = searchParams.get('rating') || ''
   const { data: categories, isPending: categoriesLoading } = useGetCategories()
   const pathname = usePathname()
   const router = useRouter()
-
-  const [rating, setRating] = useState<number>(0)
-
-  const handleRatingClick = (selectedRating: number) => {
-    setRating(selectedRating === rating ? 0 : selectedRating)
-  }
 
   const levels = Object.values(CourseLevel)
 
@@ -55,6 +50,7 @@ export const CourseSidebar = () => {
         query: {
           level: level,
           title: title,
+          rating,
           categoryId: isSelected ? null : value,
         },
       },
@@ -73,6 +69,25 @@ export const CourseSidebar = () => {
           level: isSelected ? null : value,
           title: title,
           categoryId: categoryId,
+          rating,
+        },
+      },
+      { skipNull: true, skipEmptyString: true }
+    )
+    router.push(url, { scroll: false })
+  }
+
+  const onRatingClick = (value: string) => {
+    const isSelected = value === rating
+
+    const url = qs.stringifyUrl(
+      {
+        url: pathname,
+        query: {
+          level,
+          title,
+          categoryId,
+          rating: isSelected ? null : value,
         },
       },
       { skipNull: true, skipEmptyString: true }
@@ -177,10 +192,10 @@ export const CourseSidebar = () => {
             Rating
           </h3>
           <div className="space-y-2">
-            {[5, 4, 3].map(stars => (
+            {['5', '4', '3'].map(stars => (
               <button
                 key={stars}
-                onClick={() => handleRatingClick(stars)}
+                onClick={() => onRatingClick(stars)}
                 className={`group relative w-full overflow-hidden rounded-lg border p-4 transition-all hover:border-blue-200 hover:bg-blue-50 ${
                   rating === stars
                     ? 'border-blue-200 bg-blue-50'
@@ -193,7 +208,7 @@ export const CourseSidebar = () => {
                       <Star
                         key={index}
                         className={`h-4 w-4 ${
-                          index < stars
+                          index < +stars
                             ? 'fill-yellow-400 text-yellow-400'
                             : 'fill-gray-200 text-gray-200'
                         } transition-all group-hover:scale-110`}

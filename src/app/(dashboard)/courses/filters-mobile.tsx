@@ -1,3 +1,5 @@
+'use client'
+
 import { Button } from '@/components/ui/button'
 import { useCoursesFilterStore } from '@/store/use-course-filter'
 import { ListFilter } from 'lucide-react'

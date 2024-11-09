@@ -13,14 +13,16 @@ export const useGetCourses = ({
   title,
   level,
   pageNumber,
+  rating,
 }: {
   categoryId?: string
   title?: string
   level?: string
   pageNumber?: string
+  rating?: string
 }) => {
   const query = useQuery({
-    queryKey: ['courses', title, categoryId, level, pageNumber],
+    queryKey: ['courses', title, categoryId, level, rating, pageNumber],
     queryFn: async () => {
       const response = await client.api.courses.$get({
         query: {
@@ -28,6 +30,7 @@ export const useGetCourses = ({
           title,
           level,
           pageNumber,
+          rating,
         },
       })
 

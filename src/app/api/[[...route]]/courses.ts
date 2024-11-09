@@ -1,18 +1,9 @@
 import { db } from '@/db/drizzle'
-import { getCourses, getProgress } from '@/db/queries'
-import {
-  CourseLevel,
-  carts,
-  categories,
-  chapters,
-  courses,
-  insertCoursesSchema,
-  purchases,
-  users,
-} from '@/db/schema'
+import { getCourses } from '@/db/queries'
+import { chapters, courses, users } from '@/db/schema'
 import { verifyAuth } from '@hono/auth-js'
 import { zValidator } from '@hono/zod-validator'
-import { and, desc, eq, like } from 'drizzle-orm'
+import { eq } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { z } from 'zod'
 
@@ -27,10 +18,12 @@ const app = new Hono()
         title: z.string().optional(),
         level: z.string().optional(),
         pageNumber: z.string().optional(),
+        rating: z.string().optional(),
       })
     ),
     async c => {
-      const { title, categoryId, level, pageNumber } = c.req.valid('query')
+      const { title, categoryId, level, rating, pageNumber } =
+        c.req.valid('query')
 
       const auth = c.get('authUser')
 
@@ -39,6 +32,7 @@ const app = new Hono()
         categoryId,
         level,
         pageNumber: +(pageNumber || 1),
+        rating: rating ? +rating : undefined,
         userId: auth.token?.id,
       })
 
@@ -96,38 +90,6 @@ const app = new Hono()
           chapters: chaptersData,
         },
       })
-    }
-  )
-
-  .put(
-    '/:courseId/chapters/:chapterId/progress',
-    verifyAuth(),
-    zValidator(
-      'param',
-      z.object({
-        courseId: z.string(),
-        chapterId: z.string(),
-      })
-    ),
-    async c => {
-      const auth = c.get('authUser')
-
-      if (!auth.token?.id) {
-        return c.json({ error: 'Unauthorized' }, 401)
-      }
-
-      const { courseId, chapterId } = c.req.valid('param')
-
-      const [existingCourse] = await db
-        .select()
-        .from(courses)
-        .where(eq(courses.id, courseId))
-
-      if (!existingCourse) {
-        return c.json({ error: 'Not found' }, 404)
-      }
-
-      return c.json(null, 200)
     }
   )
 

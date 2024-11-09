@@ -1,4 +1,15 @@
-import { and, asc, count, desc, eq, inArray, like, sql } from 'drizzle-orm'
+import {
+  and,
+  asc,
+  count,
+  desc,
+  eq,
+  gte,
+  inArray,
+  like,
+  lte,
+  sql,
+} from 'drizzle-orm'
 
 import { db } from './drizzle'
 import {
@@ -126,12 +137,14 @@ export const getCourses = async ({
   categoryId,
   level,
   title,
+  rating,
   pageNumber = 1,
 }: {
   userId: string | null | undefined
   categoryId?: string
   level?: string
   title?: string
+  rating?: number
   pageNumber?: number
 }) => {
   const offset = (pageNumber - 1) * PAGE_SIZE
@@ -148,6 +161,8 @@ export const getCourses = async ({
       )
     )
     .limit(1)
+
+  console.log(rating)
 
   const coursesData = await db
     .select({
@@ -181,13 +196,13 @@ export const getCourses = async ({
     .innerJoin(categories, eq(categories.id, courses.categoryId))
     .innerJoin(users, eq(users.id, courses.userId))
     .leftJoin(chapters, eq(chapters.courseId, courses.id))
-
     .where(
       and(
         eq(courses.isPublished, true),
         title ? like(courses.title, `%${title}%`) : undefined,
         categoryId ? eq(courses.categoryId, categoryId) : undefined,
-        level ? eq(courses.level, level as CourseLevel) : undefined
+        level ? eq(courses.level, level as CourseLevel) : undefined,
+        rating ? gte(courses.avgRating, rating) : undefined
       )
     )
     .groupBy(courses.id)

@@ -1,3 +1,5 @@
+'use client'
+
 import Paginator from '@/components/paginator'
 import { Card, CardContent } from '@/components/ui/card'
 import {
@@ -44,6 +46,7 @@ export const List = () => {
   const categoryId = searchParams.get('categoryId') || ''
   const pageNumber = searchParams.get('pageNumber') || ''
   const level = searchParams.get('level') || ''
+  const rating = searchParams.get('rating') || ''
 
   const [sortOption, setSortOption] = useState<string | null>(null)
 
@@ -54,6 +57,7 @@ export const List = () => {
     categoryId: categoryId === 'all' ? '' : categoryId,
     title,
     level,
+    rating,
     pageNumber,
   })
 
@@ -82,24 +86,22 @@ export const List = () => {
   const onPageChange = (value: number) => {
     const isSelected = value === +pageNumber
 
+    if (isSelected) return
+
     const url = qs.stringifyUrl(
       {
         url: pathname,
         query: {
-          level: level,
-          title: title,
-          categoryId: categoryId,
-          pageNumber: isSelected ? null : value,
+          level,
+          title,
+          categoryId,
+          rating,
+          pageNumber: value,
         },
       },
       { skipNull: true, skipEmptyString: true }
     )
-    router.push(url, { scroll: false })
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: 'smooth',
-    })
+    router.push(url, { scroll: true })
   }
 
   if (isPending) {
