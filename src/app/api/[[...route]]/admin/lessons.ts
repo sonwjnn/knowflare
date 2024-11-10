@@ -49,6 +49,35 @@ const app = new Hono()
       })
     }
   )
+  .get(
+    '/:id',
+    verifyAuth(),
+    zValidator(
+      'param',
+      z.object({
+        id: z.string().optional(),
+      })
+    ),
+    async c => {
+      const auth = c.get('authUser')
+
+      if (!auth.token?.id) {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
+      const { id } = c.req.valid('param')
+
+      if (!id) {
+        return c.json({ error: 'Missing id' }, 400)
+      }
+
+      const [data] = await db.select().from(lessons).where(eq(lessons.id, id))
+
+      return c.json({
+        data,
+      })
+    }
+  )
   .post(
     '/',
     verifyAuth(),
@@ -94,6 +123,48 @@ const app = new Hono()
       return c.json({
         data,
       })
+    }
+  )
+  .patch(
+    '/:id',
+    verifyAuth(),
+    zValidator(
+      'param',
+      z.object({
+        id: z.string().optional(),
+      })
+    ),
+    zValidator(
+      'json',
+      z.object({
+        title: z.string().optional(),
+        description: z.string().optional().nullable(),
+      })
+    ),
+    async c => {
+      const auth = c.get('authUser')
+
+      if (!auth.token?.id) {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
+      const { id } = c.req.valid('param')
+      const values = c.req.valid('json')
+
+      if (!id) {
+        return c.json({ error: 'Missing id' }, 400)
+      }
+
+      const [data] = await db
+        .update(lessons)
+        .set(values)
+        .where(eq(lessons.id, id))
+
+      if (!data) {
+        return c.json({ error: 'Not found' }, 404)
+      }
+
+      return c.json({ data })
     }
   )
   .post(

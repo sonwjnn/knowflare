@@ -16,7 +16,7 @@ export const useGetLessons = ({
 }) => {
   const query = useQuery({
     enabled: !!chapterId,
-    queryKey: ['lessons', { chapterId }],
+    queryKey: ['lessons'],
     queryFn: async () => {
       const response = await client.api.admin.lessons.$get({
         query: { chapterId, courseId },

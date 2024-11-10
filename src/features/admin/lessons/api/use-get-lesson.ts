@@ -3,16 +3,16 @@ import { useQuery } from '@tanstack/react-query'
 import { InferResponseType } from 'hono'
 
 export type ResponseType = InferResponseType<
-  (typeof client.api.admin.chapters)[':id']['$get'],
+  (typeof client.api.admin.lessons)[':id']['$get'],
   200
 >
 
-export const useGetChapter = (id?: string) => {
+export const useGetLesson = ({ id }: { id?: string }) => {
   const query = useQuery({
     enabled: !!id,
-    queryKey: ['chapter', { id }],
+    queryKey: ['lessons', { id }],
     queryFn: async () => {
-      const response = await client.api.admin.chapters[':id'].$get({
+      const response = await client.api.admin.lessons[':id'].$get({
         param: {
           id: id,
         },

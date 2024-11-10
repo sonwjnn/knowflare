@@ -28,14 +28,14 @@ const formSchema = insertCoursesSchema.pick({
 
 type FormValues = z.input<typeof formSchema>
 
-export const LessonForm = () => {
+export const LessonsForm = () => {
   const courseId = useCourseId()
   const chapterId = useChapterId()
 
   const { mutate: createLesson, isPending: createLessonLoading } =
     useCreateLesson({ courseId, chapterId })
   const { mutate: reorderLesson, isPending: reorderLessonLoading } =
-    useReorderLessons({ courseId, chapterId })
+    useReorderLessons()
 
   const router = useRouter()
 
@@ -74,7 +74,9 @@ export const LessonForm = () => {
   }
 
   const onEdit = async (id: string) => {
-    router.push(`/admin/courses/${courseId}/lessons/${id}`)
+    router.push(
+      `/admin/courses/edit/${courseId}/chapters/${chapterId}/lessons/${id}`
+    )
   }
 
   return (

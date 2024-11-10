@@ -1,9 +1,9 @@
 'use client'
 
-import { LessonForm } from '@/features/admin/lessons/components/lesson-form'
+import { EditChapterForm } from '@/features/admin/chapters/components/edit-chapter-form'
 
 const LessonsAdminPage = () => {
-  return <LessonForm />
+  return <EditChapterForm />
 }
 
 export default LessonsAdminPage

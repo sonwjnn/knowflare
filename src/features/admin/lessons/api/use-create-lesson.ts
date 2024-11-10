@@ -39,7 +39,7 @@ export const useCreateLesson = ({
     onSuccess: () => {
       toast.success('Lesson created.')
       queryClient.invalidateQueries({
-        queryKey: ['lessons', { chapterId }],
+        queryKey: ['lessons'],
       })
     },
     onError: () => {

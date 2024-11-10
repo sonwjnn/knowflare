@@ -173,50 +173,39 @@ const app = new Hono()
       return c.json({ dataOrder })
     }
   )
-// .get(
-//   '/:id',
-//   verifyAuth(),
-//   zValidator(
-//     'param',
-//     z.object({
-//       id: z.string().optional(),
-//     })
-//   ),
-//   async c => {
-//     const auth = c.get('authUser')
+  .get(
+    '/:id',
+    verifyAuth(),
+    zValidator(
+      'param',
+      z.object({
+        id: z.string().optional(),
+      })
+    ),
+    async c => {
+      const auth = c.get('authUser')
 
-//     if (!auth.token?.id) {
-//       return c.json({ error: 'Unauthorized' }, 401)
-//     }
+      if (!auth.token?.id) {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
 
-//     const { id } = c.req.valid('param')
+      const { id } = c.req.valid('param')
 
-//     if (!id) {
-//       return c.json({ error: 'Missing id' }, 400)
-//     }
+      if (!id) {
+        return c.json({ error: 'Missing id' }, 400)
+      }
 
-//     const [chapter] = await db
-//       .select()
-//       .from(chapters)
-//       .where(eq(chapters.id, id))
+      const [data] = await db.select().from(chapters).where(eq(chapters.id, id))
 
-//     if (!chapter) {
-//       return c.json({ error: 'Chapter not found' }, 404)
-//     }
+      if (!data) {
+        return c.json({ error: 'Chapter not found' }, 404)
+      }
 
-//     const [muxDataResponse] = await db
-//       .select()
-//       .from(muxData)
-//       .where(eq(muxData.chapterId, id))
-
-//     return c.json({
-//       data: {
-//         ...chapter,
-//         muxData: muxDataResponse,
-//       },
-//     })
-//   }
-// )
+      return c.json({
+        data,
+      })
+    }
+  )
 // .get(
 //   '/:id/next',
 //   verifyAuth(),
