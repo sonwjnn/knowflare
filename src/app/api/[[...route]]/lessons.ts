@@ -65,7 +65,9 @@ const app = new Hono()
           .from(chapters)
           .where(eq(chapters.id, lesson.chapterId))
 
-        if (!currentChapter) return c.json({ error: 'Chapter not found' })
+        if (!currentChapter) {
+          return c.json({ error: 'Chapter not found' }, 400)
+        }
 
         const [nextChapter] = await db
           .select()
@@ -77,30 +79,6 @@ const app = new Hono()
             )
           )
           .orderBy(asc(chapters.position))
-          .limit(1)
-
-        const [nextLesson] = await db
-          .select()
-          .from(lessons)
-          .where(
-            and(
-              eq(lessons.courseId, courseId),
-              eq(lessons.isPublished, true),
-              !currentPurchase ? eq(lessons.isFree, true) : undefined,
-              or(
-                and(
-                  eq(lessons.chapterId, lesson.chapterId),
-                  gt(lessons.position, lesson.position)
-                ),
-                and(
-                  nextChapter
-                    ? eq(lessons.chapterId, nextChapter.id)
-                    : undefined
-                )
-              )
-            )
-          )
-          .orderBy(asc(lessons.position))
           .limit(1)
 
         const [prevChapter] = await db
@@ -115,8 +93,8 @@ const app = new Hono()
           .orderBy(desc(chapters.position))
           .limit(1)
 
-        // Get previous lesson
-        const [prevLesson] = await db
+        // Get next lesson in same chapter
+        const [nextLessonInChapter] = await db
           .select()
           .from(lessons)
           .where(
@@ -124,29 +102,71 @@ const app = new Hono()
               eq(lessons.courseId, courseId),
               eq(lessons.isPublished, true),
               !currentPurchase ? eq(lessons.isFree, true) : undefined,
-              or(
-                // Same chapter, lower position
-                and(
-                  eq(lessons.chapterId, lesson.chapterId),
-                  lt(lessons.position, lesson.position)
-                ),
-                // Previous chapter's last lesson (only if we're at first lesson)
-                and(
-                  prevChapter
-                    ? eq(lessons.chapterId, prevChapter.id)
-                    : undefined
+              eq(lessons.chapterId, lesson.chapterId),
+              gt(lessons.position, lesson.position)
+            )
+          )
+          .orderBy(asc(lessons.position))
+          .limit(1)
+
+        // If no next lesson in current chapter, get first lesson of next chapter
+        const [nextLessonInNextChapter] =
+          !nextLessonInChapter && nextChapter
+            ? await db
+                .select()
+                .from(lessons)
+                .where(
+                  and(
+                    eq(lessons.courseId, courseId),
+                    eq(lessons.isPublished, true),
+                    !currentPurchase ? eq(lessons.isFree, true) : undefined,
+                    eq(lessons.chapterId, nextChapter.id),
+                    eq(lessons.position, 1)
+                  )
                 )
-              )
+                .orderBy(asc(lessons.position))
+                .limit(1)
+            : [null]
+
+        // Get previous lesson in same chapter
+        const [prevLessonInChapter] = await db
+          .select()
+          .from(lessons)
+          .where(
+            and(
+              eq(lessons.courseId, courseId),
+              eq(lessons.isPublished, true),
+              !currentPurchase ? eq(lessons.isFree, true) : undefined,
+              eq(lessons.chapterId, lesson.chapterId),
+              lt(lessons.position, lesson.position)
             )
           )
           .orderBy(desc(lessons.position))
           .limit(1)
 
+        // If no previous lesson in current chapter, get last lesson of previous chapter
+        const [prevLessonInPrevChapter] =
+          !prevLessonInChapter && prevChapter
+            ? await db
+                .select()
+                .from(lessons)
+                .where(
+                  and(
+                    eq(lessons.courseId, courseId),
+                    eq(lessons.isPublished, true),
+                    !currentPurchase ? eq(lessons.isFree, true) : undefined,
+                    eq(lessons.chapterId, prevChapter.id)
+                  )
+                )
+                .orderBy(desc(lessons.position))
+                .limit(1)
+            : [null]
+
         return c.json({
           data: {
             ...lesson,
-            nextLesson: nextLesson ?? null,
-            prevLesson: prevLesson ?? null,
+            nextLesson: nextLessonInChapter || nextLessonInNextChapter || null,
+            prevLesson: prevLessonInChapter || prevLessonInPrevChapter || null,
           },
         })
       }

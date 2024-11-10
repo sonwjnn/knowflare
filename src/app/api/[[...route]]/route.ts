@@ -6,6 +6,7 @@ import { AdapterUser } from 'next-auth/adapters'
 
 import adminChapters from './admin/chapters'
 import adminCourses from './admin/courses'
+import adminLessons from './admin/lessons'
 import attachments from './attachments'
 import carts from './carts'
 import categories from './categories'
@@ -50,6 +51,7 @@ const routes = app
   .route('/lessons', lessons)
   .route('/admin/courses', adminCourses)
   .route('/admin/chapters', adminChapters)
+  .route('/admin/lessons', adminLessons)
 
 export const GET = handle(app)
 export const POST = handle(app)

@@ -1,5 +1,4 @@
 import { db } from '@/db/drizzle'
-import { getLessons } from '@/db/queries'
 import {
   courses,
   insertLessonsSchema,
@@ -21,6 +20,7 @@ const app = new Hono()
       'query',
       z.object({
         courseId: z.string().optional(),
+        chapterId: z.string().optional(),
       })
     ),
     async c => {
@@ -30,16 +30,18 @@ const app = new Hono()
         return c.json({ error: 'Unauthorized' }, 401)
       }
 
-      const { courseId } = c.req.valid('query')
+      const { courseId, chapterId } = c.req.valid('query')
 
-      if (!courseId) {
+      if (!courseId || !chapterId) {
         return c.json({ error: 'Missing id' }, 400)
       }
 
       const data = await db
         .select()
         .from(lessons)
-        .where(eq(lessons.courseId, courseId))
+        .where(
+          and(eq(lessons.courseId, courseId), eq(lessons.chapterId, chapterId))
+        )
         .orderBy(asc(lessons.position))
 
       return c.json({
@@ -54,6 +56,7 @@ const app = new Hono()
       'json',
       insertLessonsSchema.pick({
         courseId: true,
+        chapterId: true,
         title: true,
       })
     ),
@@ -64,7 +67,7 @@ const app = new Hono()
         return c.json({ error: 'Unauthorized' }, 401)
       }
 
-      const { title, courseId } = c.req.valid('json')
+      const { title, courseId, chapterId } = c.req.valid('json')
 
       const [lastLesson] = await db
         .select({
@@ -78,6 +81,7 @@ const app = new Hono()
       const newPosition = lastLesson ? lastLesson.position + 1 : 1
 
       const [data] = await db.insert(lessons).values({
+        chapterId,
         courseId,
         title,
         position: newPosition,

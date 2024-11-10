@@ -7,9 +7,10 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { chapters, insertCoursesSchema } from '@/db/schema'
-import { useCreateChapter } from '@/features/admin/chapters/api/use-create-chapter'
-import { useReorderChapters } from '@/features/admin/chapters/api/use-reorder-chapters'
+import { insertCoursesSchema, lessons } from '@/db/schema'
+import { useCreateLesson } from '@/features/admin/lessons/api/use-create-lesson'
+import { useReorderLessons } from '@/features/admin/lessons/api/use-reorder-lessons'
+import { useChapterId } from '@/hooks/use-chapter-id'
 import { useCourseId } from '@/hooks/use-course-id'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -19,7 +20,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import ChaptersList from './chapters-list'
+import LessonsList from './lessons-list'
 
 const formSchema = insertCoursesSchema.pick({
   title: true,
@@ -27,19 +28,20 @@ const formSchema = insertCoursesSchema.pick({
 
 type FormValues = z.input<typeof formSchema>
 
-export const ChaptersCourseForm = () => {
+export const LessonForm = () => {
   const courseId = useCourseId()
+  const chapterId = useChapterId()
 
-  const { mutate: createChapter, isPending: createChapterLoading } =
-    useCreateChapter(courseId)
-  const { mutate: reorderChapters, isPending: reorderChaptersLoading } =
-    useReorderChapters(courseId)
+  const { mutate: createLesson, isPending: createLessonLoading } =
+    useCreateLesson({ courseId, chapterId })
+  const { mutate: reorderLesson, isPending: reorderLessonLoading } =
+    useReorderLessons({ courseId, chapterId })
 
   const router = useRouter()
 
   const [isCreating, setIsCreating] = useState(false)
 
-  const isLoading = createChapterLoading || reorderChaptersLoading
+  const isLoading = createLessonLoading || reorderLessonLoading
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -47,10 +49,11 @@ export const ChaptersCourseForm = () => {
   })
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    createChapter(
+    createLesson(
       {
         ...values,
         courseId,
+        chapterId,
       },
       {
         onSuccess: () => {
@@ -65,13 +68,13 @@ export const ChaptersCourseForm = () => {
   }
 
   const onReorder = async (updateData: { id: string; position: number }[]) => {
-    reorderChapters({
+    reorderLesson({
       list: updateData,
     })
   }
 
   const onEdit = async (id: string) => {
-    router.push(`/admin/courses/edit/${courseId}/chapters/${id}`)
+    router.push(`/admin/courses/${courseId}/lessons/${id}`)
   }
 
   return (
@@ -82,14 +85,14 @@ export const ChaptersCourseForm = () => {
         </div>
       )}
       <div className="flex items-center justify-between font-medium">
-        Course Chapters
+        Course lessons
         <Button onClick={toggleCreating} variant="ghost">
           {isCreating ? (
             <>Cancel</>
           ) : (
             <>
               <PlusCircle className="mr-2 h-4 w-4" />
-              Add a chapter
+              Add a lesson
             </>
           )}
         </Button>
@@ -128,16 +131,16 @@ export const ChaptersCourseForm = () => {
         <div
           className={cn(
             'mt-2 text-sm'
-            // !chapters?.length && 'italic text-slate-500'
+            // !lessons?.length && 'italic text-slate-500'
           )}
         >
-          {/* {!chapters?.length && 'No chapters'} */}
-          <ChaptersList onEdit={onEdit} onReorder={onReorder} />
+          {/* {!lessons?.length && 'No lessons'} */}
+          <LessonsList onEdit={onEdit} onReorder={onReorder} />
         </div>
       )}
       {!isCreating && (
         <p className="mt-4 text-xs text-muted-foreground">
-          Drag and drop to reorder the chapters
+          Drag and drop to reorder the lessons
         </p>
       )}
     </div>
