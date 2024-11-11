@@ -221,6 +221,17 @@ body,
   }
 }
 
+input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* Hoặc cụ thể hơn */
+.your-input-class:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
 @keyframes addToCart {
   0% {
     transform: scale(1);

@@ -7,6 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuLabel,
 } from '@/components/ui/dropdown-menu'
 import { useBilling } from '@/features/subscriptions/api/use-billing'
 import {
@@ -16,6 +17,7 @@ import {
   Loader2,
   LogOut,
   TvMinimalPlay,
+  UserCircle,
 } from 'lucide-react'
 import { signOut, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
@@ -36,59 +38,69 @@ export const UserButton = () => {
   if (session.status === 'unauthenticated' || !session.data) {
     return null
   }
+  
   const name = session.data?.user?.name || ''
+  const email = session.data?.user?.email || ''
   const imageUrl = session.data?.user?.image || ''
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
-        {/* TODO: Add user crown if user is premium */}
-        <Avatar className="size-10 cursor-pointer transition hover:opacity-75">
+      <DropdownMenuTrigger className="outline-none">
+        <Avatar className="size-10 cursor-pointer ring-2 ring-offset-2 ring-offset-background transition hover:ring-primary">
           <AvatarImage alt={name} src={imageUrl || ''} />
-          <AvatarFallback className="flex items-center justify-center bg-blue-500 font-medium text-white">
+          <AvatarFallback className="flex items-center justify-center bg-primary font-medium text-primary-foreground">
             {name.charAt(0).toUpperCase()}
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-60">
-        {/* {teacher && (
+      <DropdownMenuContent align="end" className="w-72 p-2">
+        <DropdownMenuLabel className="font-normal">
+          <div className="flex flex-col space-y-1">
+            <p className="text-sm font-medium leading-none">{name}</p>
+            <p className="text-xs leading-none text-muted-foreground">{email}</p>
+          </div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <div className="space-y-1">
           <DropdownMenuItem
-            className="h-10"
-            onClick={() => router.push(`/teacher/${teacher.id}/courses`)}
-            disabled={false}
+            className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent"
+            onClick={() => router.push(`/my-profile`)}
           >
-            <BrainCog className="mr-2 size-4" />
-            Teacher Mode
+            <UserCircle className="size-4" />
+            My Profile
           </DropdownMenuItem>
-        )} */}
-        <DropdownMenuItem
-          className="h-10"
-          onClick={() => router.push(`/my-courses`)}
-          disabled={false}
-        >
-          <TvMinimalPlay className="mr-2 size-4" />
-          My course
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          className="h-10"
-          onClick={() => router.push(`/wishlist`)}
-          disabled={false}
-        >
-          <BookHeart className="mr-2 size-4" />
-          Wishlist
-        </DropdownMenuItem>
-        <DropdownMenuItem className="h-10" onClick={onClick} disabled={false}>
-          <CreditCard className="mr-2 size-4" />
-          Billing
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          className="h-10"
-          onClick={() => signOut()}
-          disabled={false}
-        >
-          <LogOut className="mr-2 size-4" />
-          Logout
-        </DropdownMenuItem>
+          <DropdownMenuItem
+            className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent"
+            onClick={() => router.push(`/my-courses`)}
+          >
+            <TvMinimalPlay className="size-4" />
+            My Courses
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent"
+            onClick={() => router.push(`/wishlist`)}
+          >
+            <BookHeart className="size-4" />
+            Wishlist
+          </DropdownMenuItem>
+        </div>
+        <DropdownMenuSeparator />
+        <div className="space-y-1">
+          <DropdownMenuItem
+            className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent"
+            onClick={onClick}
+          >
+            <CreditCard className="size-4" />
+            Billing
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm text-red-600 hover:bg-red-100 hover:text-red-700"
+            onClick={() => signOut()}
+          >
+            <LogOut className="size-4" />
+            Logout
+          </DropdownMenuItem>
+        </div>
       </DropdownMenuContent>
     </DropdownMenu>
   )
