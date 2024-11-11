@@ -5,10 +5,10 @@ import { InferRequestType, InferResponseType } from 'hono'
 import { toast } from 'sonner'
 
 type ResponseType = InferResponseType<
-  (typeof client.api.chapters)[':id']['$patch']
+  (typeof client.api.admin.chapters)[':id']['$patch']
 >
 type RequestType = InferRequestType<
-  (typeof client.api.chapters)[':id']['$patch']
+  (typeof client.api.admin.chapters)[':id']['$patch']
 >['json']
 
 export const useEditChapter = (id?: string) => {
@@ -17,7 +17,7 @@ export const useEditChapter = (id?: string) => {
 
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async json => {
-      const response = await client.api.chapters[':id']['$patch']({
+      const response = await client.api.admin.chapters[':id']['$patch']({
         json,
         param: { id },
       })

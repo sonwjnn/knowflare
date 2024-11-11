@@ -1,17 +1,16 @@
 import { useCourseId } from '@/hooks/use-course-id'
+import { useTeacherId } from '@/hooks/use-teacher-id'
 import { client } from '@/lib/hono'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { InferRequestType, InferResponseType } from 'hono'
+import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
 type ResponseType = InferResponseType<
-  (typeof client.api.admin.lessons)[':id']['$patch']
+  (typeof client.api.admin.lessons)[':id']['$delete']
 >
-type RequestType = InferRequestType<
-  (typeof client.api.admin.lessons)[':id']['$patch']
->['json']
 
-export const useEditLesson = ({
+export const useDeleteLesson = ({
   id,
   chapterId,
 }: {
@@ -20,22 +19,20 @@ export const useEditLesson = ({
 }) => {
   const queryClient = useQueryClient()
 
-  const mutation = useMutation<ResponseType, Error, RequestType>({
+  const mutation = useMutation<ResponseType, Error>({
     mutationFn: async json => {
-      const response = await client.api.admin.lessons[':id']['$patch']({
-        json,
+      const response = await client.api.admin.lessons[':id']['$delete']({
         param: { id },
       })
 
       return await response.json()
     },
     onSuccess: () => {
-      toast.success('Lesson updated')
-      queryClient.invalidateQueries({ queryKey: ['lesson', { id }] })
+      toast.success('Lesson deleted')
       queryClient.invalidateQueries({ queryKey: ['lessons', { chapterId }] })
     },
     onError: () => {
-      toast.error('Failed to edit lesson')
+      toast.error('Failed to delete lesson')
     },
   })
 

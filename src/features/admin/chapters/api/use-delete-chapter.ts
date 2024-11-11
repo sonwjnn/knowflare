@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
 type ResponseType = InferResponseType<
-  (typeof client.api.chapters)[':id']['$delete']
+  (typeof client.api.admin.chapters)[':id']['$delete']
 >
 
 export const useDeleteChapter = (id?: string) => {
@@ -18,7 +18,7 @@ export const useDeleteChapter = (id?: string) => {
 
   const mutation = useMutation<ResponseType, Error>({
     mutationFn: async json => {
-      const response = await client.api.chapters[':id']['$delete']({
+      const response = await client.api.admin.chapters[':id']['$delete']({
         param: { id },
       })
 

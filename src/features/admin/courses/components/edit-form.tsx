@@ -12,7 +12,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { CourseLevel, insertCoursesSchema } from '@/db/schema'
+import { CourseLevel } from '@/db/schema'
 import { useDeleteCourse } from '@/features/admin/courses/api/use-delete-course'
 import { useEditCourse } from '@/features/admin/courses/api/use-edit-category'
 import { useGetCategories } from '@/features/categories/api/use-get-categories'
@@ -20,11 +20,9 @@ import { useGetCourse } from '@/features/courses/api/use-get-course'
 import { useConfirm } from '@/hooks/use-confirm'
 import { useCourseId } from '@/hooks/use-course-id'
 import { zodResolver } from '@hookform/resolvers/zod'
-import axios from 'axios'
 import { Loader2 } from 'lucide-react'
-import { Trash2 } from 'lucide-react'
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -49,6 +47,7 @@ const formSchema = z.object({
 type FormValues = z.input<typeof formSchema>
 
 export const EditForm = () => {
+  const router = useRouter()
   const courseId = useCourseId()
   const { data: categories, isPending: categoriesLoading } = useGetCategories()
   const { data: course, isPending: courseLoading } = useGetCourse(courseId)
@@ -90,8 +89,7 @@ export const EditForm = () => {
     'Delete course',
     'Are you sure you want to delete this course?'
   )
-  const router = useRouter()
-  const pathname = usePathname()
+
   const { mutate: deleteCourse, isPending: deleteCourseLoading } =
     useDeleteCourse(courseId)
 
@@ -100,7 +98,11 @@ export const EditForm = () => {
 
     if (!ok) return
 
-    deleteCourse()
+    deleteCourse(undefined, {
+      onSuccess: () => {
+        router.replace(`/admin/courses`)
+      },
+    })
   }
 
   const categoryOptions = (categories ?? []).map(item => ({
@@ -265,12 +267,10 @@ export const EditForm = () => {
             )}
           />
 
-          <ChaptersCourseForm />
-
-          <div className="flex gap-5">
+          <div className="flex justify-between gap-5">
             <Link href="/admin/courses">
               <Button variant="outline" type="button">
-                Cancel
+                Back to Courses
               </Button>
             </Link>
             <Button type="submit" disabled={!isValid || isSubmitting}>
@@ -279,6 +279,7 @@ export const EditForm = () => {
           </div>
         </form>
       </Form>
+      <ChaptersCourseForm />
     </>
   )
 }

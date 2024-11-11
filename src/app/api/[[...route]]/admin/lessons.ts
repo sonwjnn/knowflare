@@ -211,5 +211,42 @@ const app = new Hono()
       return c.json({ dataOrder })
     }
   )
+  .delete(
+    '/:id',
+    verifyAuth(),
+    zValidator(
+      'param',
+      z.object({
+        id: z.string().optional(),
+      })
+    ),
+    async c => {
+      const auth = c.get('authUser')
+
+      if (!auth.token?.id) {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
+      if (auth.token?.role !== 'admin') {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
+      const { id } = c.req.valid('param')
+
+      if (!id) {
+        return c.json({ error: 'Missing id' }, 400)
+      }
+
+      const [lesson] = await db.select().from(lessons).where(eq(lessons.id, id))
+
+      if (!lesson) {
+        return c.json({ error: 'Not found' }, 404)
+      }
+
+      const [deletedLesson] = await db.delete(lessons).where(eq(lessons.id, id))
+
+      return c.json({ data: deletedLesson })
+    }
+  )
 
 export default app

@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { chapters, insertCoursesSchema } from '@/db/schema'
 import { useCreateChapter } from '@/features/admin/chapters/api/use-create-chapter'
 import { useReorderChapters } from '@/features/admin/chapters/api/use-reorder-chapters'
+import { useCreateChapterModal } from '@/features/admin/chapters/store/use-create-chapter-modal'
 import { useCourseId } from '@/hooks/use-course-id'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -29,13 +30,14 @@ type FormValues = z.input<typeof formSchema>
 
 export const ChaptersCourseForm = () => {
   const courseId = useCourseId()
+  const router = useRouter()
 
   const { mutate: createChapter, isPending: createChapterLoading } =
     useCreateChapter(courseId)
   const { mutate: reorderChapters, isPending: reorderChaptersLoading } =
     useReorderChapters(courseId)
 
-  const router = useRouter()
+  const [open, setOpen] = useCreateChapterModal()
 
   const [isCreating, setIsCreating] = useState(false)
 
@@ -82,59 +84,22 @@ export const ChaptersCourseForm = () => {
         </div>
       )}
       <div className="flex items-center justify-between font-medium">
-        Course Chapters
-        <Button onClick={toggleCreating} variant="ghost">
-          {isCreating ? (
-            <>Cancel</>
-          ) : (
-            <>
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Add a chapter
-            </>
-          )}
+        Course chapters
+        <Button onClick={() => setOpen(true)} variant="ghost" type="button">
+          <PlusCircle className="mr-2 h-4 w-4" />
+          Add a chapter
         </Button>
       </div>
 
-      {isCreating && (
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="mt-4 space-y-4"
-          >
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      disabled={isLoading}
-                      {...field}
-                      placeholder="e.g. 'Introduction to the course'"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <Button disabled={isLoading} type="submit">
-              Create
-            </Button>
-          </form>
-        </Form>
-      )}
-      {!isCreating && (
-        <div
-          className={cn(
-            'mt-2 text-sm'
-            // !chapters?.length && 'italic text-slate-500'
-          )}
-        >
-          {/* {!chapters?.length && 'No chapters'} */}
-          <ChaptersList onEdit={onEdit} onReorder={onReorder} />
-        </div>
-      )}
+      <div
+        className={cn(
+          'mt-2 text-sm'
+          // !chapters?.length && 'italic text-slate-500'
+        )}
+      >
+        {/* {!chapters?.length && 'No chapters'} */}
+        <ChaptersList onEdit={onEdit} onReorder={onReorder} />
+      </div>
       {!isCreating && (
         <p className="mt-4 text-xs text-muted-foreground">
           Drag and drop to reorder the chapters

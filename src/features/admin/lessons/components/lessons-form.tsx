@@ -7,9 +7,10 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { insertCoursesSchema, lessons } from '@/db/schema'
+import { insertCoursesSchema } from '@/db/schema'
 import { useCreateLesson } from '@/features/admin/lessons/api/use-create-lesson'
 import { useReorderLessons } from '@/features/admin/lessons/api/use-reorder-lessons'
+import { useCreateLessonModal } from '@/features/admin/lessons/store/use-create-lesson-modal'
 import { useChapterId } from '@/hooks/use-chapter-id'
 import { useCourseId } from '@/hooks/use-course-id'
 import { cn } from '@/lib/utils'
@@ -31,15 +32,15 @@ type FormValues = z.input<typeof formSchema>
 export const LessonsForm = () => {
   const courseId = useCourseId()
   const chapterId = useChapterId()
+  const router = useRouter()
 
   const { mutate: createLesson, isPending: createLessonLoading } =
     useCreateLesson({ courseId, chapterId })
   const { mutate: reorderLesson, isPending: reorderLessonLoading } =
     useReorderLessons()
 
-  const router = useRouter()
-
   const [isCreating, setIsCreating] = useState(false)
+  const [open, setOpen] = useCreateLessonModal()
 
   const isLoading = createLessonLoading || reorderLessonLoading
 
@@ -88,15 +89,9 @@ export const LessonsForm = () => {
       )}
       <div className="flex items-center justify-between font-medium">
         Course lessons
-        <Button onClick={toggleCreating} variant="ghost">
-          {isCreating ? (
-            <>Cancel</>
-          ) : (
-            <>
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Add a lesson
-            </>
-          )}
+        <Button onClick={() => setOpen(true)} variant="ghost" type="button">
+          <PlusCircle className="mr-2 h-4 w-4" />
+          Add a lesson
         </Button>
       </div>
 

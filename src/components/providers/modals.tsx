@@ -1,5 +1,7 @@
 'use client'
 
+import { CreateChapterModal } from '@/features/admin/chapters/components/create-chapter-modal'
+import { CreateLessonModal } from '@/features/admin/lessons/components/create-lesson-modal'
 import { CreateCourseModal } from '@/features/courses/components/create-course-modal'
 import { useEffect, useState } from 'react'
 
@@ -14,6 +16,8 @@ export const Modals = () => {
 
   return (
     <>
+      <CreateChapterModal />
+      <CreateLessonModal />
       <CreateCourseModal />
     </>
   )
