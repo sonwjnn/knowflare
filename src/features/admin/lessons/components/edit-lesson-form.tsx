@@ -3,9 +3,11 @@
 import { FileUpload } from '@/components/custom//file-upload'
 import { RichEditor } from '@/components/custom/rich-editor'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -20,19 +22,24 @@ import { useConfirm } from '@/hooks/use-confirm'
 import { useCourseId } from '@/hooks/use-course-id'
 import { useLessonId } from '@/hooks/use-lesson-id'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader2 } from 'lucide-react'
+import { FileDiff, Loader2, Video } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+import { VideoForm } from './video-form'
+
 const formSchema = z.object({
-  title: z.string().min(2, {
-    message: 'Title is required and must be at least 2 characters long',
-  }),
+  title: z
+    .string()
+    .min(2, {
+      message: 'Title is required and must be at least 2 characters long',
+    })
+    .optional(),
   description: z.string().optional(),
-  lessonType: z.string().url().optional(),
+  lessonType: z.string().optional(),
   videoUrl: z.string().url().optional(),
   isFree: z.boolean().optional(),
 })
@@ -160,6 +167,49 @@ export const EditLessonForm = () => {
                   />
                 </FormControl>
                 <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="isFree"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-none border p-4">
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className="space-y-1 leading-none">
+                  <FormDescription>
+                    Check this box if you want to make this chapter free for
+                    preview
+                  </FormDescription>
+                </div>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="videoUrl"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <VideoForm
+                    value={field.value}
+                    onChange={url => {
+                      if (url) onSubmit({ videoUrl: url })
+                    }}
+                    chapterId={chapterId}
+                    type={
+                      field.value?.includes('youtube.com')
+                        ? 'youtube'
+                        : 'upload'
+                    }
+                  />
+                </FormControl>
               </FormItem>
             )}
           />

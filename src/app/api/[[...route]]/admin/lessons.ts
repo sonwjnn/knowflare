@@ -1,5 +1,6 @@
 import { db } from '@/db/drizzle'
 import {
+  LessonType,
   courses,
   insertLessonsSchema,
   lessons,
@@ -139,6 +140,9 @@ const app = new Hono()
       z.object({
         title: z.string().optional(),
         description: z.string().optional().nullable(),
+        lessonType: z.string().optional(),
+        videoUrl: z.string().optional(),
+        isFree: z.boolean().optional(),
       })
     ),
     async c => {
@@ -157,7 +161,12 @@ const app = new Hono()
 
       const [data] = await db
         .update(lessons)
-        .set(values)
+        .set({
+          ...values,
+          lessonType: values.lessonType
+            ? (values.lessonType as LessonType)
+            : undefined,
+        })
         .where(eq(lessons.id, id))
 
       if (!data) {
