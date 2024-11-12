@@ -9,9 +9,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { useEditUser } from '@/features/admin/users/api/use-edit-user'
-import { useGetUser } from '@/features/admin/users/api/use-get-user'
 import { useUserId } from '@/features/admin/users/hooks/use-user-id'
+import { useEditUser } from '@/features/auth/api/use-edit-user'
+import { useGetUser } from '@/features/auth/api/use-get-user'
 import { Loader2, Mail, Shield, Upload, UserRound } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'

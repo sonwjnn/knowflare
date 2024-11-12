@@ -1,18 +1,14 @@
 import { db } from '@/db/drizzle'
-import { getCourses, getProgress } from '@/db/queries'
 import {
-  CourseLevel,
-  carts,
   categories,
   chapters,
   courses,
   insertCoursesSchema,
-  purchases,
   users,
 } from '@/db/schema'
 import { verifyAuth } from '@hono/auth-js'
 import { zValidator } from '@hono/zod-validator'
-import { and, desc, eq, inArray, like } from 'drizzle-orm'
+import { eq, inArray } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { z } from 'zod'
 

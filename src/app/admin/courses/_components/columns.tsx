@@ -1,19 +1,10 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
-import { users } from '@/db/schema'
 import { cn } from '@/lib/utils'
 import { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
 
-import {
-  labels,
-  levelOptions,
-  priorities,
-  publishedOptions,
-  roleOptions,
-  statuses,
-} from '../_data/data'
+import { categoryOptions, levelOptions, publishedOptions } from '../_data/data'
 import { Course } from '../_data/schema'
 import { DataTableColumnHeader } from './data-table-column-header'
 import { DataTableRowActions } from './data-table-row-actions'
@@ -74,7 +65,6 @@ export const columns: ColumnDef<Course>[] = [
       return value.includes(row.getValue(id))
     },
   },
-
   {
     accessorKey: 'level',
     header: ({ column }) => (
@@ -97,6 +87,65 @@ export const columns: ColumnDef<Course>[] = [
     },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
+    },
+  },
+
+  {
+    accessorKey: 'category',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Category" />
+    ),
+    cell: ({ row }) => {
+      const rowCategory = row.getValue('category') as {
+        id: string
+        name: string
+      }
+
+      const category = categoryOptions.find(
+        item => item.value === rowCategory.id
+      )
+
+      if (!category) {
+        return null
+      }
+
+      return (
+        <div className="flex items-center">
+          <span className="capitalize">{rowCategory.name}</span>
+        </div>
+      )
+    },
+    filterFn: (row, id, value) => {
+      const rowValue = row.getValue(id) as {
+        id: string
+        name: string
+      }
+      return value.includes(rowValue.id)
+    },
+  },
+  {
+    accessorKey: 'author',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Author" />
+    ),
+    cell: ({ row }) => {
+      const rowAuthor = row.getValue('author') as {
+        id: string
+        name: string
+      }
+
+      return (
+        <div className="flex max-w-[100px] items-center">
+          <span className="truncate">{rowAuthor.name}</span>
+        </div>
+      )
+    },
+    filterFn: (row, id, value) => {
+      const rowValue = row.getValue(id) as {
+        id: string
+        name: string
+      }
+      return value.includes(rowValue.id)
     },
   },
   {

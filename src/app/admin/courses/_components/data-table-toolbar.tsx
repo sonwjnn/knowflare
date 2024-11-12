@@ -1,11 +1,12 @@
 import { Button } from '@/components/custom/button'
 import { Input } from '@/components/ui/input'
+import { useGetUsersHaveCourse } from '@/features/admin/users/api/use-get-users-have-course'
 import { useConfirm } from '@/hooks/use-confirm'
 import { Row, Table } from '@tanstack/react-table'
 import { X } from 'lucide-react'
 import Link from 'next/link'
 
-import { levelOptions, publishedOptions } from '../_data/data'
+import { categoryOptions, levelOptions, publishedOptions } from '../_data/data'
 import { DataTableFacetedFilter } from './data-table-faceted-filter'
 import { DataTableViewOptions } from './data-table-view-options'
 
@@ -22,6 +23,7 @@ export function DataTableToolbar<TData>({
     'Are you sure?',
     'You are about to delete this selected user'
   )
+  const { data: users, isPending: usersLoading } = useGetUsersHaveCourse()
   const isFiltered = table.getState().columnFilters.length > 0
   const isSelected = table.getFilteredSelectedRowModel().rows.length > 0
 
@@ -33,6 +35,11 @@ export function DataTableToolbar<TData>({
     onDelete(table.getFilteredSelectedRowModel().rows)
     table.resetRowSelection()
   }
+
+  const normalizedUsers = (users ?? []).map(user => ({
+    value: user.id,
+    label: user.name || '',
+  }))
 
   return (
     <div className="flex items-center justify-between">
@@ -47,6 +54,20 @@ export function DataTableToolbar<TData>({
           className="h-8 w-[150px] lg:w-[250px]"
         />
         <div className="flex gap-x-2">
+          {table.getColumn('author') && (
+            <DataTableFacetedFilter
+              column={table.getColumn('author')}
+              title="Author"
+              options={normalizedUsers}
+            />
+          )}
+          {table.getColumn('category') && (
+            <DataTableFacetedFilter
+              column={table.getColumn('category')}
+              title="Category"
+              options={categoryOptions}
+            />
+          )}
           {table.getColumn('level') && (
             <DataTableFacetedFilter
               column={table.getColumn('level')}

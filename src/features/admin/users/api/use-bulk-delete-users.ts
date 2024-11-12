@@ -4,10 +4,10 @@ import { InferRequestType, InferResponseType } from 'hono'
 import { toast } from 'sonner'
 
 type ResponseType = InferResponseType<
-  (typeof client.api.users)['bulk-delete']['$post']
+  (typeof client.api.admin.users)['bulk-delete']['$post']
 >
 type RequestType = InferRequestType<
-  (typeof client.api.users)['bulk-delete']['$post']
+  (typeof client.api.admin.users)['bulk-delete']['$post']
 >['json']
 
 export const useBulkDeleteUsers = () => {
@@ -15,7 +15,7 @@ export const useBulkDeleteUsers = () => {
 
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async json => {
-      const response = await client.api.users['bulk-delete']['$post']({
+      const response = await client.api.admin.users['bulk-delete']['$post']({
         json,
       })
 

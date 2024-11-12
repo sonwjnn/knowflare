@@ -19,7 +19,7 @@ import { FaGithub } from 'react-icons/fa'
 import { FcGoogle } from 'react-icons/fc'
 import { setErrorMap } from 'zod'
 
-import { useSignIn } from '../hooks/use-sign-in'
+import { useSignIn } from '../api/use-sign-in'
 
 export const SignInCard = () => {
   // Loading

@@ -8,7 +8,7 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
 
-import { useNewVerification } from '../hooks/use-new-verification'
+import { useNewVerification } from '../api/use-new-verification'
 
 export const NewVerificationCard = () => {
   const { mutate: newVerification, isPending: newVerificationLoading } =

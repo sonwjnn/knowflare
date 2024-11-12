@@ -1,4 +1,5 @@
 import { CourseLevel } from '@/db/schema'
+import { SEED_CATEGORIES } from '@/scripts/categories'
 import {
   CheckCircleIcon,
   CircleCheck,
@@ -87,6 +88,11 @@ export const roleOptions = [
     icon: UserRound,
   },
 ]
+
+export const categoryOptions = SEED_CATEGORIES.map(item => ({
+  label: item.name,
+  value: item.id,
+}))
 
 export const levelOptions = [
   {

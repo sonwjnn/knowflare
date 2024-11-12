@@ -8,7 +8,7 @@ import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 
-import { useNewPassword } from '../hooks/use-new-password'
+import { useNewPassword } from '../api/use-new-password'
 
 export const NewPasswordCard = () => {
   const router = useRouter()

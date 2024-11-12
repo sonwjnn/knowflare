@@ -1,6 +1,6 @@
 'use client'
 
-import { CreateForm } from '@/features/admin/courses/components/create-form'
+import { CreateForm } from '@/features/admin/courses/components/create-course-form'
 
 export default function EditUser() {
   return (

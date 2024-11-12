@@ -9,7 +9,7 @@ import { Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 
-import { useReset } from '../hooks/use-reset'
+import { useReset } from '../api/use-reset'
 
 export const ResetCard = () => {
   const { mutate: reset, isPending: resetLoading } = useReset()
