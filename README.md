@@ -8,7 +8,6 @@
 
 ## Features
 
-- 🌜 Dark/Light mode
 - 🛒 Payment
 - ✉️ Login/Register with Credentials, OAuth
 

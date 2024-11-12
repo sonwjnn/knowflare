@@ -11,10 +11,10 @@ import {
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
 import { Loader2, TriangleAlert } from 'lucide-react'
-import { signIn } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FaGithub } from 'react-icons/fa'
 import { FcGoogle } from 'react-icons/fc'
 import { setErrorMap } from 'zod'
@@ -35,6 +35,34 @@ export const SignInCard = () => {
   const params = useSearchParams()
   const error = params.get('error')
 
+  const popupCenter = (url: string, title: string) => {
+    const dualScreenLeft = window.screenLeft ?? window.screenX
+    const dualScreenTop = window.screenTop ?? window.screenY
+
+    const width =
+      window.innerWidth ?? document.documentElement.clientWidth ?? screen.width
+
+    const height =
+      window.innerHeight ??
+      document.documentElement.clientHeight ??
+      screen.height
+
+    const systemZoom = width / window.screen.availWidth
+
+    const left = (width - 500) / 2 / systemZoom + dualScreenLeft
+    const top = (height - 550) / 2 / systemZoom + dualScreenTop
+
+    const newWindow = window.open(
+      url,
+      title,
+      `width=${500 / systemZoom},height=${
+        550 / systemZoom
+      },top=${top},left=${left}`
+    )
+
+    newWindow?.focus()
+  }
+
   const onCredentialSignIn = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
@@ -51,7 +79,7 @@ export const SignInCard = () => {
     setLoading(true)
     setLoadingGithub(provider === 'github')
     setLoadingGoogle(provider === 'google')
-    signIn(provider, { callbackUrl: '/' })
+    popupCenter(`/auth-signin/${provider}`, 'Sample Sign In')
   }
 
   return (
