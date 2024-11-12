@@ -28,8 +28,6 @@ export const useEditChapter = (id?: string) => {
       toast.success('Chapter updated')
       queryClient.invalidateQueries({ queryKey: ['chapter', { id }] })
       queryClient.invalidateQueries({ queryKey: ['chapters', { courseId }] })
-      queryClient.invalidateQueries({ queryKey: ['course', { courseId }] })
-      queryClient.invalidateQueries({ queryKey: ['courses'] })
     },
     onError: () => {
       toast.error('Failed to edit chapter')

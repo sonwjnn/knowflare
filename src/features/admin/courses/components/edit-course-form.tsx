@@ -13,12 +13,12 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { CourseLevel } from '@/db/schema'
-import { useDeleteCourse } from '@/features/admin/courses/api/use-delete-course'
+import { ChaptersCourseForm } from '@/features/admin/chapters/components/chapters-course-form'
 import { useEditCourse } from '@/features/admin/courses/api/use-edit-category'
 import { useGetCategories } from '@/features/categories/api/use-get-categories'
 import { useGetCourse } from '@/features/courses/api/use-get-course'
-import { useConfirm } from '@/hooks/use-confirm'
 import { useCourseId } from '@/hooks/use-course-id'
+import { isEmptyHtml } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
 import Link from 'next/link'
@@ -27,8 +27,8 @@ import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { ChaptersCourseForm } from '../../chapters/components/chapters-course-form'
 import { CategoryOptions } from './category-options'
+import { EditToolbar } from './edit-toolbar'
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -46,8 +46,7 @@ const formSchema = z.object({
 
 type FormValues = z.input<typeof formSchema>
 
-export const EditForm = () => {
-  const router = useRouter()
+export const EditCourseForm = () => {
   const courseId = useCourseId()
   const { data: categories, isPending: categoriesLoading } = useGetCategories()
   const { data: course, isPending: courseLoading } = useGetCourse(courseId)
@@ -85,26 +84,6 @@ export const EditForm = () => {
     editCourse(values, { onSuccess: () => {} })
   }
 
-  const [ComfirmDialog, confirm] = useConfirm(
-    'Delete course',
-    'Are you sure you want to delete this course?'
-  )
-
-  const { mutate: deleteCourse, isPending: deleteCourseLoading } =
-    useDeleteCourse(courseId)
-
-  const onDelete = async () => {
-    const ok = await confirm()
-
-    if (!ok) return
-
-    deleteCourse(undefined, {
-      onSuccess: () => {
-        router.replace(`/admin/courses`)
-      },
-    })
-  }
-
   const categoryOptions = (categories ?? []).map(item => ({
     value: item.id,
     label: item.name,
@@ -122,22 +101,33 @@ export const EditForm = () => {
       </div>
     )
   }
+  if (!course) {
+    return null
+  }
+
+  const requiredFields = [
+    course.title,
+    isEmptyHtml(course.description) ? '' : course.description,
+  ]
+
+  const totalFields = requiredFields.length
+  const completedFields = requiredFields.filter(Boolean).length
+  const completionText = `${completedFields}/${totalFields}`
+  const isComplete = requiredFields.every(Boolean)
 
   return (
     <>
-      <ComfirmDialog />
-      <div className="mb-7 flex flex-col gap-2">
-        <div className="ml-auto">
-          {/* <PublishButton
-            disabled={!isCompleted}
-            courseId={course.id}
-            isPublished={course.isPublished}
-            page="Course"
-          /> */}
-          <Button disabled={deleteCourseLoading} onClick={onDelete}>
-            Delete Course
-          </Button>
+      <div className="flex w-full items-center justify-between">
+        <div className="flex flex-col gap-x-2">
+          <h1 className="text-2xl font-medium">Course Creation</h1>
+          <span className="text-sm text-slate-700">
+            Complete all fields {completionText}
+          </span>
         </div>
+        <EditToolbar
+          disabled={!isComplete}
+          isPublished={!!course.isPublished}
+        />
       </div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -273,7 +263,7 @@ export const EditForm = () => {
                 Back to Courses
               </Button>
             </Link>
-            <Button type="submit" disabled={!isValid || isSubmitting}>
+            <Button type="submit" disabled={editCourseLoading}>
               Save
             </Button>
           </div>

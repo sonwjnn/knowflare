@@ -267,27 +267,13 @@ const app = new Hono()
         return c.json({ error: 'Unauthorized' }, 401)
       }
 
-      const [currentTeacher] = await db
-        .select({ id: teachers.id })
-        .from(teachers)
-        .where(eq(teachers.userId, auth.token.id))
-
-      if (!currentTeacher) {
-        return c.json({ error: 'Unauthorized' }, 401)
-      }
-
       const { id } = c.req.valid('param')
 
       if (!id) {
         return c.json({ error: 'Missing id' }, 400)
       }
 
-      const [course] = await db
-        .select()
-        .from(courses)
-        .where(
-          and(eq(courses.teacherId, currentTeacher.id), eq(courses.id, id))
-        )
+      const [course] = await db.select().from(courses).where(eq(courses.id, id))
 
       if (!course) {
         return c.json({ error: 'Not found' }, 404)
@@ -315,10 +301,7 @@ const app = new Hono()
       const [data] = await db
         .update(courses)
         .set({ isPublished: true })
-        .where(
-          and(eq(courses.teacherId, currentTeacher.id), eq(courses.id, id))
-        )
-        .returning()
+        .where(eq(courses.id, id))
 
       if (!data) {
         return c.json({ error: 'Not found' }, 404)
@@ -344,27 +327,13 @@ const app = new Hono()
         return c.json({ error: 'Unauthorized' }, 401)
       }
 
-      const [currentTeacher] = await db
-        .select({ id: teachers.id })
-        .from(teachers)
-        .where(eq(teachers.userId, auth.token.id))
-
-      if (!currentTeacher) {
-        return c.json({ error: 'Unauthorized' }, 401)
-      }
-
       const { id } = c.req.valid('param')
 
       if (!id) {
         return c.json({ error: 'Missing id' }, 400)
       }
 
-      const [course] = await db
-        .select()
-        .from(courses)
-        .where(
-          and(eq(courses.teacherId, currentTeacher.id), eq(courses.id, id))
-        )
+      const [course] = await db.select().from(courses).where(eq(courses.id, id))
 
       if (!course) {
         return c.json({ error: 'Not found' }, 404)
@@ -373,47 +342,13 @@ const app = new Hono()
       const [data] = await db
         .update(courses)
         .set({ isPublished: false })
-        .where(
-          and(eq(courses.teacherId, currentTeacher.id), eq(courses.id, id))
-        )
-        .returning()
+        .where(eq(courses.id, id))
 
       if (!data) {
         return c.json({ error: 'Not found' }, 404)
       }
 
       return c.json({ data })
-    }
-  )
-  .put(
-    '/:courseId/chapters/:chapterId/progress',
-    verifyAuth(),
-    zValidator(
-      'param',
-      z.object({
-        courseId: z.string(),
-        chapterId: z.string(),
-      })
-    ),
-    async c => {
-      const auth = c.get('authUser')
-
-      if (!auth.token?.id) {
-        return c.json({ error: 'Unauthorized' }, 401)
-      }
-
-      const { courseId, chapterId } = c.req.valid('param')
-
-      const [existingCourse] = await db
-        .select()
-        .from(courses)
-        .where(eq(courses.id, courseId))
-
-      if (!existingCourse) {
-        return c.json({ error: 'Not found' }, 404)
-      }
-
-      return c.json(null, 200)
     }
   )
 

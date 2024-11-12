@@ -1,7 +1,7 @@
 'use client'
 
-import { EditForm } from '@/features/admin/courses/components/edit-form'
+import { EditCourseForm } from '@/features/admin/courses/components/edit-course-form'
 
 export default function EditUser() {
-  return <EditForm />
+  return <EditCourseForm />
 }

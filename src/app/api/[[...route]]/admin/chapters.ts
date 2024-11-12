@@ -520,6 +520,126 @@ const app = new Hono()
   //     return c.json({ data: data[0] })
   //   }
   // )
+  .patch(
+    '/:id/publish',
+    verifyAuth(),
+    zValidator(
+      'param',
+      z.object({
+        id: z.string().optional(),
+      })
+    ),
+    zValidator(
+      'query',
+      z.object({
+        courseId: z.string().optional(),
+      })
+    ),
+    async c => {
+      const auth = c.get('authUser')
+
+      if (!auth.token?.id) {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
+      const { id } = c.req.valid('param')
+      const { courseId } = c.req.valid('query')
+
+      if (!id || !courseId) {
+        return c.json({ error: 'Missing id' }, 400)
+      }
+
+      const [course] = await db
+        .select()
+        .from(courses)
+        .where(and(eq(courses.id, courseId)))
+
+      if (!course) {
+        return c.json({ error: 'Not found' }, 404)
+      }
+
+      const [chapter] = await db
+        .select()
+        .from(chapters)
+        .where(and(eq(chapters.courseId, course.id), eq(chapters.id, id)))
+
+      if (!chapter || !chapter.title || !chapter.description) {
+        return c.json({ error: 'Missing required fields!' }, 400)
+      }
+
+      const [data] = await db
+        .update(chapters)
+        .set({ isPublished: true })
+        .where(eq(chapters.id, id))
+
+      if (!data) {
+        return c.json({ error: 'Not found' }, 404)
+      }
+
+      return c.json({ data })
+    }
+  )
+  .patch(
+    '/:id/unpublish',
+    verifyAuth(),
+    zValidator(
+      'param',
+      z.object({
+        id: z.string().optional(),
+      })
+    ),
+    zValidator(
+      'query',
+      z.object({
+        courseId: z.string().optional(),
+      })
+    ),
+    async c => {
+      const auth = c.get('authUser')
+
+      if (!auth.token?.id) {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
+      const { id } = c.req.valid('param')
+
+      const { courseId } = c.req.valid('query')
+
+      if (!id || !courseId) {
+        return c.json({ error: 'Missing id' }, 400)
+      }
+
+      const [course] = await db
+        .select()
+        .from(courses)
+        .where(and(eq(courses.id, courseId)))
+
+      if (!course) {
+        return c.json({ error: 'Not found' }, 404)
+      }
+
+      const [data] = await db
+        .update(chapters)
+        .set({ isPublished: false })
+        .where(eq(chapters.id, id))
+
+      const publishedChaptersInCourse = await db
+        .select()
+        .from(chapters)
+        .where(
+          and(eq(chapters.courseId, course.id), eq(chapters.isPublished, true))
+        )
+
+      if (!publishedChaptersInCourse.length) {
+        await db
+          .update(courses)
+          .set({ isPublished: false })
+          .where(eq(courses.id, course.id))
+      }
+
+      return c.json({ data })
+    }
+  )
   .delete(
     '/:id',
     verifyAuth(),

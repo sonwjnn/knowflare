@@ -1,6 +1,7 @@
 import { db } from '@/db/drizzle'
 import {
   LessonType,
+  chapters,
   courses,
   insertLessonsSchema,
   lessons,
@@ -171,6 +172,126 @@ const app = new Hono()
 
       if (!data) {
         return c.json({ error: 'Not found' }, 404)
+      }
+
+      return c.json({ data })
+    }
+  )
+  .patch(
+    '/:id/publish',
+    verifyAuth(),
+    zValidator(
+      'param',
+      z.object({
+        id: z.string().optional(),
+      })
+    ),
+    zValidator(
+      'query',
+      z.object({
+        chapterId: z.string().optional(),
+      })
+    ),
+    async c => {
+      const auth = c.get('authUser')
+
+      if (!auth.token?.id) {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
+      const { id } = c.req.valid('param')
+      const { chapterId } = c.req.valid('query')
+
+      if (!id || !chapterId) {
+        return c.json({ error: 'Missing id' }, 400)
+      }
+
+      const [chapter] = await db
+        .select()
+        .from(chapters)
+        .where(and(eq(chapters.id, chapterId)))
+
+      if (!chapter) {
+        return c.json({ error: 'Not found' }, 404)
+      }
+
+      const [lesson] = await db
+        .select()
+        .from(lessons)
+        .where(and(eq(lessons.chapterId, chapter.id), eq(lessons.id, id)))
+
+      if (!lesson || !lesson.title || !lesson.description || !lesson.videoUrl) {
+        return c.json({ error: 'Missing required fields!' }, 400)
+      }
+
+      const [data] = await db
+        .update(lessons)
+        .set({ isPublished: true })
+        .where(eq(lessons.id, id))
+
+      if (!data) {
+        return c.json({ error: 'Not found' }, 404)
+      }
+
+      return c.json({ data })
+    }
+  )
+  .patch(
+    '/:id/unpublish',
+    verifyAuth(),
+    zValidator(
+      'param',
+      z.object({
+        id: z.string().optional(),
+      })
+    ),
+    zValidator(
+      'query',
+      z.object({
+        chapterId: z.string().optional(),
+      })
+    ),
+    async c => {
+      const auth = c.get('authUser')
+
+      if (!auth.token?.id) {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
+      const { id } = c.req.valid('param')
+
+      const { chapterId } = c.req.valid('query')
+
+      if (!id || !chapterId) {
+        return c.json({ error: 'Missing id' }, 400)
+      }
+
+      const [chapter] = await db
+        .select()
+        .from(chapters)
+        .where(and(eq(chapters.id, chapterId)))
+
+      if (!chapter) {
+        return c.json({ error: 'Not found' }, 404)
+      }
+
+      const [data] = await db
+        .update(lessons)
+        .set({ isPublished: false })
+        .where(eq(lessons.id, id))
+
+      const publishedLessonsInChapter = await db
+        .select()
+        .from(lessons)
+        .where(
+          and(eq(lessons.chapterId, chapter.id), eq(lessons.isPublished, true))
+        )
+
+      if (!publishedLessonsInChapter.length) {
+        await db
+          .update(chapters)
+          .set({ isPublished: false })
+          .where(eq(chapters.id, chapter.id))
       }
 
       return c.json({ data })

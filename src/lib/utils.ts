@@ -16,3 +16,14 @@ export const isTeacher = (userId: string | null | undefined) => {
   console.log(userId, process.env.NEXT_PUBLIC_TEACHER_ID)
   return userId === process.env.NEXT_PUBLIC_TEACHER_ID
 }
+
+export const isEmptyHtml = (htmlString: string | null) => {
+  if (!htmlString) return true
+
+  const tempDiv = document.createElement('div')
+  tempDiv.innerHTML = htmlString
+
+  const text = tempDiv.innerText.trim()
+
+  return text === ''
+}
