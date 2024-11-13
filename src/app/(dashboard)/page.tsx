@@ -4,8 +4,10 @@ import { Button } from '@/components/ui/button'
 import { Book, Globe, GraduationCap, Zap } from 'lucide-react'
 
 import { Hero } from './hero'
+import { LatestCourses } from './latest-courses'
 import { Marquee } from './marquee'
 import { TopCategories } from './top-categories'
+import { TopCourses } from './top-courses'
 
 interface Course {
   id: number
@@ -64,6 +66,10 @@ export default function KnowflareHomepage() {
       </section>
 
       <TopCategories />
+
+      <TopCourses />
+
+      <LatestCourses />
 
       <section className="bg-gray-100 py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

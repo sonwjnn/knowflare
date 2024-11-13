@@ -162,8 +162,6 @@ export const getCourses = async ({
     )
     .limit(1)
 
-  console.log(rating)
-
   const coursesData = await db
     .select({
       id: courses.id,
@@ -214,6 +212,85 @@ export const getCourses = async ({
   const pageCount = Math.ceil(totalCount / PAGE_SIZE)
 
   return { data: coursesData, pageCount }
+}
+
+export const getTenLatestCourses = async () => {
+  const coursesData = await db
+    .select({
+      id: courses.id,
+      title: courses.title,
+      description: courses.description,
+      imageUrl: courses.imageUrl,
+      price: courses.price,
+      level: courses.level,
+      isPublished: courses.isPublished,
+      date: courses.date,
+      avgRating: courses.avgRating,
+      category: {
+        id: categories.id,
+        name: categories.name,
+      },
+      author: {
+        id: users.id,
+        name: users.name,
+      },
+      totalChapters: count(chapters.id),
+    })
+    .from(courses)
+    .innerJoin(categories, eq(categories.id, courses.categoryId))
+    .innerJoin(users, eq(users.id, courses.userId))
+    .leftJoin(chapters, eq(chapters.courseId, courses.id))
+    .where(and(eq(courses.isPublished, true)))
+    .groupBy(courses.id)
+    .orderBy(desc(courses.date))
+    .limit(10)
+
+  return { data: coursesData }
+}
+
+export const getFiveTopCoursesLastThreeWeek = async () => {
+  const today = new Date()
+  const lastWeek = new Date(today)
+  lastWeek.setDate(today.getDate() - 7 * 3)
+
+  const coursesData = await db
+    .select({
+      id: courses.id,
+      title: courses.title,
+      description: courses.description,
+      imageUrl: courses.imageUrl,
+      price: courses.price,
+      level: courses.level,
+      isPublished: courses.isPublished,
+      date: courses.date,
+      avgRating: courses.avgRating,
+      category: {
+        id: categories.id,
+        name: categories.name,
+      },
+      author: {
+        id: users.id,
+        name: users.name,
+      },
+      totalChapters: count(chapters.id),
+      purchasesCount: sql<number>`COUNT(*)`.as('purchases_count'),
+    })
+    .from(purchases)
+    .innerJoin(courses, eq(courses.id, purchases.courseId))
+    .innerJoin(categories, eq(categories.id, courses.categoryId))
+    .innerJoin(users, eq(users.id, courses.userId))
+    .leftJoin(chapters, eq(chapters.courseId, courses.id))
+    .where(
+      and(
+        sql`DATE(${purchases.date}) >= ${lastWeek}`,
+        eq(courses.isPublished, true)
+      )
+    )
+    .groupBy(courses.id)
+    .orderBy(sql`purchases_count DESC`)
+    .limit(5)
+
+  return { data: coursesData }
 }
 
 export const getPasswordResetTokenByToken = async (token: string) => {

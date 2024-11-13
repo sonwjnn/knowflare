@@ -1,9 +1,13 @@
 import { db } from '@/db/drizzle'
-import { getCourses } from '@/db/queries'
-import { chapters, courses, users } from '@/db/schema'
+import {
+  getCourses,
+  getFiveTopCoursesLastThreeWeek,
+  getTenLatestCourses,
+} from '@/db/queries'
+import { categories, chapters, courses, purchases, users } from '@/db/schema'
 import { verifyAuth } from '@hono/auth-js'
 import { zValidator } from '@hono/zod-validator'
-import { eq } from 'drizzle-orm'
+import { count, desc, eq, sql } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { z } from 'zod'
 
@@ -92,5 +96,23 @@ const app = new Hono()
       })
     }
   )
+  .get('/list/top-courses-last-three-week', async c => {
+    const today = new Date()
+    const lastWeek = new Date(today)
+    lastWeek.setDate(today.getDate() - 7)
+
+    const { data } = await getFiveTopCoursesLastThreeWeek()
+
+    console.log(data)
+
+    return c.json({ data: data ?? [] })
+  })
+  .get('/list/latest-courses', async c => {
+    const { data } = await getTenLatestCourses()
+
+    console.log(data)
+
+    return c.json({ data: data ?? [] })
+  })
 
 export default app

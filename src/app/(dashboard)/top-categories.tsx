@@ -3,6 +3,7 @@
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { useGetCategories } from '@/features/categories/api/use-get-categories'
+import { useGetTopCategories } from '@/features/categories/api/use-get-top-categories'
 import {
   BarChart,
   Book,
@@ -22,6 +23,8 @@ import Link from 'next/link'
 
 export const TopCategories = () => {
   const { data: categories, isPending: categoriesLoading } = useGetCategories()
+  const { data: topCategories, isPending: topCategoriesLoading } =
+    useGetTopCategories()
   const iconMap: { [key: string]: LucideIcon } = {
     'Teaching & Academics': GraduationCap,
     'Sales & Marketing': BarChart,

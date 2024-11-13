@@ -1,17 +1,18 @@
+import { CourseLevel } from '@/db/schema'
 import { client } from '@/lib/hono'
-import { useQuery } from '@tanstack/react-query'
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import { InferResponseType } from 'hono'
 
 export type ResponseType = InferResponseType<
-  (typeof client.api.purchases)['courses']['$get'],
+  (typeof client.api.courses)['list']['latest-courses']['$get'],
   200
 >
 
-export const useGetPurchasedCourses = () => {
+export const useGetLatestCourses = () => {
   const query = useQuery({
-    queryKey: ['purchases', 'courses'],
+    queryKey: ['latest-courses'],
     queryFn: async () => {
-      const response = await client.api.purchases['courses'].$get()
+      const response = await client.api.courses['list']['latest-courses'].$get()
 
       if (!response.ok) {
         throw new Error('Failed to fetch course')

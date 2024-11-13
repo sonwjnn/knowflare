@@ -1,8 +1,13 @@
 import { db } from '@/db/drizzle'
-import { categories, insertCategoriesSchema } from '@/db/schema'
+import {
+  categories,
+  courses,
+  insertCategoriesSchema,
+  purchases,
+} from '@/db/schema'
 import { verifyAuth } from '@hono/auth-js'
 import { zValidator } from '@hono/zod-validator'
-import { desc, eq, inArray } from 'drizzle-orm'
+import { desc, eq, inArray, sql } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { z } from 'zod'
 
@@ -194,5 +199,26 @@ const app = new Hono()
       return c.json({ data })
     }
   )
+  .get('/list/top-categories-last-three-week', async c => {
+    const today = new Date()
+    const lastWeek = new Date(today)
+    lastWeek.setDate(today.getDate() - 7 * 3)
+
+    const topCategories = await db
+      .select({
+        categoryId: categories.id,
+        categoryName: categories.name,
+        purchasesCount: sql<number>`COUNT(*)`.as('purchases_count'),
+      })
+      .from(purchases)
+      .innerJoin(courses, eq(courses.id, purchases.courseId))
+      .innerJoin(categories, eq(categories.id, courses.categoryId))
+      .where(sql`DATE(${purchases.date}) >= ${lastWeek}`)
+      .groupBy(categories.id)
+      .orderBy(sql`purchases_count DESC`)
+      .limit(5)
+
+    return c.json({ data: topCategories })
+  })
 
 export default app
