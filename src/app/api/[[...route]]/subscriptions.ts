@@ -194,6 +194,7 @@ const app = new Hono()
         .map(id => ({
           userId: session?.metadata?.userId!,
           courseId: id,
+          date: new Date(),
         }))
         .filter(data => data.userId !== undefined)
 

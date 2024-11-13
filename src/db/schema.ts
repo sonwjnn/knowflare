@@ -350,6 +350,7 @@ export const purchases = mysqlTable('purchases', {
     .references(() => courses.id, {
       onDelete: 'cascade',
     }),
+  date: timestamp('date', { mode: 'date' }).default(sql`CURRENT_TIMESTAMP`),
 })
 
 export const purchasesRelations = relations(purchases, ({ one }) => ({

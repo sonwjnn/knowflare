@@ -3,15 +3,15 @@ import { useQuery } from '@tanstack/react-query'
 import { InferResponseType } from 'hono'
 
 export type ResponseType = InferResponseType<
-  (typeof client.api.admin.analysis)['$get'],
+  (typeof client.api.admin.analysis)['courses']['$get'],
   200
 >
 
-export const useGetAnalysis = () => {
+export const useGetCourseAnalysis = () => {
   const query = useQuery({
     queryKey: ['analysis'],
     queryFn: async () => {
-      const response = await client.api.admin.analysis.$get()
+      const response = await client.api.admin.analysis['courses'].$get()
 
       if (!response.ok) {
         throw new Error('Failed to fetch analysis')

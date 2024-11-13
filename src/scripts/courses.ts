@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { SEED_CATEGORIES } from './categories'
 
-const userId = '3322ca9b-f8b3-4277-919c-8bade60f54ac'
+const userId = '62636ca0-8c6f-4fa8-b6fd-b7e67d6756a4'
 
 export const SEED_COURSES = [
   {
