@@ -91,8 +91,10 @@ export const Reviews = () => {
     <Card className="border-none shadow-none">
       <CardContent>
         {reviews?.length === 0 && (
-          <div className="flex h-10 items-center justify-center">
-            This course has no reviews yet.
+          <div className="flex h-full min-h-48 w-full flex-col items-center justify-center gap-4">
+            <p className="text-lg text-gray-500">
+              This course has no reviews yet.
+            </p>
           </div>
         )}
         {reviews?.map(item => (

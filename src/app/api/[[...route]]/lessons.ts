@@ -214,6 +214,7 @@ const app = new Hono()
       const [firstLesson] = await db
         .select({ id: lessons.id })
         .from(lessons)
+        .innerJoin(chapters, eq(chapters.id, lessons.chapterId))
         .where(
           and(
             eq(lessons.courseId, courseId),
@@ -221,7 +222,7 @@ const app = new Hono()
             !currentPurchase ? eq(lessons.isFree, true) : undefined
           )
         )
-        .orderBy(asc(lessons.position))
+        .orderBy(asc(chapters.position), asc(lessons.position))
         .limit(1)
 
       return c.json({

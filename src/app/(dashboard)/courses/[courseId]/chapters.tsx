@@ -20,11 +20,6 @@ export const Chapters = () => {
   if (chapters?.length === 0) {
     return (
       <div className="flex h-full min-h-48 w-full flex-col items-center justify-center gap-4">
-        <Image
-          src="/empty-chapters.svg"
-          alt="No chapters"
-          className="h-32 w-32 opacity-50"
-        />
         <p className="text-lg text-gray-500">
           This course does not have any chapters yet.
         </p>
