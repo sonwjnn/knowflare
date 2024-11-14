@@ -3,6 +3,7 @@ import { Input } from '@/components/ui/input'
 import { useConfirm } from '@/hooks/use-confirm'
 import { Row, Table } from '@tanstack/react-table'
 import { X } from 'lucide-react'
+import Link from 'next/link'
 
 import { roleOptions, statusOptions } from '../_data/data'
 import { DataTableFacetedFilter } from './data-table-faceted-filter'
@@ -85,6 +86,12 @@ export function DataTableToolbar<TData>({
             </span>
           </Button>
         )}
+
+        <Link href="/admin/users/create">
+          <Button size="sm" className="h-8">
+            Create User
+          </Button>
+        </Link>
 
         <DataTableViewOptions table={table} />
       </div>

@@ -9,11 +9,23 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useGetOverviewAnalysis } from '@/features/admin/analysis/api/use-get-overview-analysis'
+import { Loader2 } from 'lucide-react'
 
 import { Overview } from './overview'
 import { RecentSales } from './recent-sales'
 
 const DashboardPage = () => {
+  const { data, isPending } = useGetOverviewAnalysis()
+
+  if (isPending) {
+    return (
+      <div className="flex h-full min-h-64 w-full items-center justify-center">
+        <Loader2 className="h-6 w-6 animate-spin" />
+      </div>
+    )
+  }
+
   return (
     <>
       <div className="mb-2 flex items-center justify-between space-y-2">
@@ -56,10 +68,9 @@ const DashboardPage = () => {
                 </svg>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">$45,231.89</div>
-                <p className="text-xs text-muted-foreground">
-                  +20.1% from last month
-                </p>
+                <div className="text-2xl font-bold">
+                  ${data?.totalRevenue ?? 0}
+                </div>
               </CardContent>
             </Card>
             <Card>
@@ -84,9 +95,6 @@ const DashboardPage = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">+2350</div>
-                <p className="text-xs text-muted-foreground">
-                  +180.1% from last month
-                </p>
               </CardContent>
             </Card>
             <Card>
@@ -107,10 +115,9 @@ const DashboardPage = () => {
                 </svg>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">+12,234</div>
-                <p className="text-xs text-muted-foreground">
-                  +19% from last month
-                </p>
+                <div className="text-2xl font-bold">
+                  +{data?.totalSales ?? 0}
+                </div>
               </CardContent>
             </Card>
             <Card>
@@ -133,9 +140,6 @@ const DashboardPage = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">+573</div>
-                <p className="text-xs text-muted-foreground">
-                  +201 since last hour
-                </p>
               </CardContent>
             </Card>
           </div>
@@ -145,7 +149,7 @@ const DashboardPage = () => {
                 <CardTitle>Overview</CardTitle>
               </CardHeader>
               <CardContent className="pl-2">
-                <Overview />
+                <Overview data={data?.data ?? []} />
               </CardContent>
             </Card>
             <Card className="col-span-1 lg:col-span-3">

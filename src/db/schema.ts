@@ -18,6 +18,7 @@ import { z } from 'zod'
 export enum UserRole {
   ADMIN = 'admin',
   USER = 'user',
+  TEACHER = 'teacher',
 }
 
 export function enumToPgEnum<T extends Record<string, any>>(

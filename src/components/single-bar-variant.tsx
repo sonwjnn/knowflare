@@ -3,13 +3,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts'
 
-interface ChartProps {
+interface SingleBarVariantProps {
   data: {
     name: string
     total: number
   }[]
 }
-const Chart = ({ data }: ChartProps) => {
+export const SingleBarVariant = ({ data }: SingleBarVariantProps) => {
   return (
     <Card>
       <CardHeader>
@@ -44,5 +44,3 @@ const Chart = ({ data }: ChartProps) => {
     </Card>
   )
 }
-
-export default Chart

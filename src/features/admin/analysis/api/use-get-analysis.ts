@@ -4,11 +4,11 @@ import { InferResponseType } from 'hono'
 import { useSearchParams } from 'next/navigation'
 
 export type ResponseType = InferResponseType<
-  (typeof client.api.admin.analysis)['monthly']['$get'],
+  (typeof client.api.admin.analysis)['$get'],
   200
 >
 
-export const useGetMonthlyAnalysis = () => {
+export const useGetAnalysis = () => {
   const params = useSearchParams()
   const from = params.get('from') || ''
   const to = params.get('to') || ''
@@ -17,7 +17,7 @@ export const useGetMonthlyAnalysis = () => {
   const query = useQuery({
     queryKey: ['analysis', { from, to }],
     queryFn: async () => {
-      const response = await client.api.admin.analysis['monthly'].$get({
+      const response = await client.api.admin.analysis.$get({
         query: {
           from,
           to,
