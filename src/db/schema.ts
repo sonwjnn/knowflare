@@ -456,12 +456,19 @@ export const coupons = mysqlTable('coupon', {
   id: varchar('id', { length: 255 })
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
+  categoryId: varchar('category_id', { length: 255 }).references(
+    () => categories.id,
+    {
+      onDelete: 'cascade',
+    }
+  ),
   code: varchar('code', { length: 255 }).notNull().unique(),
-  discountType: varchar('discount_type', { length: 255 }).notNull(), // Loại giảm giá (ví dụ: 'percentage' hoặc 'fixed')
-  discountValue: int('discount_value').notNull(),
+  discountAmount: int('discount_amount').notNull(),
   expires: timestamp('expires', { mode: 'date' }),
   isActive: boolean('is_active').default(true).notNull(),
 })
+
+export const insertCouponsSchema = createInsertSchema(coupons)
 
 export const carts = mysqlTable(
   'cart',

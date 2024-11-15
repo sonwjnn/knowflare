@@ -20,6 +20,7 @@ import {
 import { UserRole, insertUsersSchema } from '@/db/schema'
 import { useCreateUser } from '@/features/admin/users/api/use-create-user'
 import { zodResolver } from '@hookform/resolvers/zod'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -160,9 +161,11 @@ export const CreateUserForm = () => {
           />
 
           <div className="flex justify-end gap-x-2">
-            <Button type="button" variant="outline">
-              Back to users
-            </Button>
+            <Link href="/admin/users">
+              <Button type="button" variant="outline">
+                Back to users
+              </Button>
+            </Link>
             <Button type="submit" disabled={!isValid || createUserLoading}>
               Create
             </Button>

@@ -4,27 +4,27 @@ import { InferResponseType } from 'hono'
 import { toast } from 'sonner'
 
 type ResponseType = InferResponseType<
-  (typeof client.api.admin.categories)[':id']['$delete']
+  (typeof client.api.admin.coupons)[':id']['$delete']
 >
 
-export const useDeleteCategory = (id?: string) => {
+export const useDeleteCoupon = (id?: string) => {
   const queryClient = useQueryClient()
 
   const mutation = useMutation<ResponseType, Error>({
     mutationFn: async json => {
-      const response = await client.api.admin.categories[':id']['$delete']({
+      const response = await client.api.admin.coupons[':id']['$delete']({
         param: { id },
       })
 
       return await response.json()
     },
     onSuccess: () => {
-      toast.success('Category deleted')
-      queryClient.invalidateQueries({ queryKey: ['category', { id }] })
-      queryClient.invalidateQueries({ queryKey: ['categories'] })
+      toast.success('Coupon deleted')
+      queryClient.invalidateQueries({ queryKey: ['coupon', { id }] })
+      queryClient.invalidateQueries({ queryKey: ['coupons'] })
     },
     onError: () => {
-      toast.error('Failed to delete category')
+      toast.error('Failed to delete coupon')
     },
   })
 

@@ -5,7 +5,9 @@ import { handle } from 'hono/vercel'
 import { AdapterUser } from 'next-auth/adapters'
 
 import adminAnalysis from './admin/analysis'
+import adminCategories from './admin/categories'
 import adminChapters from './admin/chapters'
+import adminCoupons from './admin/coupons'
 import adminCourses from './admin/courses'
 import adminLessons from './admin/lessons'
 import adminUsers from './admin/users'
@@ -56,6 +58,8 @@ const routes = app
   .route('/admin/lessons', adminLessons)
   .route('/admin/analysis', adminAnalysis)
   .route('/admin/users', adminUsers)
+  .route('/admin/categories', adminCategories)
+  .route('/admin/coupons', adminCoupons)
 
 export const GET = handle(app)
 export const POST = handle(app)

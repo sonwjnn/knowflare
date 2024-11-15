@@ -16,6 +16,7 @@ import {
   ServerOff,
   Settings,
   Shield,
+  Ticket,
   Truck,
   Users,
 } from 'lucide-react'
@@ -83,6 +84,12 @@ export const sidelinks: SideLink[] = [
     label: '',
     href: '/admin/analysis',
     icon: <BarChart2 size={18} />,
+  },
+  {
+    title: 'Coupons',
+    label: '',
+    href: '/admin/coupons',
+    icon: <Ticket size={18} />,
   },
 
   {
