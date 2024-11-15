@@ -32,13 +32,13 @@ export default {
         const { email, password } = validateFields.data
 
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_APP_URL}/api/users/user/by-email`,
+          `${process.env.NEXT_PUBLIC_APP_URL}/api/users/user/by-email?email=${encodeURIComponent(email)}`,
           {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email }),
           }
         )
+
         if (!res.ok) return null
 
         const { data: user } = (await res.json()) as {

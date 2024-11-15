@@ -24,6 +24,8 @@ import { SEED_CATEGORIES } from './categories'
 import { SEED_CHAPTERS } from './chapters'
 import { SEED_COURSES } from './courses'
 import { SEED_LESSONS } from './lessons'
+import { SEED_PURCHASES } from './purchases'
+import { SEED_USERS } from './users'
 
 config({ path: '.env.local' })
 
@@ -39,6 +41,7 @@ const db = drizzle(connection)
 async function main() {
   try {
     // Reset db
+    await db.delete(users).execute()
     await db.delete(orders).execute()
     await db.delete(subscriptions).execute()
     await db.delete(reviews).execute()
@@ -52,10 +55,12 @@ async function main() {
     await db.delete(courses).execute()
 
     // Seed categories
+    await db.insert(users).values(SEED_USERS).execute()
     await db.insert(categories).values(SEED_CATEGORIES).execute()
 
     // Seed courses
     await db.insert(courses).values(SEED_COURSES).execute()
+    await db.insert(purchases).values(SEED_PURCHASES).execute()
 
     // Seed chapters
     await db.insert(chapters).values(SEED_CHAPTERS).execute()

@@ -2,8 +2,9 @@ import { CourseLevel } from '@/db/schema'
 import { v4 as uuidv4 } from 'uuid'
 
 import { SEED_CATEGORIES } from './categories'
+import { SEED_USERS } from './users'
 
-const userId = '34a717fd-d248-4956-a4a2-b5675c14f646'
+const userId = SEED_USERS[0].id
 
 export const SEED_COURSES = [
   {

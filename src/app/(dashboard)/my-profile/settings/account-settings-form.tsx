@@ -109,7 +109,6 @@ export const AccountSettingsForm = ({ user }: AccountSettingsFormProps) => {
     try {
       setIsLoading(true)
       // API call would go here
-      console.log(data)
       toast.success('Profile updated successfully')
     } catch (error) {
       toast.error('Something went wrong')

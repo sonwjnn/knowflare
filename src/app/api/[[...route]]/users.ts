@@ -26,13 +26,13 @@ const app = new Hono()
   .get(
     '/user/by-email',
     zValidator(
-      'json',
+      'query',
       z.object({
         email: z.string().email(),
       })
     ),
     async c => {
-      const { email } = c.req.valid('json')
+      const { email } = c.req.valid('query')
 
       const [data] = await db.select().from(users).where(eq(users.email, email))
 

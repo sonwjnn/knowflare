@@ -103,14 +103,10 @@ const app = new Hono()
 
     const { data } = await getFiveTopCoursesLastThreeWeek()
 
-    console.log(data)
-
     return c.json({ data: data ?? [] })
   })
   .get('/list/latest-courses', async c => {
     const { data } = await getTenLatestCourses()
-
-    console.log(data)
 
     return c.json({ data: data ?? [] })
   })
