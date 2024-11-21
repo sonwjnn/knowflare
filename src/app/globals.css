@@ -261,3 +261,19 @@ input:focus {
     opacity: 0;
   }
 }
+
+.swiper {
+    padding-bottom: 3rem !important;
+}
+
+.swiper-pagination-bullet {
+    width: 10px !important;
+    height: 10px !important;
+    background: #cbd5e1 !important;
+    opacity: 0.5 !important;
+}
+
+.swiper-pagination-bullet-active {
+    background: #2563eb !important;
+    opacity: 1 !important;
+}

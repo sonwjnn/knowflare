@@ -1,117 +1,127 @@
 import Link from 'next/link'
 import {
-  FaFacebook,
-  FaInstagram,
-  FaLinkedin,
-  FaPinterest,
-  FaTiktok,
-  FaTwitter,
-  FaYoutube,
+    FaFacebook,
+    FaInstagram,
+    FaLinkedin,
+    FaPinterest,
+    FaTiktok,
+    FaTwitter,
+    FaYoutube,
 } from 'react-icons/fa'
 
 const links = {
-  Explore: [
-    { name: 'Products', href: '#' },
-    { name: 'Features', href: '#' },
-    { name: 'Pricing', href: '#' },
-    { name: 'Staff picks', href: '#' },
-    { name: 'Product demo', href: '#' },
-  ],
-  Company: [
-    { name: 'Careers', href: '#' },
-    { name: 'Blog', href: '#' },
-    { name: 'Press', href: '#' },
-    { name: 'Partners', href: '#' },
-    { name: 'Newsletter', href: '#' },
-  ],
-  Support: [
-    { name: 'Help Center', href: '#' },
-    { name: 'House Rules', href: '#' },
-    { name: 'Content Guidelines', href: '#' },
-  ],
+    Explore: [
+        { name: 'Products', href: '#' },
+        { name: 'Features', href: '#' },
+        { name: 'Pricing', href: '#' },
+        { name: 'Staff picks', href: '#' },
+        { name: 'Product demo', href: '#' },
+    ],
+    Company: [
+        { name: 'Careers', href: '#' },
+        { name: 'Blog', href: '#' },
+        { name: 'Press', href: '#' },
+        { name: 'Partners', href: '#' },
+        { name: 'Newsletter', href: '#' },
+    ],
+    Support: [
+        { name: 'Help Center', href: '#' },
+        { name: 'House Rules', href: '#' },
+        { name: 'Content Guidelines', href: '#' },
+    ],
 }
 
 const socialLinks = [
-  { name: 'YouTube', href: '#', icon: FaYoutube },
-  { name: 'Facebook', href: '#', icon: FaFacebook },
-  { name: 'Pinterest', href: '#', icon: FaPinterest },
-  { name: 'Instagram', href: '#', icon: FaInstagram },
-  { name: 'Twitter', href: '#', icon: FaTwitter },
-  { name: 'LinkedIn', href: '#', icon: FaLinkedin },
-  { name: 'TikTok', href: '#', icon: FaTiktok },
+    { name: 'YouTube', href: '#', icon: FaYoutube },
+    { name: 'Facebook', href: '#', icon: FaFacebook },
+    { name: 'Pinterest', href: '#', icon: FaPinterest },
+    { name: 'Instagram', href: '#', icon: FaInstagram },
+    { name: 'Twitter', href: '#', icon: FaTwitter },
+    { name: 'LinkedIn', href: '#', icon: FaLinkedin },
+    { name: 'TikTok', href: '#', icon: FaTiktok },
 ]
 
 export const Footer = () => {
-  return (
-    <footer className="bg-[#2d2f31] text-white">
-      <div className="max-w-8xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
-          <div className="col-span-1 md:col-span-1">
-            <h2 className="mb-4 text-2xl font-bold">Knowflare</h2>
-            <p className="text-md text mb-8">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Necessitatibus commodi nam cum ab quibusdam recusandae tempore.
-            </p>
-            <div className="mt-4 flex space-x-4">
-              {socialLinks.map(link => {
-                const Icon = link.icon
-                return (
-                  <a
-                    key={link.name}
-                    href={link.href}
-                    className="text-white hover:text-gray-300"
-                    aria-label={link.name}
-                  >
-                    <Icon className="h-6 w-6" />
-                  </a>
-                )
-              })}
+    return (
+        <footer className="bg-gradient-to-r from-gray-900 to-gray-800 text-white">
+            <div className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
+                <div className="grid grid-cols-1 gap-12 lg:grid-cols-4 md:grid-cols-2">
+                    <div className="space-y-6">
+                        <div className="flex items-center space-x-3">
+                            <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                                Knowflare
+                            </h2>
+                        </div>
+                        <p className="text-gray-300 text-sm leading-relaxed max-w-md">
+                            Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                            Necessitatibus commodi nam cum ab quibusdam recusandae tempore.
+                        </p>
+                        <div className="flex space-x-5">
+                            {socialLinks.map(link => {
+                                const Icon = link.icon
+                                return (
+                                    <a
+                                        key={link.name}
+                                        href={link.href}
+                                        className="text-gray-400 hover:text-white transform hover:scale-110 transition-all duration-300"
+                                        aria-label={link.name}
+                                    >
+                                        <Icon className="h-6 w-6" />
+                                    </a>
+                                )
+                            })}
+                        </div>
+                    </div>
+                    {Object.entries(links).map(([title, items]) => (
+                        <div key={title} className="space-y-6">
+                            <h3 className="text-lg font-semibold relative">
+                                {title}
+                                <span className="absolute -bottom-2 left-0 w-12 h-1 bg-blue-500 rounded-full"></span>
+                            </h3>
+                            <ul className="space-y-4">
+                                {items.map(item => (
+                                    <li key={item.name}>
+                                        <Link
+                                            href={item.href}
+                                            className="text-gray-400 hover:text-white transition-colors duration-300 relative group"
+                                        >
+                                            <div className="absolute left-0 -bottom-1 w-0 h-0.5 bg-blue-500 group-hover:w-12 transition-all duration-300"></div>
+                                            <span className="inline-block transform translate-x-0 group-hover:translate-x-4 transition-transform duration-300">
+                                                {item.name}
+                                            </span>
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    ))}
+                </div>
+                <div className="mt-16 pt-8 border-t border-gray-700">
+                    <div className="flex flex-col items-center space-y-6 md:flex-row md:justify-between md:space-y-0">
+                        <p className="text-sm text-gray-400">
+                            &copy; {new Date().getFullYear()} Knowflare, Inc. All rights reserved.
+                        </p>
+                        <div className="flex flex-wrap justify-center gap-x-8 gap-y-4">
+                            {[
+                                'Privacy Policy',
+                                'Terms of Use',
+                                'Cookies Policy',
+                                'Cookie Preferences',
+                                'Ethics Line',
+                                'Accessibility',
+                            ].map(item => (
+                                <Link
+                                    key={item}
+                                    href="#"
+                                    className="text-sm text-gray-400 hover:text-white transition-colors duration-300"
+                                >
+                                    {item}
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-          {Object.entries(links).map(([title, items]) => (
-            <div key={title}>
-              <h3 className="mb-4 text-lg font-semibold">{title}</h3>
-              <ul className="space-y-2">
-                {items.map(item => (
-                  <li key={item.name}>
-                    <Link
-                      href={item.href}
-                      className="text-sm hover:text-gray-300"
-                    >
-                      {item.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-        <div className="mt-8 flex flex-col items-center justify-between border-t pt-8 md:flex-row">
-          <p className="text-sm">
-            &copy; 2024 Knowflare, Inc. All rights reserved.
-          </p>
-          <div className="mt-4 flex space-x-4 md:mt-0">
-            <Link href="#" className="text-sm hover:text-gray-300">
-              Privacy Policy
-            </Link>
-            <Link href="#" className="text-sm hover:text-gray-300">
-              Terms of Use
-            </Link>
-            <Link href="#" className="text-sm hover:text-gray-300">
-              Cookies Policy
-            </Link>
-            <Link href="#" className="text-sm hover:text-gray-300">
-              Cookie Preferences
-            </Link>
-            <Link href="#" className="text-sm hover:text-gray-300">
-              Ethics Line
-            </Link>
-            <Link href="#" className="text-sm hover:text-gray-300">
-              Accessibility
-            </Link>
-          </div>
-        </div>
-      </div>
-    </footer>
-  )
+        </footer>
+    )
 }
