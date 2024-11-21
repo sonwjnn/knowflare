@@ -1,5 +1,10 @@
 import { db } from '@/db/drizzle'
-import { categories, coupons, insertCouponsSchema } from '@/db/schema'
+import {
+  CouponType,
+  categories,
+  coupons,
+  insertCouponsSchema,
+} from '@/db/schema'
 import { verifyAuth } from '@hono/auth-js'
 import { zValidator } from '@hono/zod-validator'
 import { eq, inArray } from 'drizzle-orm'
@@ -52,6 +57,7 @@ const app = new Hono()
       return c.json({ data })
     }
   )
+
   .post(
     '/',
     verifyAuth(),
@@ -61,6 +67,7 @@ const app = new Hono()
         categoryId: z.string(),
         discountAmount: z.number(),
         expires: z.string(),
+        type: z.string(),
       })
     ),
     async c => {
@@ -72,6 +79,7 @@ const app = new Hono()
 
       const [data] = await db.insert(coupons).values({
         ...values,
+        type: values.type as CouponType,
         expires: new Date(values.expires),
         isActive: true,
         code: uuidv4(),

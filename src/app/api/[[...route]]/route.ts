@@ -16,6 +16,7 @@ import carts from './carts'
 import categories from './categories'
 import chapters from './chapters'
 import comments from './comments'
+import coupons from './coupons'
 import courses from './courses'
 import lessons from './lessons'
 import purchases from './purchases'
@@ -53,6 +54,7 @@ const routes = app
   .route('/comments', comments)
   .route('/subscriptions', subscriptions)
   .route('/lessons', lessons)
+  .route('/coupons', coupons)
   .route('/admin/courses', adminCourses)
   .route('/admin/chapters', adminChapters)
   .route('/admin/lessons', adminLessons)

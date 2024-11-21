@@ -452,6 +452,13 @@ export const comments = mysqlTable('comment', {
 
 export const insertCommentsSchema = createInsertSchema(comments)
 
+export enum CouponType {
+  PRIVATE = 'private',
+  PUBLIC = 'public',
+}
+
+export const couponTypeEnum = mysqlEnum('type', enumToPgEnum(CouponType))
+
 export const coupons = mysqlTable('coupon', {
   id: varchar('id', { length: 255 })
     .primaryKey()
@@ -465,6 +472,7 @@ export const coupons = mysqlTable('coupon', {
   code: varchar('code', { length: 255 }).notNull().unique(),
   discountAmount: int('discount_amount').notNull(),
   expires: timestamp('expires', { mode: 'date' }),
+  type: couponTypeEnum.default(CouponType.PUBLIC).notNull(),
   isActive: boolean('is_active').default(true).notNull(),
 })
 

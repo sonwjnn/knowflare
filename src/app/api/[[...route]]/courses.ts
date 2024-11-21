@@ -4,7 +4,15 @@ import {
   getFiveTopCoursesLastThreeWeek,
   getTenLatestCourses,
 } from '@/db/queries'
-import { categories, chapters, courses, purchases, users } from '@/db/schema'
+import {
+  CouponType,
+  categories,
+  chapters,
+  coupons,
+  courses,
+  purchases,
+  users,
+} from '@/db/schema'
 import { verifyAuth } from '@hono/auth-js'
 import { zValidator } from '@hono/zod-validator'
 import { count, desc, eq, sql } from 'drizzle-orm'
@@ -50,15 +58,22 @@ const app = new Hono()
     '/:id',
     verifyAuth(),
     zValidator('param', z.object({ id: z.string() })),
+    zValidator(
+      'query',
+      z.object({
+        couponId: z.string().optional(),
+      })
+    ),
     async c => {
       const auth = c.get('authUser')
       const { id } = c.req.valid('param')
+      const { couponId } = c.req.valid('query')
 
       if (!auth.token?.id) {
         return c.json({ error: 'Unauthorized' }, 401)
       }
 
-      const [data] = await db
+      const [course] = await db
         .select({
           id: courses.id,
           price: courses.price,
@@ -79,18 +94,64 @@ const app = new Hono()
         .innerJoin(users, eq(users.id, courses.userId))
         .where(eq(courses.id, id))
 
-      if (!data) {
+      if (!course) {
         return c.json({ error: 'Not found' }, 404)
       }
+
+      let selectedCoupon = null
+
+      // Tìm couponId được truyền hoặc mã tốt nhất nếu không có couponId
+      if (couponId) {
+        ;[selectedCoupon] = await db
+          .select({
+            id: coupons.id,
+            discountAmount: coupons.discountAmount,
+            expires: coupons.expires,
+            code: coupons.code,
+          })
+          .from(coupons)
+          .where(eq(coupons.id, couponId))
+          .limit(1)
+
+        if (!selectedCoupon) {
+          return c.json({ error: 'Coupon not found' }, 404)
+        }
+      } else {
+        ;[selectedCoupon] = await db
+          .select({
+            id: coupons.id,
+            discountAmount: coupons.discountAmount,
+            expires: coupons.expires,
+            code: coupons.code,
+          })
+          .from(coupons)
+          .where(
+            sql`${coupons.categoryId} = ${course.categoryId} 
+                 AND ${coupons.type} = ${CouponType.PUBLIC}
+                 AND ${coupons.isActive} = true 
+                 AND (${coupons.expires} IS NULL OR ${coupons.expires} > CURRENT_TIMESTAMP)`
+          )
+          .orderBy(desc(coupons.discountAmount))
+          .limit(1)
+      }
+
+      const discountPrice = selectedCoupon
+        ? course.price - (course.price * selectedCoupon.discountAmount) / 100
+        : course.price
 
       const chaptersData = await db
         .select()
         .from(chapters)
-        .where(eq(chapters.courseId, data.id))
+        .where(eq(chapters.courseId, course.id))
 
       return c.json({
         data: {
-          ...data,
+          ...course,
+          couponId: selectedCoupon?.id ?? null,
+          discountAmount: selectedCoupon?.discountAmount ?? null,
+          discountPrice,
+          discountExpires: selectedCoupon?.expires ?? null,
+          discountCode: selectedCoupon?.code ?? null,
           chapters: chaptersData,
         },
       })

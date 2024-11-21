@@ -170,6 +170,8 @@ export const List = () => {
         {sortedCourses.map(item => {
           const isInWishlist = !!wishlists?.find(w => w.courseId === item.id)
           const isInCart = !!carts?.find(w => w.courseId === item.id)
+          const isDiscounted =
+            !!item.discountPrice && item.discountPrice !== item.price
 
           return (
             <Item
@@ -179,6 +181,8 @@ export const List = () => {
               description={item.description}
               imageUrl={item.imageUrl}
               price={item.price}
+              discountPrice={isDiscounted ? +item.discountPrice : null}
+              couponId={isDiscounted ? item.couponId : null}
               author={item.author.name!}
               totalChapters={item.totalChapters}
               rating={item.avgRating}

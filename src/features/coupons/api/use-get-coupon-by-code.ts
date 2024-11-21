@@ -3,32 +3,23 @@ import { useQuery } from '@tanstack/react-query'
 import { InferResponseType } from 'hono'
 
 export type ResponseType = InferResponseType<
-  (typeof client.api.courses)[':id']['$get'],
+  (typeof client.api.coupons)['by-code'][':code']['$get'],
   200
 >
 
-export const useGetCourse = ({
-  id,
-  couponId,
-}: {
-  id: string
-  couponId?: string
-}) => {
+export const useGetCouponByCode = (code?: string) => {
   const query = useQuery({
-    enabled: !!id,
-    queryKey: ['course', { id, couponId }],
+    enabled: !!code,
+    queryKey: ['coupon', { code }],
     queryFn: async () => {
-      const response = await client.api.courses[':id'].$get({
+      const response = await client.api.coupons['by-code'][':code'].$get({
         param: {
-          id,
-        },
-        query: {
-          couponId,
+          code,
         },
       })
 
       if (!response.ok) {
-        throw new Error('Failed to fetch course')
+        throw new Error('Failed to fetch coupon')
       }
 
       const { data } = await response.json()

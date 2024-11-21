@@ -1,16 +1,22 @@
 'use client'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
+import { useGetCoupon } from '@/features/coupons/api/use-get-coupon'
+import { useGetCouponByCategoryId } from '@/features/coupons/api/use-get-coupon-by-category-id'
 import { useGetCourse } from '@/features/courses/api/use-get-course'
 import { useGetCurrentPurchase } from '@/features/purchases/api/use-get-current-purchases'
-import { useGetReviews } from '@/features/reviews/api/use-get-reviews'
 import { useCourseId } from '@/hooks/use-course-id'
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import { Check, Clock, Loader2, Play, Star, Users } from 'lucide-react'
 import Link from 'next/link'
-import { useCallback } from 'react'
+import {
+  notFound,
+  useParams,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation'
+import { useEffect } from 'react'
 
 import { Chapters } from './chapters'
 import { Reviews } from './reviews'
@@ -32,23 +38,26 @@ const courseObjectives = [
 ]
 
 export default function CourseDetail() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const couponId = searchParams.get('couponId') || ''
   const courseId = useCourseId()
-  const { data: course, isPending: courseLoading } = useGetCourse(courseId)
+  const { data: course, isPending: courseLoading } = useGetCourse({
+    id: courseId,
+    couponId,
+  })
 
-  const { data: reviews, isPending: reviewsLoading } = useGetReviews(courseId)
   const { data: currentPurchase, isPending: currentPurchaseLoading } =
     useGetCurrentPurchase(courseId)
 
-  const courseDetails = {
-    title: course?.title,
-    instructor: course?.user?.name,
-    rating: course?.avgRating || 0,
-    students: 12345,
-    lastUpdated: course?.date,
-    description: course?.description,
-    price: course?.price,
-    image: course?.imageUrl,
-  }
+  // const { data: coupon, isPending: couponLoading } = useGetCoupon(couponId)
+
+  useEffect(() => {
+    if (!course) return
+    if (!course.couponId) return
+
+    router.replace(`/courses/${course.id}?couponId=${course.couponId}`)
+  }, [course, router])
 
   if (courseLoading) {
     return (
@@ -57,6 +66,13 @@ export default function CourseDetail() {
       </div>
     )
   }
+
+  if (!course) {
+    return notFound()
+  }
+
+  const isDiscounted =
+    course.discountPrice ?? course.price !== course.discountPrice
 
   return (
     <div className="min-h-screen bg-[#F4F7FE]">
@@ -83,7 +99,7 @@ export default function CourseDetail() {
               Courses
             </Link>
             <span>/</span>
-            <span className="text-gray-400">{courseDetails.title}</span>
+            <span className="text-gray-400">{course.title}</span>
           </div>
 
           <div className="flex flex-col gap-16 lg:flex-row lg:items-start">
@@ -99,11 +115,11 @@ export default function CourseDetail() {
                 </div>
 
                 <h1 className="text-4xl font-bold tracking-tight text-gray-900 md:text-5xl">
-                  {courseDetails.title}
+                  {course.title}
                 </h1>
 
                 <p className="text-xl leading-relaxed text-gray-600">
-                  {courseDetails.description}
+                  {course.description}
                 </p>
               </div>
 
@@ -119,7 +135,7 @@ export default function CourseDetail() {
                           key={i}
                           className={cn(
                             'size-5',
-                            i < Math.floor(courseDetails.rating)
+                            i < Math.floor(course.avgRating ?? 0)
                               ? 'fill-amber-400 text-amber-400'
                               : 'fill-gray-200 text-gray-200'
                           )}
@@ -127,7 +143,7 @@ export default function CourseDetail() {
                       ))}
                     </div>
                     <span className="text-2xl font-bold text-gray-900">
-                      {courseDetails.rating.toFixed(1)}
+                      {course.avgRating.toFixed(1)}
                     </span>
                   </div>
                 </div>
@@ -139,7 +155,8 @@ export default function CourseDetail() {
                   <div className="flex items-center gap-3">
                     <Users className="size-6 text-blue-600" />
                     <span className="text-2xl font-bold text-gray-900">
-                      {courseDetails.students.toLocaleString()}
+                      {/* {course.students.toLocaleString()} */}
+                      1234
                     </span>
                   </div>
                 </div>
@@ -151,10 +168,7 @@ export default function CourseDetail() {
                   <div className="flex items-center gap-3">
                     <Clock className="size-6 text-green-600" />
                     <span className="text-lg font-medium text-gray-900">
-                      {format(
-                        new Date(courseDetails.lastUpdated!),
-                        DATE_FORMAT
-                      )}
+                      {format(new Date(course.date), DATE_FORMAT)}
                     </span>
                   </div>
                 </div>
@@ -172,15 +186,13 @@ export default function CourseDetail() {
                     <Avatar className="size-20 border-4 border-white shadow-md">
                       <AvatarImage
                         src="/placeholder.svg"
-                        alt={courseDetails.instructor!}
+                        alt={course.user.name!}
                       />
-                      <AvatarFallback>
-                        {courseDetails.instructor?.[0]}
-                      </AvatarFallback>
+                      <AvatarFallback>{course.user.name?.[0]}</AvatarFallback>
                     </Avatar>
                     <div className="space-y-2">
                       <h4 className="text-xl font-semibold text-gray-900">
-                        {courseDetails.instructor}
+                        {course.user.name}
                       </h4>
                       <p className="text-gray-600">
                         Professional Developer & Instructor
@@ -218,10 +230,14 @@ export default function CourseDetail() {
 
             {/* Right Column */}
             <Sidebar
-              imageUrl={courseDetails.image}
-              title={courseDetails.title}
-              price={courseDetails.price}
+              imageUrl={course.imageUrl}
+              title={course.title}
+              price={course.price}
               isPurchased={!!currentPurchase}
+              discountPrice={isDiscounted ? course.discountPrice : null}
+              discountExpires={isDiscounted ? course.discountExpires : null}
+              discountAmount={course.discountAmount}
+              discountCode={course.discountCode}
             />
           </div>
         </div>

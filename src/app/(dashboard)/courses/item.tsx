@@ -18,6 +18,8 @@ type Props = {
   imageUrl: string | null
   description: string | null
   price: number
+  discountPrice?: number | null
+  couponId?: string | null
   rating: number
   totalChapters: number
   isInWishlist: boolean
@@ -32,6 +34,8 @@ export const Item = ({
   imageUrl,
   description,
   price,
+  discountPrice,
+  couponId,
   totalChapters,
   rating,
   isInWishlist,
@@ -50,8 +54,13 @@ export const Item = ({
     setTimeout(() => setIsAnimating(false), 1000)
   }
 
+  const hasDiscount = !!discountPrice
+  const href = couponId
+    ? `/courses/${id}?couponId=${couponId}`
+    : `/courses/${id}`
+
   return (
-    <Link key={id} href={`/courses/${id}`}>
+    <Link key={id} href={href}>
       <Card className="group relative h-full overflow-hidden rounded-3xl border-0 bg-gradient-to-br from-white/80 to-white/60 backdrop-blur-lg transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.15)]">
         {/* Image Course section - Redesigned */}
         <div className="relative overflow-hidden">
@@ -72,9 +81,30 @@ export const Item = ({
             <div className="absolute left-4 top-4 overflow-hidden rounded-2xl bg-white/95 shadow-lg backdrop-blur-md">
               <div className="relative px-4 py-2">
                 <div className="absolute inset-0 bg-gradient-to-r from-violet-600/20 to-indigo-600/20 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                <span className="relative z-10 text-base font-bold text-gray-900">
-                  ${price.toFixed(2)}
-                </span>
+
+                {!hasDiscount && (
+                  <span className="relative z-10 text-base font-semibold">
+                    ${price.toFixed(2)}
+                  </span>
+                )}
+
+                {hasDiscount && discountPrice && (
+                  <>
+                    <span className="relative z-10 text-base text-gray-500 line-through">
+                      ${price.toFixed(2)}
+                    </span>
+
+                    <span className="relative z-10 ml-2 text-lg font-bold text-violet-600">
+                      ${discountPrice.toFixed(2)}
+                    </span>
+
+                    {/* {discountPrice > 0 && (
+                      <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white shadow-md">
+                        -{Math.round((discountAmount / price) * 100)}%
+                      </span>
+                    )} */}
+                  </>
+                )}
               </div>
             </div>
           )}

@@ -15,19 +15,35 @@ import {
   FileText,
   Play,
   ShoppingCart,
+  TvMinimalPlay,
 } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { GoHeartFill } from 'react-icons/go'
 
+import { CouponInput } from './coupon-input'
+
 type Props = {
   imageUrl: string | undefined | null
   title: string | undefined
   price: number | undefined
+  discountAmount: number | null
+  discountPrice: number | null
+  discountExpires: string | null
+  discountCode: string | null
   isPurchased: boolean
 }
 
-export const Sidebar = ({ imageUrl, title, price, isPurchased }: Props) => {
+export const Sidebar = ({
+  imageUrl,
+  title,
+  price,
+  isPurchased,
+  discountPrice,
+  discountCode,
+  discountExpires,
+  discountAmount,
+}: Props) => {
   const router = useRouter()
 
   const courseId = useCourseId()
@@ -67,6 +83,21 @@ export const Sidebar = ({ imageUrl, title, price, isPurchased }: Props) => {
 
     router.push('/cart')
   }
+
+  const timeRemaining = () => {
+    if (!discountExpires) return null
+
+    const now = new Date()
+    const expiresDate = new Date(discountExpires)
+    const diffTime = expiresDate.getTime() - now.getTime()
+    const diffDays = Math.ceil(diffTime / (1000 * 3600 * 24)) // Tính số ngày còn lại
+
+    return diffDays > 0
+      ? `${diffDays} day${diffDays > 1 ? 's' : ''}`
+      : 'Sale ended'
+  }
+
+  const hasDiscount = !!price && !!discountPrice && discountPrice < price
   return (
     <div className="lg:w-[300px]">
       <div className="sticky top-24 space-y-4">
@@ -91,16 +122,32 @@ export const Sidebar = ({ imageUrl, title, price, isPurchased }: Props) => {
           <div className="space-y-6 p-6">
             <div className="space-y-2">
               <div className="flex items-baseline justify-between">
-                <div className="text-4xl font-bold text-gray-900">${price}</div>
-                <div className="text-sm text-gray-500">
-                  <s>${((price ?? 0) * 1.7).toFixed(2)}</s>
-                  <span className="ml-2 text-green-600">70% off</span>
+                {hasDiscount && (
+                  <>
+                    <div className="text-4xl font-bold text-gray-900">
+                      ${discountPrice.toFixed(2)}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      <s>${price.toFixed(2)}</s>
+                      <span className="ml-2 text-green-600">
+                        {discountAmount}% off
+                      </span>
+                    </div>
+                  </>
+                )}
+
+                {!hasDiscount && (
+                  <div className="text-4xl font-bold text-gray-900">
+                    ${price}
+                  </div>
+                )}
+              </div>
+              {hasDiscount && (
+                <div className="flex items-center gap-2 text-sm text-red-600">
+                  <Clock className="size-4" />
+                  <span>Sale ends in {timeRemaining()}</span>
                 </div>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-red-600">
-                <Clock className="size-4" />
-                <span>Sale ends in 2 days</span>
-              </div>
+              )}
             </div>
             {isPurchased && (
               <Button
@@ -215,16 +262,18 @@ export const Sidebar = ({ imageUrl, title, price, isPurchased }: Props) => {
             {!isPurchased && (
               <div>
                 <Button
-                  variant="outline"
+                  variant="success"
                   size="lg"
                   onClick={() => router.push(`/courses/${courseId}/learn`)}
-                  className="w-full"
+                  className="w-full rounded-md"
                 >
+                  <TvMinimalPlay className="mr-1 size-5" />
                   Try learn now
-                  <ChevronsRight className="ml-1 size-5" />
                 </Button>
               </div>
             )}
+
+            <CouponInput code={discountCode} />
           </div>
         </div>
       </div>

@@ -23,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { CouponType } from '@/db/schema'
 import { useCreateCoupon } from '@/features/admin/coupons/api/use-create-coupon'
 import { useGetCategories } from '@/features/categories/api/use-get-categories'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -30,7 +31,6 @@ import { format } from 'date-fns'
 import { CalendarIcon, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 
@@ -42,6 +42,9 @@ const formSchema = z.object({
   expires: z
     .date()
     .min(new Date(), { message: 'Expiration date must be in the future' }),
+  type: z.enum(['public', 'private'], {
+    required_error: 'Coupon type is required',
+  }),
 })
 
 type FormValues = z.infer<typeof formSchema>
@@ -58,6 +61,7 @@ export const CreateCouponForm = () => {
       categoryId: '',
       discountAmount: 0,
       expires: new Date(),
+      type: CouponType.PUBLIC,
     },
   })
 
@@ -123,6 +127,31 @@ export const CreateCouponForm = () => {
                   onChange={e => field.onChange(parseFloat(e.target.value))}
                 />
               </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="type"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Coupon Type</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a type" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {Object.values(CouponType).map(type => (
+                    <SelectItem key={type} value={type} className="capitalize">
+                      {type.toLowerCase()}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}

@@ -6,16 +6,20 @@ import {
   eq,
   gte,
   inArray,
+  isNull,
   like,
   lte,
+  or,
   sql,
 } from 'drizzle-orm'
 
 import { db } from './drizzle'
 import {
+  CouponType,
   CourseLevel,
   categories,
   chapters,
+  coupons,
   courses,
   lessons,
   passwordResetTokens,
@@ -189,11 +193,29 @@ export const getCourses = async ({
           AND purchases.user_id = ${userId}
         )
       `,
+
+      couponId: coupons.id,
+      discountAmount: coupons.discountAmount,
+      discountPrice: sql<number>`(course.price - 
+      (course.price * coupon.discount_amount / 100)
+    )`,
     })
     .from(courses)
     .innerJoin(categories, eq(categories.id, courses.categoryId))
     .innerJoin(users, eq(users.id, courses.userId))
     .leftJoin(chapters, eq(chapters.courseId, courses.id))
+    .leftJoin(
+      coupons,
+      and(
+        eq(coupons.categoryId, courses.categoryId),
+        eq(coupons.isActive, true),
+        eq(coupons.type, CouponType.PUBLIC),
+        or(
+          isNull(coupons.expires),
+          gte(coupons.expires, sql`CURRENT_TIMESTAMP`)
+        )
+      )
+    )
     .where(
       and(
         eq(courses.isPublished, true),
