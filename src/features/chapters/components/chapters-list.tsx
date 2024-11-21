@@ -1,7 +1,7 @@
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
 } from '@/components/ui/collapsible'
 import { Progress } from '@/components/ui/progress'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -10,118 +10,206 @@ import { useGetCurrentPurchase } from '@/features/purchases/api/use-get-current-
 import { useCourseId } from '@/hooks/use-course-id'
 import { useLessonId } from '@/hooks/use-lesson-id'
 import { cn } from '@/lib/utils'
-import { ChevronUp } from 'lucide-react'
+import { ChevronUp, Clock, BookOpen, Lock, CheckCircle, PlayCircle, Video, FileText } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 import { LessonItem } from './lesson-item'
 
 export const ChaptersList = () => {
-  const courseId = useCourseId()
-  const lessonId = useLessonId()
+    const courseId = useCourseId()
+    const lessonId = useLessonId()
 
-  const { data: chapters, isPending: chaptersLoading } =
-    useGetChapters(courseId)
+    const { data: chapters, isPending: chaptersLoading } =
+        useGetChapters(courseId)
 
-  const { data: purchase, isPending: purchaseLoading } =
-    useGetCurrentPurchase(courseId)
+    const { data: purchase, isPending: purchaseLoading } =
+        useGetCurrentPurchase(courseId)
 
-  const [expandedChapters, setExpandedChapters] = useState<string[]>([])
+    const [expandedChapters, setExpandedChapters] = useState<string[]>([])
 
-  const toggleChapter = (chapterId: string) => {
-    setExpandedChapters(prev =>
-      prev.includes(chapterId)
-        ? prev.filter(id => id !== chapterId)
-        : [...prev, chapterId]
-    )
-  }
-  useEffect(() => {
-    if (lessonId && chapters) {
-      const activeChapter = chapters.find(chapter =>
-        chapter.lessons.some(lesson => lesson.id === lessonId)
-      )
-      if (activeChapter && !expandedChapters.includes(activeChapter.id)) {
-        toggleChapter(activeChapter.id)
-      }
+    const toggleChapter = (chapterId: string) => {
+        setExpandedChapters(prev =>
+            prev.includes(chapterId)
+                ? prev.filter(id => id !== chapterId)
+                : [...prev, chapterId]
+        )
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chapters])
+    useEffect(() => {
+        if (lessonId && chapters) {
+            const activeChapter = chapters.find(chapter =>
+                chapter.lessons.some(lesson => lesson.id === lessonId)
+            )
+            if (activeChapter && !expandedChapters.includes(activeChapter.id)) {
+                toggleChapter(activeChapter.id)
+            }
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [chapters])
 
-  if (!chapters) return null
+    if (!chapters) return null
 
-  const totalLessons = chapters.reduce(
-    (total, chapter) => total + chapter.lessons.length,
-    0
-  )
-  const completedLessons = chapters.reduce(
-    (completed, chapter) =>
-      completed + chapter.lessons.filter(lesson => lesson.isCompleted).length,
-    0
-  )
+    const totalLessons = chapters.reduce(
+        (total, chapter) => total + chapter.lessons.length,
+        0
+    )
+    const completedLessons = chapters.reduce(
+        (completed, chapter) =>
+            completed + chapter.lessons.filter(lesson => lesson.isCompleted).length,
+        0
+    )
 
-  const calculateProgress =
-    totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0
+    const calculateProgress =
+        totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0
 
-  return (
-    <div className="flex h-full flex-col">
-      <div className="border-b border-gray-200 p-4">
-        <h2 className="text-lg font-semibold">Course Content</h2>
-        <div className="mt-2 flex items-center">
-          <Progress value={calculateProgress} className="mr-2 flex-1" />
-          <span className="whitespace-nowrap text-sm text-gray-600">
-            {completedLessons}/{totalLessons}
-          </span>
+    return (
+        <div className="flex h-full flex-col bg-white">
+            <div className="bg-slate-50/80 px-6 py-5 border-b border-slate-200">
+                <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-xl font-bold text-slate-800">
+                        Course Content
+                    </h2>
+                    <div className="bg-slate-100 px-3 py-1 rounded-full">
+                        <span className="text-sm font-medium text-slate-600">
+                            {chapters.length} sections • {totalLessons} lectures
+                        </span>
+                    </div>
+                </div>
+
+                <div className="bg-white p-3 rounded-lg border border-slate-200">
+                    <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
+                                <Clock className="w-4 h-4 text-indigo-600" />
+                            </div>
+                            <span className="font-medium text-slate-700">Course Progress</span>
+                        </div>
+                        <span className="text-lg font-bold text-indigo-600">
+                            {Math.round(calculateProgress)}%
+                        </span>
+                    </div>
+                    <Progress
+                        value={calculateProgress}
+                        className="h-2 bg-slate-100"
+                        indicatorClassName="bg-indigo-600"
+                    />
+                    <div className="mt-2 text-sm text-slate-500 text-right">
+                        {completedLessons} of {totalLessons} lessons completed
+                    </div>
+                </div>
+            </div>
+
+            <ScrollArea className="flex-1">
+                <div className="divide-y divide-slate-200">
+                    {chapters?.map((chapter, chapterIndex) => (
+                        <Collapsible
+                            key={chapter.id}
+                            open={expandedChapters.includes(chapter.id)}
+                            onOpenChange={() => toggleChapter(chapter.id)}
+                            className="bg-white"
+                        >
+                            <CollapsibleTrigger
+                                className={cn(
+                                    'w-full text-left px-6 py-4',
+                                    'hover:bg-slate-50/80 transition-all duration-200',
+                                    'border-l-2 border-transparent',
+                                    chapter.lessons.some(lesson => lesson.id === lessonId) &&
+                                    'border-l-2 border-indigo-500 bg-slate-50/80',
+                                    'focus:outline-none'
+                                )}
+                            >
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-4">
+                                        <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 font-medium">
+                                            {chapterIndex + 1}
+                                        </div>
+                                        <div>
+                                            <h3 className="font-semibold text-slate-800">{chapter.title}</h3>
+                                            <p className="text-sm text-slate-500 mt-0.5">
+                                                {chapter.lessons.length} lectures • {chapter.lessons.filter(l => l.isCompleted).length} completed
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <ChevronUp
+                                        className={cn(
+                                            'w-5 h-5 text-slate-400 transition-transform duration-200',
+                                            !expandedChapters.includes(chapter.id) && 'rotate-180'
+                                        )}
+                                    />
+                                </div>
+                            </CollapsibleTrigger>
+
+                            <CollapsibleContent>
+                                <div className="border-t border-slate-200 bg-slate-50/50">
+                                    {chapter.lessons.map((lesson, lessonIndex) => (
+                                        <div
+                                            key={lesson.id}
+                                            className={cn(
+                                                'flex items-center px-6 py-3',
+                                                'transition-colors duration-200',
+                                                'border-l-2 border-transparent',
+                                                lesson.id === lessonId && [
+                                                    'border-l-2 border-indigo-500',
+                                                    'bg-white'
+                                                ],
+                                                lessonIndex !== chapter.lessons.length - 1 && 'border-b border-slate-100'
+                                            )}
+                                        >
+                                            <div className="flex items-center gap-4 flex-1 min-w-0">
+                                                <div className="flex-shrink-0">
+                                                    {lesson.isCompleted ? (
+                                                        <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center">
+                                                            <CheckCircle className="w-4 h-4 text-green-600" />
+                                                        </div>
+                                                    ) : !purchase && !lesson.isFree ? (
+                                                        <div className="w-6 h-6 rounded-full bg-orange-100 flex items-center justify-center">
+                                                            <Lock className="w-4 h-4 text-orange-500" />
+                                                        </div>
+                                                    ) : (
+                                                        <div className="w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center">
+                                                            {lesson.lessonType === 'video' ? (
+                                                                <Video className="w-4 h-4 text-indigo-600" />
+                                                            ) : (
+                                                                <FileText className="w-4 h-4 text-indigo-600" />
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="flex items-center gap-2 mb-0.5">
+                                                        <span className="text-xs font-medium text-slate-500">
+                                                            Lesson {lessonIndex + 1}
+                                                        </span>
+                                                        {!purchase && !lesson.isFree && (
+                                                            <span className="inline-flex items-center px-1.5 py-0.5 rounded-sm text-xs font-medium bg-orange-100 text-orange-600">
+                                                                Premium
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <LessonItem
+                                                        id={lesson.id}
+                                                        title={lesson.title}
+                                                        lessonType={lesson.lessonType}
+                                                        isActive={lesson.id === lessonId}
+                                                        isCompleted={!!lesson.isCompleted}
+                                                        isLocked={!purchase && !lesson.isFree}
+                                                    />
+                                                </div>
+
+                                                <div className="flex-shrink-0 ml-4">
+                                                    <span className="text-xs text-slate-400">
+                                                        {lesson.lessonType === 'video' ? '10:00' : '5 min read'}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </CollapsibleContent>
+                        </Collapsible>
+                    ))}
+                </div>
+            </ScrollArea>
         </div>
-      </div>
-      <ScrollArea className="h-[calc(100vh-10rem)]">
-        <div>
-          {chapters?.map((chapter, chapterIndex) => (
-            <Collapsible
-              key={chapter.id}
-              open={expandedChapters.includes(chapter.id)}
-              onOpenChange={() => toggleChapter(chapter.id)}
-            >
-              <CollapsibleTrigger
-                className={cn(
-                  'flex w-full items-center justify-between rounded-none px-4 py-2 hover:bg-accent hover:text-accent-foreground',
-                  chapter.lessons.some(lesson => lesson.id === lessonId) &&
-                    'bg-accent text-accent-foreground'
-                )}
-              >
-                <span className="line-clamp-1 text-left font-medium">
-                  {chapterIndex + 1}. {chapter.title}
-                </span>
-                {chapter.lessons.length !== 0 ? (
-                  <ChevronUp
-                    className={cn(
-                      'size-8 transition',
-                      !expandedChapters.includes(chapter.id) && 'rotate-180'
-                    )}
-                  />
-                ) : (
-                  <div className="size-8" />
-                )}
-              </CollapsibleTrigger>
-              <CollapsibleContent
-                className={cn(
-                  'outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2'
-                )}
-              >
-                {chapter.lessons.map(lesson => (
-                  <LessonItem
-                    key={lesson.id}
-                    id={lesson.id}
-                    title={lesson.title}
-                    lessonType={lesson.lessonType}
-                    isActive={lesson.id === lessonId}
-                    isCompleted={!!lesson.isCompleted}
-                    isLocked={!purchase && !lesson.isFree}
-                  />
-                ))}
-              </CollapsibleContent>
-            </Collapsible>
-          ))}
-        </div>
-      </ScrollArea>
-    </div>
-  )
+    )
 }
