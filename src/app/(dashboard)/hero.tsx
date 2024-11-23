@@ -39,20 +39,26 @@ export const Hero = () => {
 
                     <Link
                         href={`${currentUser ? '/courses' : '/sign-up'}`}
-                        className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-[2px] text-lg font-semibold text-white transition-all duration-300 hover:scale-105"
+                        className="group inline-flex items-center px-8 py-4 text-lg font-semibold 
+                        text-white border-2 border-white/20 rounded-lg 
+                        backdrop-blur-sm bg-white/10
+                        transition-all duration-300
+                        hover:bg-white/20 hover:border-white/30 transform hover:-translate-y-1
+                        hover:shadow-[0_10px_40px_-10px_rgba(255,255,255,0.2)]
+                        active:bg-white/30"
                     >
-                        <span className="relative flex items-center gap-2 rounded-full bg-transparent px-8 py-4 transition-all duration-300 group-hover:bg-opacity-0">
+                        <span className="flex items-center gap-2">
                             Get Started Now
-                            <svg
-                                className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1"
-                                fill="none"
-                                stroke="currentColor"
+                            <svg 
+                                className="w-5 h-5 transform transition-transform duration-300 group-hover:translate-x-1" 
+                                fill="none" 
+                                stroke="currentColor" 
                                 viewBox="0 0 24 24"
                             >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
+                                <path 
+                                    strokeLinecap="round" 
+                                    strokeLinejoin="round" 
+                                    strokeWidth="2" 
                                     d="M14 5l7 7m0 0l-7 7m7-7H3"
                                 />
                             </svg>
