@@ -5,9 +5,9 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  DropdownMenuLabel,
 } from '@/components/ui/dropdown-menu'
 import { useBilling } from '@/features/subscriptions/api/use-billing'
 import {
@@ -20,6 +20,7 @@ import {
   UserCircle,
 } from 'lucide-react'
 import { signOut, useSession } from 'next-auth/react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
 export const UserButton = () => {
@@ -38,7 +39,7 @@ export const UserButton = () => {
   if (session.status === 'unauthenticated' || !session.data) {
     return null
   }
-  
+
   const name = session.data?.user?.name || ''
   const email = session.data?.user?.email || ''
   const imageUrl = session.data?.user?.image || ''
@@ -48,7 +49,7 @@ export const UserButton = () => {
       <DropdownMenuTrigger className="outline-none">
         <Avatar className="size-10 cursor-pointer ring-2 ring-offset-2 ring-offset-background transition hover:ring-primary">
           <AvatarImage alt={name} src={imageUrl || ''} />
-          <AvatarFallback className="flex items-center justify-center bg-primary font-medium text-primary-foreground">
+          <AvatarFallback className="flex items-center justify-center bg-sky-500 font-medium text-white">
             {name.charAt(0).toUpperCase()}
           </AvatarFallback>
         </Avatar>
@@ -57,32 +58,37 @@ export const UserButton = () => {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">{name}</p>
-            <p className="text-xs leading-none text-muted-foreground">{email}</p>
+            <p className="text-xs leading-none text-muted-foreground">
+              {email}
+            </p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <div className="space-y-1">
-          <DropdownMenuItem
-            className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent"
-            onClick={() => router.push(`/my-profile`)}
-          >
-            <UserCircle className="size-4" />
-            My Profile
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent"
-            onClick={() => router.push(`/my-courses`)}
-          >
-            <TvMinimalPlay className="size-4" />
-            My Courses
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent"
-            onClick={() => router.push(`/wishlist`)}
-          >
-            <BookHeart className="size-4" />
-            Wishlist
-          </DropdownMenuItem>
+          <Link href="/my-profile">
+            <DropdownMenuItem className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent">
+              <UserCircle className="size-4" />
+              My Profile
+            </DropdownMenuItem>
+          </Link>
+          <Link href="/my-courses">
+            <DropdownMenuItem
+              className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent"
+              onClick={() => router.push(`/my-courses`)}
+            >
+              <TvMinimalPlay className="size-4" />
+              My Courses
+            </DropdownMenuItem>
+          </Link>
+          <Link href="/wishlist">
+            <DropdownMenuItem
+              className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent"
+              onClick={() => router.push(`/wishlist`)}
+            >
+              <BookHeart className="size-4" />
+              Wishlist
+            </DropdownMenuItem>
+          </Link>
         </div>
         <DropdownMenuSeparator />
         <div className="space-y-1">

@@ -27,7 +27,7 @@ const app = new Hono()
       const [data] = await db.select().from(coupons).where(eq(coupons.id, id))
 
       if (!data) {
-        return c.json({ error: 'data not found' }, 404)
+        return c.json({ error: 'data not found' }, 401)
       }
 
       return c.json({ data })
@@ -59,24 +59,40 @@ const app = new Hono()
       return c.json({ data })
     }
   )
-  .get(
-    '/by-code/:code',
+  .post(
+    '/by-code',
+    verifyAuth(),
     zValidator(
-      'param',
+      'json',
       z.object({
         code: z.string(),
+        categoryId: z.string(),
       })
     ),
     async c => {
-      const { code } = c.req.valid('param')
+      const auth = c.get('authUser')
+      if (!auth.token?.id) {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
+      const { code, categoryId } = c.req.valid('json')
+
+      const [existingCategory] = await db
+        .select()
+        .from(categories)
+        .where(eq(categories.id, categoryId))
+
+      if (!existingCategory) {
+        return c.json({ error: 'category not found' }, 401)
+      }
 
       const [data] = await db
         .select()
         .from(coupons)
-        .where(eq(coupons.code, code))
+        .where(and(eq(coupons.code, code), eq(coupons.categoryId, categoryId)))
 
       if (!data) {
-        return c.json({ error: 'data not found' }, 404)
+        return c.json({ error: 'data not found' }, 401)
       }
 
       return c.json({ data })

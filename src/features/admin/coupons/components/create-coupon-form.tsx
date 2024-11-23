@@ -117,7 +117,7 @@ export const CreateCouponForm = () => {
           name="discountAmount"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Discount Amount (USD)</FormLabel>
+              <FormLabel>Discount Amount (%)</FormLabel>
               <FormControl>
                 <Input
                   type="number"

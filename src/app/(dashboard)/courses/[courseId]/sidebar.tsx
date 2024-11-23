@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button'
+import { useCouponId } from '@/features/admin/coupons/hooks/use-coupon-id'
 import { useCreateCart } from '@/features/carts/api/use-create-cart'
 import { useGetCartByCourseId } from '@/features/carts/api/use-get-cart-by-course-id'
 import { useGetCurrentPurchase } from '@/features/purchases/api/use-get-current-purchases'
@@ -32,6 +33,7 @@ type Props = {
   discountExpires: string | null
   discountCode: string | null
   isPurchased: boolean
+  categoryId: string
 }
 
 export const Sidebar = ({
@@ -43,9 +45,10 @@ export const Sidebar = ({
   discountCode,
   discountExpires,
   discountAmount,
+  categoryId,
 }: Props) => {
   const router = useRouter()
-
+  const couponId = useCouponId()
   const courseId = useCourseId()
   const { mutate: createCart, isPending: createCartLoading } = useCreateCart()
 
@@ -64,7 +67,7 @@ export const Sidebar = ({
     if (cart) {
       router.push('/cart')
     } else {
-      createCart({ courseId })
+      createCart({ courseId, couponId })
     }
   }
 
@@ -99,7 +102,7 @@ export const Sidebar = ({
 
   const hasDiscount = !!price && !!discountPrice && discountPrice < price
   return (
-    <div className="lg:w-[300px]">
+    <div className="lg:w-[350px]">
       <div className="sticky top-24 space-y-4">
         <div className="overflow-hidden rounded-2xl bg-white shadow-lg">
           <div className="relative aspect-video">
@@ -120,35 +123,37 @@ export const Sidebar = ({
           </div>
 
           <div className="space-y-6 p-6">
-            <div className="space-y-2">
-              <div className="flex items-baseline justify-between">
-                {hasDiscount && (
-                  <>
-                    <div className="text-4xl font-bold text-gray-900">
-                      ${discountPrice.toFixed(2)}
-                    </div>
-                    <div className="text-sm text-gray-500">
-                      <s>${price.toFixed(2)}</s>
-                      <span className="ml-2 text-green-600">
-                        {discountAmount}% off
-                      </span>
-                    </div>
-                  </>
-                )}
+            {!isPurchased && (
+              <div className="space-y-2">
+                <div className="flex items-baseline justify-between">
+                  {hasDiscount && (
+                    <>
+                      <div className="text-4xl font-bold text-gray-900">
+                        ${discountPrice.toFixed(2)}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        <s>${price.toFixed(2)}</s>
+                        <span className="ml-2 text-green-600">
+                          {discountAmount}% off
+                        </span>
+                      </div>
+                    </>
+                  )}
 
-                {!hasDiscount && (
-                  <div className="text-4xl font-bold text-gray-900">
-                    ${price}
+                  {!hasDiscount && (
+                    <div className="text-4xl font-bold text-gray-900">
+                      ${price}
+                    </div>
+                  )}
+                </div>
+                {hasDiscount && (
+                  <div className="flex items-center gap-2 text-sm text-red-600">
+                    <Clock className="size-4" />
+                    <span>Sale ends in {timeRemaining()}</span>
                   </div>
                 )}
               </div>
-              {hasDiscount && (
-                <div className="flex items-center gap-2 text-sm text-red-600">
-                  <Clock className="size-4" />
-                  <span>Sale ends in {timeRemaining()}</span>
-                </div>
-              )}
-            </div>
+            )}
             {isPurchased && (
               <Button
                 variant="success"
@@ -260,20 +265,21 @@ export const Sidebar = ({
             </div>
 
             {!isPurchased && (
-              <div>
-                <Button
-                  variant="success"
-                  size="lg"
-                  onClick={() => router.push(`/courses/${courseId}/learn`)}
-                  className="w-full rounded-md"
-                >
-                  <TvMinimalPlay className="mr-1 size-5" />
-                  Try learn now
-                </Button>
-              </div>
+              <>
+                <div>
+                  <Button
+                    variant="success"
+                    size="lg"
+                    onClick={() => router.push(`/courses/${courseId}/learn`)}
+                    className="w-full rounded-md"
+                  >
+                    <TvMinimalPlay className="mr-1 size-5" />
+                    Try learn now
+                  </Button>
+                </div>
+                <CouponInput code={discountCode} categoryId={categoryId} />
+              </>
             )}
-
-            <CouponInput code={discountCode} />
           </div>
         </div>
       </div>

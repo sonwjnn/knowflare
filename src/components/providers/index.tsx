@@ -8,6 +8,7 @@ import { JotaiProvider } from './jotai-provider'
 import { QueryProvider } from './query-provider'
 import { SheetProvider } from './sheet-provider'
 import { ToastProvider } from './toast-provider'
+import { TopLoaderProvider } from './top-loader-provider'
 
 interface ProvidersProps {
   children: React.ReactNode
@@ -23,6 +24,7 @@ export const Providers = ({ children }: ProvidersProps) => {
           enableSystem={false}
           storageKey="app-theme"
         >
+          <TopLoaderProvider />
           <SheetProvider />
           <ToastProvider />
           <Modals />

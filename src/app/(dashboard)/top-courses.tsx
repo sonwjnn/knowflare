@@ -139,14 +139,12 @@ export const TopCourses = () => {
                         </span>
                       </div>
                     )}
-                    {course.totalChapters && (
-                      <div className="flex items-center rounded-2xl bg-sky-500/10 px-4 py-2 text-sky-500">
-                        <BookOpen className="h-5 w-5 text-sky-700 transition-all duration-300 group-hover:text-sky-600" />
-                        <span className="ml-2 text-sm text-sky-700">
-                          {course.totalChapters} Lessons
-                        </span>
-                      </div>
-                    )}
+                    <div className="flex items-center rounded-2xl bg-sky-500/10 px-4 py-2 text-sky-500">
+                      <BookOpen className="h-5 w-5 text-sky-700 transition-all duration-300 group-hover:text-sky-600" />
+                      <span className="ml-2 text-sm text-sky-700">
+                        {course.totalChapters} Lessons
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>

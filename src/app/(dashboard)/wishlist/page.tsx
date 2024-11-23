@@ -11,15 +11,10 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { WishlistButton } from '@/components/wishlist-button'
-import { useCreateCart } from '@/features/carts/api/use-create-cart'
 import { useGetCarts } from '@/features/carts/api/use-get-carts'
 import { useAddAllToCart } from '@/features/wishlists/api/use-add-all-to-cart'
 import { useGetWishlists } from '@/features/wishlists/api/use-get-carts'
-import { cn } from '@/lib/utils'
 import { Award, BookOpen, Clock, ShoppingCart, Star } from 'lucide-react'
-import Image from 'next/image'
-import Link from 'next/link'
 
 import { Item } from './item'
 

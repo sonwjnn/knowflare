@@ -34,6 +34,7 @@ export const SignInCard = () => {
 
   const params = useSearchParams()
   const error = params.get('error')
+  const callbackUrl = params.get('callbackUrl') || '/'
 
   const popupCenter = (url: string, title: string) => {
     const dualScreenLeft = window.screenLeft ?? window.screenX
@@ -71,7 +72,7 @@ export const SignInCard = () => {
     signInMutate({
       email: email,
       password: password,
-      callbackUrl: '/',
+      callbackUrl,
     })
   }
 

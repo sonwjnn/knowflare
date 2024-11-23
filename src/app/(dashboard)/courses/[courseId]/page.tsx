@@ -238,6 +238,7 @@ export default function CourseDetail() {
               discountExpires={isDiscounted ? course.discountExpires : null}
               discountAmount={course.discountAmount}
               discountCode={course.discountCode}
+              categoryId={course.categoryId || ''}
             />
           </div>
         </div>

@@ -49,7 +49,7 @@ export const Item = ({
     e.preventDefault()
     e.stopPropagation()
     setIsAnimating(true)
-    createCart({ courseId: id })
+    createCart({ courseId: id, couponId: couponId ?? undefined })
 
     setTimeout(() => setIsAnimating(false), 1000)
   }

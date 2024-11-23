@@ -79,9 +79,7 @@ const app = new Hono()
     verifyAuth(),
     zValidator(
       'json',
-      insertCartsSchema.pick({
-        courseId: true,
-      })
+      z.object({ courseId: z.string(), couponId: z.string().optional() })
     ),
     async c => {
       const auth = c.get('authUser')

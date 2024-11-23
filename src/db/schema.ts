@@ -491,7 +491,13 @@ export const carts = mysqlTable(
       .references(() => courses.id, {
         onDelete: 'cascade',
       }),
-    date: timestamp('created_at', { mode: 'date' }),
+    couponId: varchar('coupon_id', { length: 255 }).references(
+      () => coupons.id,
+      {
+        onDelete: 'set null',
+      }
+    ),
+    date: timestamp('date', { mode: 'date' }),
   },
   carts => ({
     compositePk: primaryKey({

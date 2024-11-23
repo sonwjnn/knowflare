@@ -8,9 +8,10 @@ import { useEffect, useState } from 'react'
 
 type Props = {
   code: string | null
+  categoryId: string
 }
 
-export const CouponInput = ({ code }: Props) => {
+export const CouponInput = ({ code, categoryId }: Props) => {
   const courseId = useCourseId()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -19,7 +20,7 @@ export const CouponInput = ({ code }: Props) => {
   const [coupon, setCoupon] = useState('')
   const [selectedCoupon, setSelectedCoupon] = useState(code || '')
 
-  const { data, isPending } = useGetCouponByCode(selectedCoupon)
+  const { mutate: getCoupon, isPending } = useGetCouponByCode()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCoupon(e.target.value)
@@ -30,31 +31,44 @@ export const CouponInput = ({ code }: Props) => {
     setSelectedCoupon(coupon)
   }
 
-  useEffect(() => {
-    if (!data) return
-
-    if (couponId !== selectedCoupon) {
-      router.replace(`/courses/${courseId}?couponId=${data.id}`)
-    }
-  }, [data, router, courseId, couponId, selectedCoupon])
+  const onApply = () => {
+    getCoupon(
+      {
+        code: selectedCoupon,
+        categoryId,
+      },
+      {
+        onSuccess: ({ data }) => {
+          router.replace(`/courses/${courseId}?couponId=${data.id}`)
+        },
+      }
+    )
+  }
 
   return (
     <div className="mt-4">
-      <form onSubmit={handleSubmit} className="flex flex-col gap-y-2">
+      <form onSubmit={handleSubmit} className="relative">
         <Input
           placeholder="Enter coupon code"
           value={coupon}
           onChange={handleChange}
-          className="w-full"
+          className="h-10 pr-24"
           required
           disabled={isPending}
         />
         {/* {errorMessage && (
           <div className="text-sm text-red-600">{errorMessage}</div>
         )} */}
-        <Button disabled={isPending} type="submit" className="mt-2">
-          Apply code
-        </Button>
+        <div className="absolute right-0 top-0">
+          <Button
+            disabled={isPending}
+            onClick={onApply}
+            type="submit"
+            className="m-1.5 h-7 rounded-md text-xs"
+          >
+            Apply
+          </Button>
+        </div>
       </form>
     </div>
   )
