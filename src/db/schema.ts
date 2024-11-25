@@ -529,5 +529,14 @@ export const wishlists = mysqlTable(
     }),
   })
 )
-
 export const insertWishlistsSchema = createInsertSchema(wishlists)
+
+export const backups = mysqlTable('backup', {
+  id: varchar('id', { length: 255 })
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  fileUrl: varchar('file_url', { length: 255 }).notNull().unique(),
+  date: timestamp('date', { mode: 'date' }).default(sql`CURRENT_TIMESTAMP`),
+})
+
+export const insertBackupsSchema = createInsertSchema(backups)

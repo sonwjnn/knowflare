@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils'
 import { ChevronsUp } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { IoBook } from 'react-icons/io5'
 import { MdStar } from 'react-icons/md'
@@ -42,6 +43,7 @@ export const Item = ({
   isInCart,
   isPurchased,
 }: Props) => {
+  const router = useRouter()
   const { mutate: createCart, isPending: createCartLoading } = useCreateCart()
   const [isAnimating, setIsAnimating] = useState(false)
 
@@ -60,7 +62,7 @@ export const Item = ({
     : `/courses/${id}`
 
   return (
-    <Link key={id} href={href}>
+    <div onClick={() => router.push(href)} className="cursor-pointer">
       <Card className="group relative h-full overflow-hidden rounded-3xl border-0 bg-gradient-to-br from-white/80 to-white/60 backdrop-blur-lg transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.15)]">
         {/* Image Course section - Redesigned */}
         <div className="relative overflow-hidden">
@@ -248,6 +250,6 @@ export const Item = ({
           </div>
         </CardContent>
       </Card>
-    </Link>
+    </div>
   )
 }

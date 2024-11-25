@@ -91,6 +91,8 @@ const app = new Hono()
         .from(coupons)
         .where(and(eq(coupons.code, code), eq(coupons.categoryId, categoryId)))
 
+      console.log(data.id)
+
       if (!data) {
         return c.json({ error: 'data not found' }, 401)
       }

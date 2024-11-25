@@ -1,5 +1,5 @@
 import { Separator } from '@/components/ui/separator'
-// import { formatCurrency } from '@/lib/utils'
+import { formatCurrency } from '@/lib/utils'
 import { format } from 'date-fns'
 
 export const CustomTooltip = ({ active, payload }: any) => {
@@ -21,21 +21,9 @@ export const CustomTooltip = ({ active, payload }: any) => {
             <p className="text-sm text-muted-foreground">Revenue</p>
           </div>
           <p className="text-right text-sm font-medium">
-            {/* {formatCurrency(income)} */}
-            {revenue}
+            {formatCurrency(revenue)}
           </p>
         </div>
-
-        {/* {formatCurrency(expenses * -1)} */}
-        {/* <div className="flex items-center justify-between gap-x-4">
-          <div className="flex items-center gap-x-2">
-            <div className="size-1.5 rounded-full bg-rose-500" />
-            <p className="text-sm text-muted-foreground">Expenses</p>
-          </div>
-          <p className="text-right text-sm font-medium">
-            value
-          </p>
-        </div> */}
       </div>
     </div>
   )
