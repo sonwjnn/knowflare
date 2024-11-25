@@ -17,7 +17,6 @@ declare module 'next-auth/jwt' {
 declare module '@auth/core/jwt' {
   interface JWT extends ExtendedUser {}
 }
-
 // declare module '@tanstack/table-core' {
 //   interface FilterFns {
 //     dateBetweenFilterFn: FilterFn<unknown>
