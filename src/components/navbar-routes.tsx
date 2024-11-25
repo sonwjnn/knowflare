@@ -4,6 +4,7 @@ import { UserButton } from '@/features/auth/components/user-button'
 import { LogOut } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 import SearchInput from './search-input'
 import { Button } from './ui/button'
