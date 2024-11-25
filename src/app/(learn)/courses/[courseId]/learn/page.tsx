@@ -5,6 +5,7 @@ import { useCourseId } from '@/hooks/use-course-id'
 import { Loader2 } from 'lucide-react'
 import { redirect } from 'next/navigation'
 
+//
 const LearnPage = () => {
   const courseId = useCourseId()
 
