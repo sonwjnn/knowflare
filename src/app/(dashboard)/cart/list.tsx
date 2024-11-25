@@ -35,16 +35,21 @@ export const List = () => {
 
   return (
     <div className="overflow-hidden rounded-none bg-white shadow">
-      {carts?.map(item => (
-        <Item
-          key={item.courseId}
-          courseId={item.courseId}
-          title={item.title}
-          description={item.description}
-          imageUrl={item.imageUrl}
-          price={item.price}
-        />
-      ))}
+      {carts?.map(item => {
+        const isDiscounted =
+          !!item.discountPrice && item.discountPrice !== item.price
+        return (
+          <Item
+            key={item.courseId}
+            courseId={item.courseId}
+            title={item.title}
+            description={item.description}
+            imageUrl={item.imageUrl}
+            price={item.price}
+            discountPrice={isDiscounted ? +item.discountPrice : null}
+          />
+        )
+      })}
     </div>
   )
 }

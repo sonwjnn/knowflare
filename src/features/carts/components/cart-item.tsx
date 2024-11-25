@@ -9,10 +9,19 @@ type Props = {
   imageUrl: string | null
   title: string
   price: number
+  discountPrice?: number | null
 }
 
-export const CartItem = ({ id, imageUrl, title, price }: Props) => {
+export const CartItem = ({
+  id,
+  imageUrl,
+  title,
+  price,
+  discountPrice,
+}: Props) => {
   const { mutate: deleteCart, isPending: deleteCartPending } = useDeleteCart(id)
+
+  const hasDiscount = !!discountPrice
 
   return (
     <div className="mb-4 flex items-center space-x-4">
@@ -28,7 +37,21 @@ export const CartItem = ({ id, imageUrl, title, price }: Props) => {
       </div>
       <div className="flex-1">
         <h5 className="font-medium">{title}</h5>
-        <p className="text-sm text-muted-foreground">${price}</p>
+        {!hasDiscount && (
+          <span className="text-sm font-semibold">${price.toFixed(2)}</span>
+        )}
+
+        {hasDiscount && (
+          <>
+            <span className="mr-1 text-xs text-gray-500 line-through">
+              ${price.toFixed(2)}
+            </span>
+
+            <span className="text-sm font-semibold">
+              ${discountPrice.toFixed(2)}
+            </span>
+          </>
+        )}
       </div>
       <Button
         size="icon"

@@ -18,7 +18,13 @@ export const CartSheet = () => {
 
   const [open, setOpen] = useCartSheet()
 
-  const total = carts?.reduce((sum, item) => sum + item.price, 0) || 0
+  const total =
+    carts?.reduce((sum, item) => {
+      if (!!item.discountPrice) {
+        return sum + +item.discountPrice
+      }
+      return sum + item.price
+    }, 0) || 0
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -30,7 +36,9 @@ export const CartSheet = () => {
               ({(carts ?? []).length})
             </span>
           </SheetTitle>
-          <SheetDescription>Total price: ${total}</SheetDescription>
+          <SheetDescription>
+            Total price: <span className="font-semibold">${total}</span>
+          </SheetDescription>
         </SheetHeader>
         {!!carts?.length && (
           <>
@@ -42,6 +50,9 @@ export const CartSheet = () => {
                   imageUrl={item.imageUrl}
                   title={item.title}
                   price={item.price}
+                  discountPrice={
+                    item.discountPrice ? +item.discountPrice : null
+                  }
                 />
               ))}
             </ScrollArea>
