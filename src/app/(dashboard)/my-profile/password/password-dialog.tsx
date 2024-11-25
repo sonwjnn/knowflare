@@ -1,15 +1,11 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-} from '@/components/ui/dialog'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Eye, EyeOff } from 'lucide-react'
 import { useState } from 'react'
-import { Checkbox } from '@/components/ui/checkbox'
 
 // Hàm kiểm tra độ mạnh mật khẩu
 const checkPasswordStrength = (password: string) => {
@@ -54,11 +50,15 @@ const PasswordStrengthBar = ({ password }: { password: string }) => {
         ))}
       </div>
       {password.length > 0 && (
-        <p className={`text-xs ${
-          strength <= 2 ? 'text-red-500' : 
-          strength <= 3 ? 'text-yellow-500' : 
-          'text-green-600'
-        }`}>
+        <p
+          className={`text-xs ${
+            strength <= 2
+              ? 'text-red-500'
+              : strength <= 3
+                ? 'text-yellow-500'
+                : 'text-green-600'
+          }`}
+        >
           {getStrengthText()}
         </p>
       )}
@@ -90,23 +90,24 @@ export function PasswordDialog() {
           Change Password
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[400px] p-0">
+      <DialogContent className="p-0 sm:max-w-[400px]">
         <div className="px-6 pt-6">
           <h2 className="text-xl font-semibold">Change Password</h2>
-          <p className="text-sm text-muted-foreground mt-2">
-            Your password must be at least 8 characters and include numbers, letters, and special characters (!$@%...).
+          <p className="mt-2 text-sm text-muted-foreground">
+            Your password must be at least 8 characters and include numbers,
+            letters, and special characters (!$@%...).
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="px-6 py-4 space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 px-6 py-4">
           <div className="space-y-3">
             <div>
-              <label className="text-sm font-medium mb-1.5 block">
+              <label className="mb-1.5 block text-sm font-medium">
                 Current Password
               </label>
               <div className="relative">
                 <Input
-                  type={showCurrentPassword ? "text" : "password"}
+                  type={showCurrentPassword ? 'text' : 'password'}
                   value={currentPassword}
                   onChange={e => setCurrentPassword(e.target.value)}
                   required
@@ -128,12 +129,12 @@ export function PasswordDialog() {
             </div>
 
             <div>
-              <label className="text-sm font-medium mb-1.5 block">
+              <label className="mb-1.5 block text-sm font-medium">
                 New Password
               </label>
               <div className="relative">
                 <Input
-                  type={showNewPassword ? "text" : "password"}
+                  type={showNewPassword ? 'text' : 'password'}
                   value={newPassword}
                   onChange={e => setNewPassword(e.target.value)}
                   required
@@ -155,26 +156,36 @@ export function PasswordDialog() {
               <PasswordStrengthBar password={newPassword} />
               {newPassword.length > 0 && (
                 <div className="mt-2 space-y-1">
-                  <p className="text-xs text-gray-500">Password must contain:</p>
-                  <ul className="text-xs space-y-1 text-gray-500">
-                    <li className={`flex items-center gap-1 ${
-                      newPassword.length >= 8 ? 'text-green-600' : ''
-                    }`}>
+                  <p className="text-xs text-gray-500">
+                    Password must contain:
+                  </p>
+                  <ul className="space-y-1 text-xs text-gray-500">
+                    <li
+                      className={`flex items-center gap-1 ${
+                        newPassword.length >= 8 ? 'text-green-600' : ''
+                      }`}
+                    >
                       • Minimum 8 characters
                     </li>
-                    <li className={`flex items-center gap-1 ${
-                      /[A-Z]/.test(newPassword) ? 'text-green-600' : ''
-                    }`}>
+                    <li
+                      className={`flex items-center gap-1 ${
+                        /[A-Z]/.test(newPassword) ? 'text-green-600' : ''
+                      }`}
+                    >
                       • At least 1 uppercase letter
                     </li>
-                    <li className={`flex items-center gap-1 ${
-                      /[0-9]/.test(newPassword) ? 'text-green-600' : ''
-                    }`}>
+                    <li
+                      className={`flex items-center gap-1 ${
+                        /[0-9]/.test(newPassword) ? 'text-green-600' : ''
+                      }`}
+                    >
                       • At least 1 number
                     </li>
-                    <li className={`flex items-center gap-1 ${
-                      /[^A-Za-z0-9]/.test(newPassword) ? 'text-green-600' : ''
-                    }`}>
+                    <li
+                      className={`flex items-center gap-1 ${
+                        /[^A-Za-z0-9]/.test(newPassword) ? 'text-green-600' : ''
+                      }`}
+                    >
                       • At least 1 special character
                     </li>
                   </ul>
@@ -183,12 +194,12 @@ export function PasswordDialog() {
             </div>
 
             <div>
-              <label className="text-sm font-medium mb-1.5 block">
+              <label className="mb-1.5 block text-sm font-medium">
                 Confirm New Password
               </label>
               <div className="relative">
                 <Input
-                  type={showConfirmPassword ? "text" : "password"}
+                  type={showConfirmPassword ? 'text' : 'password'}
                   value={confirmPassword}
                   onChange={e => setConfirmPassword(e.target.value)}
                   required
@@ -218,23 +229,20 @@ export function PasswordDialog() {
           </a>
 
           <div className="flex items-center gap-2">
-            <Checkbox 
-              id="logout"
-              className="rounded-[4px] border-gray-300"
-            />
+            <Checkbox id="logout" className="rounded-[4px] border-gray-300" />
             <label
               htmlFor="logout"
-              className="text-sm text-gray-600 select-none"
+              className="select-none text-sm text-gray-600"
             >
               Sign out from other devices
             </label>
           </div>
         </form>
 
-        <div className="px-6 py-4 bg-gray-50 border-t">
+        <div className="border-t bg-gray-50 px-6 py-4">
           <Button
             type="submit"
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium"
+            className="w-full bg-blue-500 font-medium text-white hover:bg-blue-600"
           >
             Change Password
           </Button>
@@ -242,4 +250,4 @@ export function PasswordDialog() {
       </DialogContent>
     </Dialog>
   )
-} 
+}

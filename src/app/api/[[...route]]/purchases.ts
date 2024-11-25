@@ -23,11 +23,15 @@ const app = new Hono()
         imageUrl: courses.imageUrl,
         price: courses.price,
         date: courses.date,
-
+        author: {
+          id: users.id,
+          name: users.name,
+        },
         currentUserId: purchases.userId,
       })
       .from(purchases)
       .innerJoin(courses, eq(courses.id, purchases.courseId))
+      .innerJoin(users, eq(users.id, courses.userId))
       .where(eq(purchases.userId, auth.token.id))
 
     const coursesWithProgress = await Promise.all(

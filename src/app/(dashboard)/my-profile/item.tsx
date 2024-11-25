@@ -2,7 +2,7 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Card } from '@/components/ui/card'
-import { Globe, MapPin, Github, Twitter, LinkedinIcon } from 'lucide-react'
+import { Github, Globe, LinkedinIcon, MapPin, Twitter } from 'lucide-react'
 import { User } from 'next-auth'
 
 interface ProfileItemProps {
@@ -19,27 +19,29 @@ interface ProfileItemProps {
 export const ProfileItem = ({ user }: ProfileItemProps) => {
   const enhancedUser = {
     ...user,
-    bio: user.bio || "Senior Full-stack Developer passionate about creating elegant solutions to complex problems. Experienced in React, TypeScript, and Cloud Architecture. Currently building innovative web applications and contributing to open-source projects.",
-    location: user.location || "San Francisco, CA",
-    website: user.website || "https://johndoe.dev",
-    github: user.github || "johndoe",
-    twitter: user.twitter || "johndoe",
-    linkedin: user.linkedin || "https://linkedin.com/in/johndoe",
+    bio:
+      user.bio ||
+      'Senior Full-stack Developer passionate about creating elegant solutions to complex problems. Experienced in React, TypeScript, and Cloud Architecture. Currently building innovative web applications and contributing to open-source projects.',
+    location: user.location || 'San Francisco, CA',
+    website: user.website || 'https://johndoe.dev',
+    github: user.github || 'johndoe',
+    twitter: user.twitter || 'johndoe',
+    linkedin: user.linkedin || 'https://linkedin.com/in/johndoe',
   }
 
   return (
     <Card className="overflow-hidden bg-white">
       {/* Header Banner */}
       <div className="h-32 bg-gradient-to-r from-blue-600 to-blue-400" />
-      
+
       <div className="px-6 pb-6">
         {/* Profile Section */}
         <div className="relative flex flex-col items-center">
           {/* Avatar */}
           <Avatar className="absolute -top-16 size-32 ring-4 ring-white">
-            <AvatarImage 
-              src={enhancedUser.image || ''} 
-              alt={enhancedUser.name || ''} 
+            <AvatarImage
+              src={enhancedUser.image || ''}
+              alt={enhancedUser.name || ''}
               className="object-cover"
             />
             <AvatarFallback className="bg-gradient-to-r from-blue-600 to-blue-700 text-3xl text-white">
@@ -51,7 +53,9 @@ export const ProfileItem = ({ user }: ProfileItemProps) => {
           <div className="mt-20 w-full space-y-4">
             {/* Name and Email */}
             <div className="text-center">
-              <h2 className="text-2xl font-bold text-gray-900">{enhancedUser.name}</h2>
+              <h2 className="text-2xl font-bold text-gray-900">
+                {enhancedUser.name}
+              </h2>
               <p className="text-sm text-gray-500">{enhancedUser.email}</p>
             </div>
 
@@ -70,11 +74,11 @@ export const ProfileItem = ({ user }: ProfileItemProps) => {
                   <span>{enhancedUser.location}</span>
                 </div>
               )}
-              
+
               {enhancedUser.website && (
                 <div className="flex items-center gap-1.5 text-sm text-gray-500">
                   <Globe className="size-4" />
-                  <a 
+                  <a
                     href={enhancedUser.website}
                     target="_blank"
                     rel="noopener noreferrer"

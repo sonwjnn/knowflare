@@ -12,7 +12,8 @@
     "db:generate": "npx drizzle-kit generate",
     "db:seed": "bun ./src/scripts/seed.ts",
     "db:backup": "bun ./src/scripts/backup.ts",
-    "db:migrate": "bun ./src/scripts/migrate.ts"
+    "db:migrate": "bun ./src/scripts/migrate.ts",
+    "prettier:fix": "prettier --write \"src/**/(*.tsx|*.ts|*.css|*.scss)\""
   },
   "dependencies": {
     "@auth/core": "^0.34.1",

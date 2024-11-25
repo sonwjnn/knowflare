@@ -1,11 +1,11 @@
-"use client";
+'use client'
 
-import { Provider } from "jotai";
+import { Provider } from 'jotai'
 
 type JotaiProviderProps = {
-  children: React.ReactNode;
-};
+  children: React.ReactNode
+}
 
 export const JotaiProvider = ({ children }: JotaiProviderProps) => {
-  return <Provider>{children}</Provider>;
-};
+  return <Provider>{children}</Provider>
+}

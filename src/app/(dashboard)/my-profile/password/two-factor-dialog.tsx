@@ -14,7 +14,9 @@ import { useState } from 'react'
 
 export function TwoFactorDialog() {
   const [isEnabled, setIsEnabled] = useState(false)
-  const [step, setStep] = useState<'initial' | 'setup' | 'verify' | 'success'>('initial')
+  const [step, setStep] = useState<'initial' | 'setup' | 'verify' | 'success'>(
+    'initial'
+  )
   const [verificationCode, setVerificationCode] = useState('')
 
   const handleToggle2FA = () => {
@@ -46,14 +48,13 @@ export function TwoFactorDialog() {
   }
 
   return (
-    <Dialog onOpenChange={(open) => !open && setStep('initial')}>
+    <Dialog onOpenChange={open => !open && setStep('initial')}>
       <DialogTrigger asChild>
-        <Button 
-          variant={isEnabled ? "default" : "outline"} 
-          className="w-full"
-        >
+        <Button variant={isEnabled ? 'default' : 'outline'} className="w-full">
           <Shield className="mr-2 h-4 w-4" />
-          {isEnabled ? 'Two-Factor Authentication Enabled' : 'Enable Two-Factor Authentication'}
+          {isEnabled
+            ? 'Two-Factor Authentication Enabled'
+            : 'Enable Two-Factor Authentication'}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
@@ -67,43 +68,55 @@ export function TwoFactorDialog() {
         {step === 'initial' && (
           <div className="space-y-4">
             <div className="text-sm text-muted-foreground">
-              {isEnabled ? (
-                "Two-factor authentication is currently enabled. This adds an extra layer of security to your account."
-              ) : (
-                "Add an extra layer of security to your account by requiring both your password and authentication code from your mobile device."
-              )}
+              {isEnabled
+                ? 'Two-factor authentication is currently enabled. This adds an extra layer of security to your account.'
+                : 'Add an extra layer of security to your account by requiring both your password and authentication code from your mobile device.'}
             </div>
-            <Button 
-              onClick={handleToggle2FA} 
-              variant={isEnabled ? "destructive" : "default"}
+            <Button
+              onClick={handleToggle2FA}
+              variant={isEnabled ? 'destructive' : 'default'}
               className="w-full"
             >
-              {isEnabled ? 'Disable Two-Factor Authentication' : 'Set up Two-Factor Authentication'}
+              {isEnabled
+                ? 'Disable Two-Factor Authentication'
+                : 'Set up Two-Factor Authentication'}
             </Button>
           </div>
         )}
 
         {step === 'setup' && (
           <div className="space-y-4">
-            <div className="text-sm text-muted-foreground space-y-2">
-              <p>1. Install an authenticator app like Google Authenticator or Authy</p>
+            <div className="space-y-2 text-sm text-muted-foreground">
+              <p>
+                1. Install an authenticator app like Google Authenticator or
+                Authy
+              </p>
               <p>2. Scan this QR code with your authenticator app</p>
             </div>
-            <div className="flex justify-center p-4 bg-muted/30 rounded-lg">
+            <div className="flex justify-center rounded-lg bg-muted/30 p-4">
               <QrCode className="h-32 w-32" />
             </div>
             <div className="space-y-2">
-              <p className="text-sm font-medium">3. Enter the 6-digit code from your app</p>
+              <p className="text-sm font-medium">
+                3. Enter the 6-digit code from your app
+              </p>
               <div className="flex gap-2">
                 <Input
                   type="text"
                   maxLength={6}
                   placeholder="000000"
                   value={verificationCode}
-                  onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  onChange={e =>
+                    setVerificationCode(
+                      e.target.value.replace(/\D/g, '').slice(0, 6)
+                    )
+                  }
                   className="text-center text-lg tracking-widest"
                 />
-                <Button onClick={handleVerifyCode} disabled={verificationCode.length !== 6}>
+                <Button
+                  onClick={handleVerifyCode}
+                  disabled={verificationCode.length !== 6}
+                >
                   Verify
                 </Button>
               </div>
@@ -114,7 +127,8 @@ export function TwoFactorDialog() {
         {step === 'verify' && (
           <div className="space-y-4">
             <div className="text-sm text-muted-foreground">
-              Please enter the verification code from your authenticator app to disable two-factor authentication.
+              Please enter the verification code from your authenticator app to
+              disable two-factor authentication.
             </div>
             <div className="flex gap-2">
               <Input
@@ -122,11 +136,15 @@ export function TwoFactorDialog() {
                 maxLength={6}
                 placeholder="000000"
                 value={verificationCode}
-                onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                onChange={e =>
+                  setVerificationCode(
+                    e.target.value.replace(/\D/g, '').slice(0, 6)
+                  )
+                }
                 className="text-center text-lg tracking-widest"
               />
-              <Button 
-                onClick={handleVerifyCode} 
+              <Button
+                onClick={handleVerifyCode}
                 variant="destructive"
                 disabled={verificationCode.length !== 6}
               >
@@ -138,7 +156,7 @@ export function TwoFactorDialog() {
 
         {step === 'success' && (
           <div className="space-y-4 text-center">
-            <Smartphone className="h-12 w-12 mx-auto text-primary" />
+            <Smartphone className="mx-auto h-12 w-12 text-primary" />
             <div>
               <h3 className="text-lg font-semibold">Setup Complete!</h3>
               <p className="text-sm text-muted-foreground">

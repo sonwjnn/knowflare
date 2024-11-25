@@ -15,9 +15,5 @@ export const CheckboxHeart = () => {
     setChecked(!checked)
   }
 
-  return (
-    <div>
-     
-    </div>
-  )
+  return <div></div>
 }
