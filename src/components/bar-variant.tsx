@@ -7,6 +7,7 @@ import {
   ResponsiveContainer,
   Tooltip,
   XAxis,
+  YAxis,
 } from 'recharts'
 
 type BarVariantProps = {
@@ -28,6 +29,12 @@ export const BarVariant = ({ data = [] }: BarVariantProps) => {
           tickFormatter={value => format(value, 'dd MMM')}
           style={{ fontSize: '12px' }}
           tickMargin={16}
+        />
+        <YAxis
+          axisLine={false}
+          tickLine={false}
+          tickFormatter={value => `$${value}`}
+          style={{ fontSize: '12px', color: '#333' }}
         />
         <Tooltip content={<CustomTooltip />} />
         <Bar dataKey="revenue" fill="#3d82f6" className="drop-shadow-sm" />

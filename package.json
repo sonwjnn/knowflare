@@ -11,6 +11,7 @@
     "db:push": "npx drizzle-kit push",
     "db:generate": "npx drizzle-kit generate",
     "db:seed": "bun ./src/scripts/seed.ts",
+    "db:backup": "bun ./src/scripts/backup.ts",
     "db:migrate": "bun ./src/scripts/migrate.ts"
   },
   "dependencies": {
@@ -56,6 +57,7 @@
     "drizzle-zod": "^0.5.1",
     "embla-carousel-autoplay": "^8.3.0",
     "embla-carousel-react": "^8.3.0",
+    "form-data": "^4.0.1",
     "framer-motion": "^11.11.8",
     "hono": "^4.4.8",
     "jotai": "^2.9.3",

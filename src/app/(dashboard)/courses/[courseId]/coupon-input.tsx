@@ -18,7 +18,6 @@ export const CouponInput = ({ code, categoryId }: Props) => {
   const couponId = searchParams.get('couponId') || ''
 
   const [coupon, setCoupon] = useState('')
-  const [selectedCoupon, setSelectedCoupon] = useState(code || '')
 
   const { mutate: getCoupon, isPending } = useGetCouponByCode()
 
@@ -26,19 +25,17 @@ export const CouponInput = ({ code, categoryId }: Props) => {
     setCoupon(e.target.value)
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onApply = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setSelectedCoupon(coupon)
-  }
 
-  const onApply = () => {
     getCoupon(
       {
-        code: selectedCoupon,
+        code: coupon,
         categoryId,
       },
       {
         onSuccess: ({ data }) => {
+          console.log(data.id)
           router.replace(`/courses/${courseId}?couponId=${data.id}`)
         },
       }
@@ -47,7 +44,7 @@ export const CouponInput = ({ code, categoryId }: Props) => {
 
   return (
     <div className="mt-4">
-      <form onSubmit={handleSubmit} className="relative">
+      <form onSubmit={onApply} className="relative">
         <Input
           placeholder="Enter coupon code"
           value={coupon}
@@ -62,7 +59,6 @@ export const CouponInput = ({ code, categoryId }: Props) => {
         <div className="absolute right-0 top-0">
           <Button
             disabled={isPending}
-            onClick={onApply}
             type="submit"
             className="m-1.5 h-7 rounded-md text-xs"
           >

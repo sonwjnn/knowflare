@@ -7,6 +7,7 @@ import {
   ResponsiveContainer,
   Tooltip,
   XAxis,
+  YAxis,
 } from 'recharts'
 
 type AreaVariantProps = {
@@ -38,6 +39,12 @@ export const AreaVariant = ({ data = [] }: AreaVariantProps) => {
           tickFormatter={value => format(value, 'dd MMM')}
           style={{ fontSize: '12px' }}
           tickMargin={16}
+        />
+        <YAxis
+          axisLine={false}
+          tickLine={false}
+          tickFormatter={value => `$${value}`}
+          style={{ fontSize: '12px', color: '#333' }}
         />
         <Tooltip content={<CustomTooltip />} />
         {/* <Area

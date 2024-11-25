@@ -6,6 +6,8 @@ import {
   BarChart2,
   CheckSquare,
   Component,
+  Database,
+  DatabaseBackup,
   FileX,
   Hexagon,
   LayoutDashboard,
@@ -85,6 +87,7 @@ export const sidelinks: SideLink[] = [
     href: '/admin/analysis',
     icon: <BarChart2 size={18} />,
   },
+
   {
     title: 'Coupons',
     label: '',
@@ -97,5 +100,11 @@ export const sidelinks: SideLink[] = [
     label: '',
     href: '/admin/settings',
     icon: <Settings size={18} />,
+  },
+  {
+    title: 'Backup & Restore',
+    label: '',
+    href: '/admin/backups',
+    icon: <DatabaseBackup size={18} />,
   },
 ]
