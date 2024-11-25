@@ -1,5 +1,5 @@
 import { db } from '@/db/drizzle'
-import { carts, courses, insertCartsSchema } from '@/db/schema'
+import { carts, coupons, courses, insertCartsSchema } from '@/db/schema'
 import { verifyAuth } from '@hono/auth-js'
 import { zValidator } from '@hono/zod-validator'
 import { and, desc, eq, sql } from 'drizzle-orm'
@@ -21,9 +21,15 @@ const app = new Hono()
         imageUrl: courses.imageUrl,
         price: courses.price,
         date: courses.date,
+        couponId: coupons.id,
+        discountAmount: coupons.discountAmount,
+        discountPrice: sql<number>`(course.price - 
+      (course.price * coupon.discount_amount / 100)
+    )`,
       })
       .from(carts)
       .innerJoin(courses, eq(courses.id, carts.courseId))
+      .leftJoin(coupons, eq(coupons.id, carts.couponId))
       .where(eq(carts.userId, auth.token.id))
       .orderBy(desc(carts.date))
 

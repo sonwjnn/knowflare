@@ -16,13 +16,19 @@ export const Summary = () => {
       id: item.courseId,
       title: item.title,
       imageUrl: item.imageUrl,
-      price: item.price,
+      price: item.discountPrice ? +item.discountPrice : item.price,
     }))
 
     checkout({ courses })
   }
 
-  const total = carts?.reduce((total, item) => total + item.price, 0) || 0
+  const total =
+    carts?.reduce((sum, item) => {
+      if (!!item.discountPrice) {
+        return sum + +item.discountPrice
+      }
+      return sum + item.price
+    }, 0) || 0
 
   return (
     <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">

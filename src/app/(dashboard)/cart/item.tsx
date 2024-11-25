@@ -9,6 +9,7 @@ type Props = {
   imageUrl: string | null
   description: string | null
   price: number
+  discountPrice?: number | null
 }
 
 export const Item = ({
@@ -17,9 +18,12 @@ export const Item = ({
   imageUrl,
   description,
   price,
+  discountPrice,
 }: Props) => {
   const { mutate: deleteCart, isPending: deleteCartLoading } =
     useDeleteCart(courseId)
+
+  const hasDiscount = !!discountPrice
 
   return (
     <div className="group relative flex gap-6 border border-gray-100 bg-white p-4 shadow-sm transition-all hover:shadow-md sm:p-6">
@@ -48,9 +52,23 @@ export const Item = ({
 
         <div className="mt-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-2xl font-bold text-gray-900">
-              ${price.toFixed(2)}
-            </span>
+            {!hasDiscount && (
+              <span className="text-2xl font-bold text-gray-900">
+                ${price.toFixed(2)}
+              </span>
+            )}
+
+            {hasDiscount && (
+              <>
+                <span className="text-sm text-gray-500 line-through">
+                  ${price.toFixed(2)}
+                </span>
+
+                <span className="text-2xl font-bold text-gray-900">
+                  ${discountPrice.toFixed(2)}
+                </span>
+              </>
+            )}
             <span className="rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-600">
               In Cart
             </span>
