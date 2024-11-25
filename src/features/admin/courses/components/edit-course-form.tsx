@@ -49,7 +49,9 @@ type FormValues = z.input<typeof formSchema>
 export const EditCourseForm = () => {
   const courseId = useCourseId()
   const { data: categories, isPending: categoriesLoading } = useGetCategories()
-  const { data: course, isPending: courseLoading } = useGetCourse(courseId)
+  const { data: course, isPending: courseLoading } = useGetCourse({
+    id: courseId,
+  })
 
   const { mutate: editCourse, isPending: editCourseLoading } =
     useEditCourse(courseId)

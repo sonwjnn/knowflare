@@ -51,7 +51,6 @@
     "cmdk": "1.0.0",
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.5",
-    "drizzle-dbml-generator": "^0.9.0",
     "drizzle-kit": "^0.22.7",
     "drizzle-orm": "^0.31.2",
     "drizzle-zod": "^0.5.1",
