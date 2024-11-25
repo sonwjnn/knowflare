@@ -47,7 +47,6 @@ const routes = app
   .route('/chapters', chapters)
   // .route('/attachments', attachments)
   .route('/purchases', purchases)
-  // .route('/teachers', teachers)
   .route('/userProgress', userProgress)
   .route('/carts', carts)
   .route('/wishlists', wishlists)

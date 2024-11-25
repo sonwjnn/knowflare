@@ -1,9 +1,6 @@
 'use client'
 
 import { UserButton } from '@/features/auth/components/user-button'
-import { useGetCurrentTeacher } from '@/features/teachers/use-get-current-teacher'
-import { useCurrentUser } from '@/hooks/use-current-user'
-import { isTeacher } from '@/lib/utils'
 import { LogOut } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -12,10 +9,8 @@ import SearchInput from './search-input'
 import { Button } from './ui/button'
 
 const NavbarRoutes = () => {
-  const { data: teacher } = useGetCurrentTeacher()
   const pathname = usePathname()
 
-  const isTeacherPage = pathname?.startsWith('/teacher')
   const isCoursePage = pathname?.includes('/courses')
   const isSearchPage = pathname === '/search'
 
@@ -27,7 +22,7 @@ const NavbarRoutes = () => {
         </div>
       )}
       <div className="ml-auto flex gap-x-2">
-        {isTeacherPage || isCoursePage ? (
+        {isCoursePage ? (
           <Link href="/">
             <Button size="sm" variant="ghost">
               <LogOut className="mr-2 h-4 w-4" />

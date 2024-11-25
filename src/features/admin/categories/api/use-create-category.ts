@@ -1,4 +1,3 @@
-import { useTeacherId } from '@/hooks/use-teacher-id'
 import { client } from '@/lib/hono'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { InferRequestType, InferResponseType } from 'hono'
