@@ -1,7 +1,6 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { useUpsertProgressChapter } from '@/features/chapters/api/use-upsert-progress-chapter'
 import { useUpsertProgressLesson } from '@/features/progress/api/use-upsert-progress'
 import { useConfettiStore } from '@/store/use-confetti-store'
 import { CheckCircle, XCircle } from 'lucide-react'
