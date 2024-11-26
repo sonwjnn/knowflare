@@ -5,7 +5,7 @@ import { useVideo } from 'react-use'
 export const Hero = () => {
     const [video] = useVideo(
         <video
-            src="/hero-home.mp4"
+            src="/online-courses-stocck.mp4"
             className="absolute left-0 top-0 h-full w-full object-cover"
             autoPlay
             loop
@@ -16,7 +16,7 @@ export const Hero = () => {
     const currentUser = useCurrentUser()
 
     return (
-        <section className="relative min-h-[95vh] overflow-hidden">
+        <section className="relative min-h-[80vh] overflow-hidden">
             {video}
             <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-black/60" />
 
@@ -49,16 +49,16 @@ export const Hero = () => {
                     >
                         <span className="flex items-center gap-2">
                             Get Started Now
-                            <svg 
-                                className="w-5 h-5 transform transition-transform duration-300 group-hover:translate-x-1" 
-                                fill="none" 
-                                stroke="currentColor" 
+                            <svg
+                                className="w-5 h-5 transform transition-transform duration-300 group-hover:translate-x-1"
+                                fill="none"
+                                stroke="currentColor"
                                 viewBox="0 0 24 24"
                             >
-                                <path 
-                                    strokeLinecap="round" 
-                                    strokeLinejoin="round" 
-                                    strokeWidth="2" 
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
                                     d="M14 5l7 7m0 0l-7 7m7-7H3"
                                 />
                             </svg>

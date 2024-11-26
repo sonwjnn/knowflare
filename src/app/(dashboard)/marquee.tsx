@@ -10,7 +10,7 @@ const MarqueeItem = ({
 }) => (
   <div className="mx-8 flex items-center space-x-2">
     <Icon className="h-6 w-6 text-primary" />
-    <span className="text-xl font-semibold text-white">{text}</span>
+    <span className="text-md font-regular text-white">{text}</span>
   </div>
 )
 
