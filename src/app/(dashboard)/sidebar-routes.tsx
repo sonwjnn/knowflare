@@ -1,15 +1,12 @@
 'use client'
 
-import { useTeacherId } from '@/hooks/use-teacher-id'
-import { BarChart, Compass, Layout, List } from 'lucide-react'
+import { Compass, Layout } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 
 import SidebarItem from './sidebar-item'
 
 const SidebarRoutes = () => {
-  const teacherId = useTeacherId()
   const pathname = usePathname()
-  const isTeacherPage = pathname.includes('/teacher')
 
   const guestRoutes = [
     {
@@ -19,20 +16,10 @@ const SidebarRoutes = () => {
     },
     { icon: Compass, label: 'Browse', href: '/search' },
   ]
-  const teacherRoutes = [
-    {
-      icon: List,
-      label: 'Courses',
-      href: `/teacher/${teacherId}/courses`,
-    },
-    { icon: BarChart, label: 'Analytics', href: '/teacher/analytics' },
-  ]
-
-  const routes = isTeacherPage ? teacherRoutes : guestRoutes
 
   return (
     <div className="flex w-full flex-col">
-      {routes.map(route => (
+      {guestRoutes.map(route => (
         <SidebarItem
           key={route.href}
           icon={route.icon}

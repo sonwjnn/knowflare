@@ -1,5 +1,4 @@
 import { useCourseId } from '@/hooks/use-course-id'
-import { useTeacherId } from '@/hooks/use-teacher-id'
 import { client } from '@/lib/hono'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { InferRequestType, InferResponseType } from 'hono'
@@ -14,7 +13,6 @@ export const useDeleteChapter = (id?: string) => {
   const router = useRouter()
   const queryClient = useQueryClient()
   const courseId = useCourseId()
-  const teacherId = useTeacherId()
 
   const mutation = useMutation<ResponseType, Error>({
     mutationFn: async json => {
@@ -26,7 +24,6 @@ export const useDeleteChapter = (id?: string) => {
     },
     onSuccess: () => {
       toast.success('Chapter deleted')
-      router.replace(`/teacher/${teacherId}courses/${courseId}`)
       queryClient.invalidateQueries({ queryKey: ['chapter', { id }] })
       queryClient.invalidateQueries({ queryKey: ['chapters', { courseId }] })
       queryClient.invalidateQueries({ queryKey: ['course', { courseId }] })
