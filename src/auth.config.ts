@@ -90,9 +90,13 @@ export default {
       }
       return session
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id
+      }
+
+      if (trigger === 'update') {
+        return { ...token, ...session }
       }
 
       const res = await fetch(
