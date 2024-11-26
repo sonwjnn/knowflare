@@ -186,19 +186,45 @@ export const getCourses = async ({
         name: users.name,
       },
       totalChapters: count(chapters.id),
-      isPurchased: sql<boolean>`
-        EXISTS (
-          SELECT 1 FROM purchases 
-          WHERE purchases.course_id = ${courses.id} 
-          AND purchases.user_id = ${userId}
-        )
-      `,
+      isPurchased: sql<boolean>`EXISTS (
+        SELECT 1 FROM purchases 
+        WHERE purchases.course_id = ${courses.id} 
+        AND purchases.user_id = ${userId}
+      )`,
 
-      couponId: coupons.id,
-      discountAmount: coupons.discountAmount,
-      discountPrice: sql<number>`(course.price - 
-      (course.price * coupon.discount_amount / 100)
-    )`,
+      couponId: sql`(
+        SELECT id 
+        FROM coupon 
+        WHERE coupon.category_id = ${courses.categoryId} 
+        AND coupon.discount_amount = (
+          SELECT MAX(discount_amount) 
+          FROM coupon 
+          WHERE coupon.category_id = ${courses.categoryId} 
+        ) 
+        ORDER BY id DESC 
+        LIMIT 1
+      )`,
+
+      discountAmount: sql`(
+        SELECT discount_amount 
+        FROM coupon 
+        WHERE coupon.category_id = ${courses.categoryId} 
+        AND coupon.discount_amount = (
+          SELECT MAX(discount_amount) 
+          FROM coupon 
+          WHERE coupon.category_id = ${courses.categoryId} 
+        ) 
+        ORDER BY id DESC 
+        LIMIT 1
+      )`,
+
+      discountPrice: sql<number>`(
+        course.price - (course.price * (
+          SELECT MAX(discount_amount) 
+          FROM coupon 
+          WHERE coupon.category_id = ${courses.categoryId} 
+        ) / 100)
+      )`,
     })
     .from(courses)
     .innerJoin(categories, eq(categories.id, courses.categoryId))
