@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Slider } from '@/components/ui/slider'
 import {
+  Database,
   Maximize,
   Minimize,
   Pause,
@@ -138,6 +139,7 @@ function VideoPlayer({
         })
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [played])
 
   return (

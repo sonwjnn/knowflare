@@ -16,20 +16,24 @@ export default function PasswordPage() {
         </p>
       </div>
 
-      <div className="space-y-6 max-w-2xl">
+      <div className="max-w-2xl space-y-6">
         <div className="rounded-lg border p-6">
           <h2 className="mb-4 text-xl font-semibold">Password</h2>
           <p className="mb-6 text-sm text-muted-foreground">
-            Change your password to protect your account. Use a strong password that you haven&apos;t used for other accounts.
+            Change your password to protect your account. Use a strong password
+            that you haven&apos;t used for other accounts.
           </p>
           <PasswordDialog />
         </div>
 
-        <div className="rounded-lg border p-6"> 
-          <h2 className="mb-4 text-xl font-semibold">Two-Factor Authentication</h2>
+        <div className="rounded-lg border p-6">
+          <h2 className="mb-4 text-xl font-semibold">
+            Two-Factor Authentication
+          </h2>
           <p className="mb-6 text-sm text-muted-foreground">
-            Add an extra layer of security to your account by requiring a verification code when signing in from a new device.
-          </p> 
+            Add an extra layer of security to your account by requiring a
+            verification code when signing in from a new device.
+          </p>
           <TwoFactorDialog />
         </div>
       </div>

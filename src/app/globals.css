@@ -222,14 +222,14 @@ body,
 }
 
 input:focus {
-    outline: none !important;
-    box-shadow: none !important;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 /* Hoặc cụ thể hơn */
 .your-input-class:focus {
-    outline: none !important;
-    box-shadow: none !important;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 @keyframes addToCart {
@@ -263,17 +263,17 @@ input:focus {
 }
 
 .swiper {
-    padding-bottom: 3rem !important;
+  padding-bottom: 3rem !important;
 }
 
 .swiper-pagination-bullet {
-    width: 10px !important;
-    height: 10px !important;
-    background: #cbd5e1 !important;
-    opacity: 0.5 !important;
+  width: 10px !important;
+  height: 10px !important;
+  background: #cbd5e1 !important;
+  opacity: 0.5 !important;
 }
 
 .swiper-pagination-bullet-active {
-    background: #2563eb !important;
-    opacity: 1 !important;
+  background: #2563eb !important;
+  opacity: 1 !important;
 }

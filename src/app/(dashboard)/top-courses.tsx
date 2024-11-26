@@ -7,9 +7,9 @@ import Link from 'next/link'
 import { useEffect } from 'react'
 import 'swiper/css'
 import 'swiper/css/autoplay'
-import 'swiper/css/pagination'
 import 'swiper/css/navigation'
-import { Autoplay, Pagination, Navigation } from 'swiper/modules'
+import 'swiper/css/pagination'
+import { Autoplay, Navigation, Pagination } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react'
 
 export const TopCourses = () => {
@@ -79,7 +79,7 @@ export const TopCourses = () => {
         className="relative w-full"
       >
         <div className="absolute left-0 right-0 top-1/2 z-10 flex -translate-y-1/2 justify-between px-4">
-          <button className="group rounded-full bg-white/80 p-3 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl prev-button">
+          <button className="prev-button group rounded-full bg-white/80 p-3 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl">
             <svg
               className="h-6 w-6 text-gray-800 transition-transform group-hover:-translate-x-0.5"
               fill="none"
@@ -94,7 +94,7 @@ export const TopCourses = () => {
               />
             </svg>
           </button>
-          <button className="group rounded-full bg-white/80 p-3 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl next-button">
+          <button className="next-button group rounded-full bg-white/80 p-3 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl">
             <svg
               className="h-6 w-6 text-gray-800 transition-transform group-hover:translate-x-0.5"
               fill="none"
