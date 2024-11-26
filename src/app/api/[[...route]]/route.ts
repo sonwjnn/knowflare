@@ -27,7 +27,7 @@ import userProgress from './user-progress'
 import users from './users'
 import wishlists from './wishlists'
 
-const runtime = 'edge'
+const runtime = 'nodejs'
 
 function getAuthConfig(c: Context): AuthConfig {
   return {
