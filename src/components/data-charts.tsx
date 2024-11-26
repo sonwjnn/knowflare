@@ -1,22 +1,28 @@
 import { Chart, ChartLoading } from '@/components/chart'
+import { DateRangePicker } from '@/components/date-range-picker'
 import { SpendingPie, SpendingPieLoading } from '@/components/spending-pie'
-import { useGetAnalysis } from '@/features/admin/analysis/api/use-get-analysis'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { DateRangePicker } from '@/components/date-range-picker'
+import { useGetAnalysis } from '@/features/admin/analysis/api/use-get-analysis'
 import { useState } from 'react'
+import { DateRange } from 'react-day-picker'
 
 type DataChartsProps = {}
 
 export const DataCharts = ({}: DataChartsProps) => {
   const { data, isLoading } = useGetAnalysis()
-  const [dateRange, setDateRange] = useState<DateRange>({ from: undefined, to: undefined })
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: undefined,
+    to: undefined,
+  })
 
   if (isLoading) {
     return (
       <div className="space-y-8">
         <div className="flex items-center justify-between">
-          <h2 className="text-3xl font-bold tracking-tight">Dashboard Analytics</h2>
+          <h2 className="text-3xl font-bold tracking-tight">
+            Dashboard Analytics
+          </h2>
           <DateRangePicker date={dateRange} setDate={setDateRange} />
         </div>
 
@@ -54,7 +60,9 @@ export const DataCharts = ({}: DataChartsProps) => {
           <TabsContent value="details">
             <Card>
               <CardContent>
-                <p className="p-4 text-center text-muted-foreground">Loading detailed view...</p>
+                <p className="p-4 text-center text-muted-foreground">
+                  Loading detailed view...
+                </p>
               </CardContent>
             </Card>
           </TabsContent>
@@ -66,7 +74,9 @@ export const DataCharts = ({}: DataChartsProps) => {
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold tracking-tight">Dashboard Analytics</h2>
+        <h2 className="text-3xl font-bold tracking-tight">
+          Dashboard Analytics
+        </h2>
         <DateRangePicker date={dateRange} setDate={setDateRange} />
       </div>
 
@@ -105,8 +115,11 @@ export const DataCharts = ({}: DataChartsProps) => {
           <Card>
             <CardContent>
               <div className="space-y-4">
-                {data?.categories.map((category) => (
-                  <div key={category.name} className="flex items-center justify-between">
+                {data?.categories.map(category => (
+                  <div
+                    key={category.name}
+                    className="flex items-center justify-between"
+                  >
                     <span className="font-medium">{category.name}</span>
                     <span>{category.value}</span>
                   </div>
