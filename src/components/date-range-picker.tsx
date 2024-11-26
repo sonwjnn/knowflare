@@ -1,14 +1,16 @@
-import { DateRange } from "react-day-picker"
-import { Button } from "./ui/button"
-import { Calendar } from "./ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
-import { cn } from "@/lib/utils"
-import { CalendarIcon } from "lucide-react"
-import { format } from "date-fns"
+import { cn } from '@/lib/utils'
+import { format } from 'date-fns'
+import { CalendarIcon } from 'lucide-react'
+import { DateRange, SelectRangeEventHandler } from 'react-day-picker'
+
+
+import { Button } from './ui/button'
+import { Calendar } from './ui/calendar'
+import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'
 
 interface DateRangePickerProps {
   date: DateRange
-  setDate: (date: DateRange) => void
+  setDate: SelectRangeEventHandler
 }
 
 export function DateRangePicker({ date, setDate }: DateRangePickerProps) {
@@ -40,4 +42,5 @@ export function DateRangePicker({ date, setDate }: DateRangePickerProps) {
       </PopoverContent>
     </Popover>
   )
-} 
+}
+
