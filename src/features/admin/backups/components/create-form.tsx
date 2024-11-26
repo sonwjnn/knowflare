@@ -15,16 +15,11 @@ export const CreateForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    createBackup(
-      {
-        fileUrl,
+    createBackup(undefined, {
+      onSuccess: () => {
+        router.push('/admin/backups')
       },
-      {
-        onSuccess: () => {
-          router.push('/admin/backups')
-        },
-      }
-    )
+    })
   }
 
   if (createBackupLoading) {
