@@ -1,33 +1,121 @@
 import { Chart, ChartLoading } from '@/components/chart'
 import { SpendingPie, SpendingPieLoading } from '@/components/spending-pie'
 import { useGetAnalysis } from '@/features/admin/analysis/api/use-get-analysis'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { DateRangePicker } from '@/components/date-range-picker'
+import { useState } from 'react'
 
 type DataChartsProps = {}
 
 export const DataCharts = ({}: DataChartsProps) => {
   const { data, isLoading } = useGetAnalysis()
+  const [dateRange, setDateRange] = useState<DateRange>({ from: undefined, to: undefined })
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-6">
-        <div className="col-span-1 lg:col-span-3 xl:col-span-4">
-          <ChartLoading />
+      <div className="space-y-8">
+        <div className="flex items-center justify-between">
+          <h2 className="text-3xl font-bold tracking-tight">Dashboard Analytics</h2>
+          <DateRangePicker date={dateRange} setDate={setDateRange} />
         </div>
-        <div className="col-span-1 lg:col-span-3 xl:col-span-2">
-          <SpendingPieLoading />
-        </div>
+
+        <Tabs defaultValue="charts" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="charts">Charts View</TabsTrigger>
+            <TabsTrigger value="details">Detailed View</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="charts" className="space-y-4">
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-6">
+              <div className="col-span-1 lg:col-span-3 xl:col-span-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Spending Trends</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ChartLoading />
+                  </CardContent>
+                </Card>
+              </div>
+              <div className="col-span-1 lg:col-span-3 xl:col-span-2">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Spending Distribution</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <SpendingPieLoading />
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="details">
+            <Card>
+              <CardContent>
+                <p className="p-4 text-center text-muted-foreground">Loading detailed view...</p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     )
   }
 
   return (
-    <div className="grid grid-cols-1 gap-8 lg:grid-cols-6">
-      <div className="col-span-1 lg:col-span-3 xl:col-span-4">
-        <Chart data={data?.days} />
+    <div className="space-y-8">
+      <div className="flex items-center justify-between">
+        <h2 className="text-3xl font-bold tracking-tight">Dashboard Analytics</h2>
+        <DateRangePicker date={dateRange} setDate={setDateRange} />
       </div>
-      <div className="col-span-1 lg:col-span-3 xl:col-span-2">
-        <SpendingPie data={data?.categories} />
-      </div>
+
+      <Tabs defaultValue="charts" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="charts">Charts View</TabsTrigger>
+          <TabsTrigger value="details">Detailed View</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="charts" className="space-y-4">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-6">
+            <div className="col-span-1 lg:col-span-3 xl:col-span-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Spending Trends</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Chart data={data?.days} />
+                </CardContent>
+              </Card>
+            </div>
+            <div className="col-span-1 lg:col-span-3 xl:col-span-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Spending Distribution</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <SpendingPie data={data?.categories} />
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="details">
+          <Card>
+            <CardContent>
+              <div className="space-y-4">
+                {data?.categories.map((category) => (
+                  <div key={category.name} className="flex items-center justify-between">
+                    <span className="font-medium">{category.name}</span>
+                    <span>{category.value}</span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }
