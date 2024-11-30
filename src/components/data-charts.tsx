@@ -77,7 +77,7 @@ export const DataCharts = ({}: DataChartsProps) => {
         <h2 className="text-3xl font-bold tracking-tight">
           Dashboard Analytics
         </h2>
-        <DateRangePicker date={dateRange} setDate={setDateRange} />
+        {/* <DateRangePicker date={dateRange} setDate={setDateRange} /> */}
       </div>
 
       <Tabs defaultValue="charts" className="space-y-4">
