@@ -1,26 +1,37 @@
 import { useCurrentUser } from '@/hooks/use-current-user'
+import Image from 'next/image'
 import Link from 'next/link'
-import { useVideo } from 'react-use'
+import { useState } from 'react'
 
 export const Hero = () => {
-  const [video] = useVideo(
-    <video
-      src="/online-courses-stocck.mp4"
-      className="absolute left-0 top-0 h-full w-full object-cover"
-      autoPlay
-      loop
-      playsInline
-      muted
-    />
-  )
+  const [isVideoLoaded, setIsVideoLoaded] = useState(false)
   const currentUser = useCurrentUser()
 
   return (
     <section className="relative min-h-[80vh] overflow-hidden">
-      {video}
+      {!isVideoLoaded && (
+        <Image
+          src="/homepage-poster.jpg"
+          alt="Learning Background"
+          layout="fill"
+          objectFit="cover"
+          priority
+          className="absolute left-0 top-0 h-full w-full object-cover"
+        />
+      )}
+
+      <video
+        src="/online-courses-stocck.mp4"
+        className="absolute left-0 top-0 h-full w-full object-cover"
+        autoPlay
+        loop
+        playsInline
+        muted
+        onLoadedData={() => setIsVideoLoaded(true)}
+      />
+
       <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-black/60" />
 
-      {/* Centered content container */}
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="max-w-4xl px-4 text-center text-white">
           <h1 className="mb-6">
