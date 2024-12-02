@@ -1,5 +1,6 @@
 import { Button } from '@/components/custom/button'
 import { Input } from '@/components/ui/input'
+import { useCreateCouponModal } from '@/features/admin/coupons/store/use-create-coupon-modal'
 import { useConfirm } from '@/hooks/use-confirm'
 import { Row, Table } from '@tanstack/react-table'
 import Link from 'next/link'
@@ -19,6 +20,7 @@ export function DataTableToolbar<TData>({
     'Are you sure?',
     'You are about to delete this selected coupon'
   )
+  const [_, setOpen] = useCreateCouponModal()
   const isFiltered = table.getState().columnFilters.length > 0
   const isSelected = table.getFilteredSelectedRowModel().rows.length > 0
 
@@ -58,11 +60,9 @@ export function DataTableToolbar<TData>({
             </span>
           </Button>
         )}
-        <Link href="/admin/coupons/create">
-          <Button size="sm" className="h-8">
-            Create Coupon
-          </Button>
-        </Link>
+        <Button size="sm" className="h-8" onClick={() => setOpen(true)}>
+          Create Coupon
+        </Button>
         <DataTableViewOptions table={table} />
       </div>
     </div>

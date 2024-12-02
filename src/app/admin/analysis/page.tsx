@@ -20,7 +20,12 @@ const AnalysisPage = () => {
         <DataCard label="Total Sales" value={data.totalSales} />
       </div> */}
       <div className="flex flex-col gap-y-2">
-        <Filters />
+        <div className="flex items-center justify-between">
+          <h2 className="text-3xl font-bold tracking-tight">
+            Dashboard Analytics
+          </h2>
+          <Filters />
+        </div>
         {/* <SingleBarVariant data={formattedData} /> */}
         <DataCharts />
       </div>

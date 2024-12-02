@@ -12,11 +12,12 @@ import { useDeleteBackup } from '@/features/admin/backups/api/use-delete-backup'
 import { useRestoreBackup } from '@/features/admin/backups/api/use-restore'
 import { useConfirm } from '@/hooks/use-confirm'
 import { Row } from '@tanstack/react-table'
-import { Ellipsis } from 'lucide-react'
+import { Download, Ellipsis } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { IoCopyOutline } from 'react-icons/io5'
 import { MdRestore } from 'react-icons/md'
 import { PiTrashSimpleBold } from 'react-icons/pi'
+import { toast } from 'sonner'
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>
@@ -62,6 +63,21 @@ export function DataTableRowActions<TData>({
     restoreBackup({ fileUrl: backup.fileUrl })
   }
 
+  const handleDownload = () => {
+    if (!backup.fileUrl) {
+      toast.error('File URL is not available')
+      return
+    }
+
+    const anchor = document.createElement('a')
+    anchor.href = backup.fileUrl
+    anchor.download = backup.fileUrl.split('/').pop() || 'backup-file'
+    anchor.target = '_blank'
+    anchor.click()
+
+    anchor.remove()
+  }
+
   return (
     <>
       <ConfirmDialog />
@@ -84,9 +100,11 @@ export function DataTableRowActions<TData>({
             <MdRestore className="mr-1 h-4 w-4" />
             Restore
           </DropdownMenuItem>
-          <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleCopy}>
             <IoCopyOutline className="mr-1 h-4 w-4" /> Copy ID
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleDownload}>
+            <Download className="mr-1 h-4 w-4" /> Download
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem

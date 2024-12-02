@@ -19,13 +19,6 @@ export const DataCharts = ({}: DataChartsProps) => {
   if (isLoading) {
     return (
       <div className="space-y-8">
-        <div className="flex items-center justify-between">
-          <h2 className="text-3xl font-bold tracking-tight">
-            Dashboard Analytics
-          </h2>
-          <DateRangePicker date={dateRange} setDate={setDateRange} />
-        </div>
-
         <Tabs defaultValue="charts" className="space-y-4">
           <TabsList>
             <TabsTrigger value="charts">Charts View</TabsTrigger>
@@ -73,13 +66,6 @@ export const DataCharts = ({}: DataChartsProps) => {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold tracking-tight">
-          Dashboard Analytics
-        </h2>
-        {/* <DateRangePicker date={dateRange} setDate={setDateRange} /> */}
-      </div>
-
       <Tabs defaultValue="charts" className="space-y-4">
         <TabsList>
           <TabsTrigger value="charts">Charts View</TabsTrigger>

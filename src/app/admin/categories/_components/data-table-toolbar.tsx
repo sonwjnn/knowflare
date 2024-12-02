@@ -1,5 +1,6 @@
 import { Button } from '@/components/custom/button'
 import { Input } from '@/components/ui/input'
+import { useCreateCategoryModal } from '@/features/admin/categories/store/use-create-category-modal'
 import { useConfirm } from '@/hooks/use-confirm'
 import { Row, Table } from '@tanstack/react-table'
 import { X } from 'lucide-react'
@@ -22,6 +23,7 @@ export function DataTableToolbar<TData>({
     'Are you sure?',
     'You are about to delete this selected user'
   )
+  const [_, setOpen] = useCreateCategoryModal()
   const isFiltered = table.getState().columnFilters.length > 0
   const isSelected = table.getFilteredSelectedRowModel().rows.length > 0
 
@@ -61,11 +63,9 @@ export function DataTableToolbar<TData>({
             </span>
           </Button>
         )}
-        <Link href="/admin/categories/create">
-          <Button size="sm" className="h-8">
-            Create Category
-          </Button>
-        </Link>
+        <Button size="sm" className="h-8" onClick={() => setOpen(true)}>
+          Create Category
+        </Button>
         <DataTableViewOptions table={table} />
       </div>
     </div>

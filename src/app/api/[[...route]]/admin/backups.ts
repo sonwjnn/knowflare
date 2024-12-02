@@ -164,7 +164,7 @@ const app = new Hono()
     await writeFile(filePath, sqlContent)
 
     const data = await db.insert(backups).values({
-      fileUrl: filePath,
+      fileUrl: '/tmp/' + fileName,
     })
 
     return c.json({ data })
@@ -271,7 +271,8 @@ const app = new Hono()
         return c.json({ error: 'Not found' }, 404)
       }
 
-      const filePath = path.resolve(backup.fileUrl)
+      const filePath = path.join(process.cwd(), backup.fileUrl)
+
       if (fs.existsSync(filePath)) {
         try {
           await fsp.unlink(filePath)
@@ -317,7 +318,7 @@ const app = new Hono()
         .where(inArray(backups.id, values.ids))
 
       for (const backup of backupsToDelete) {
-        const filePath = path.resolve(backup.fileUrl)
+        const filePath = path.join(process.cwd(), backup.fileUrl)
         if (fs.existsSync(filePath)) {
           try {
             await fsp.unlink(filePath)
