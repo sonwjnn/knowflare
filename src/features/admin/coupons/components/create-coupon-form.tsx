@@ -25,6 +25,7 @@ import {
 } from '@/components/ui/select'
 import { CouponType } from '@/db/schema'
 import { useCreateCoupon } from '@/features/admin/coupons/api/use-create-coupon'
+import { useCreateCouponModal } from '@/features/admin/coupons/store/use-create-coupon-modal'
 import { useGetCategories } from '@/features/categories/api/use-get-categories'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { format } from 'date-fns'
@@ -54,6 +55,7 @@ export const CreateCouponForm = () => {
   const { mutate: createCoupon, isPending: createCouponLoading } =
     useCreateCoupon()
   const { data: categories, isPending: categoriesLoading } = useGetCategories()
+  const [_, setOpen] = useCreateCouponModal()
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -70,7 +72,8 @@ export const CreateCouponForm = () => {
       { ...values, expires: values.expires.toString() },
       {
         onSuccess: () => {
-          router.push('/admin/coupons')
+          // router.push('/admin/coupons')
+          setOpen(false)
         },
       }
     )
@@ -195,24 +198,12 @@ export const CreateCouponForm = () => {
         />
 
         <div className="flex gap-x-2">
-          <Link href="/admin/coupons">
-            <Button
-              type="button"
-              variant="outline"
-              disabled={createCouponLoading}
-            >
-              Back to coupons
-            </Button>
-          </Link>
-          <Button type="submit" disabled={createCouponLoading}>
-            {createCouponLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Creating...
-              </>
-            ) : (
-              'Create Coupon'
-            )}
+          <Button
+            className="ml-auto"
+            type="submit"
+            disabled={createCouponLoading}
+          >
+            Create Coupon
           </Button>
         </div>
       </form>

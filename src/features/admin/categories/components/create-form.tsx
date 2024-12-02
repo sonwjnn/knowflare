@@ -2,7 +2,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useCreateCategory } from '@/features/admin/categories/api/use-create-category'
-import { Loader2, UserRound } from 'lucide-react'
+import { useCreateCategoryModal } from '@/features/admin/categories/store/use-create-category-modal'
+import { Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -10,6 +11,7 @@ export const CreateForm = () => {
   const router = useRouter()
   const { mutate: createCategory, isPending: createCategoryLoading } =
     useCreateCategory()
+  const [_, setOpen] = useCreateCategoryModal()
   const [name, setName] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -21,17 +23,10 @@ export const CreateForm = () => {
       },
       {
         onSuccess: () => {
-          router.push('/admin/categories')
+          // router.push('/admin/categories')
+          setOpen(false)
         },
       }
-    )
-  }
-
-  if (createCategoryLoading) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <Loader2 className="size-6 animate-spin text-muted-foreground" />
-      </div>
     )
   }
 
@@ -54,6 +49,7 @@ export const CreateForm = () => {
                   value={name}
                   onChange={e => setName(e.target.value)}
                   required
+                  disabled={createCategoryLoading}
                 />
               </div>
             </div>
@@ -64,11 +60,7 @@ export const CreateForm = () => {
       <div className="pt-5">
         <div className="flex justify-end">
           <Button type="submit" disabled={createCategoryLoading}>
-            {createCategoryLoading ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              'Create'
-            )}
+            Create
           </Button>
         </div>
       </div>
