@@ -119,12 +119,12 @@ export const levelOptions = [
 export const publishedOptions = [
   {
     label: 'Published',
-    value: 'published',
+    value: '1',
     icon: CircleCheck,
   },
   {
     label: 'Unpublished',
-    value: 'unpublished',
+    value: '0',
     icon: CircleX,
   },
 ]

@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { UploadDropzone } from '@/lib/uploadthing'
+import { ImageIcon, Pencil, PlusCircle } from 'lucide-react'
 import Image from 'next/image'
 import { useState } from 'react'
 import { toast } from 'sonner'
@@ -19,57 +20,61 @@ export const FileUpload = ({
   endpoint,
   page,
 }: FileUploadProps) => {
-  const [isUrlConfirmed, setIsUrlConfirmed] = useState(false)
-  const allowedDomains = [
-    'utfs.io',
-    'images.unsplash.com',
-    'picsum.photos',
-    'i.ytimg.com',
-  ]
+  const [isEditing, setIsEditing] = useState(false)
 
-  const isAllowedUrl = (url: string) => {
-    try {
-      const { hostname } = new URL(url)
-      return allowedDomains.some(domain => hostname.includes(domain))
-    } catch {
-      return false
-    }
+  const toggleEdit = () => {
+    setIsEditing(current => !current)
   }
 
-  const handleConfirmUrl = () => {
-    if (isAllowedUrl(value)) {
-      setIsUrlConfirmed(true)
-      toast.success('URL is valid and image will be used.')
-    } else {
-      setIsUrlConfirmed(false)
-      toast.error('Invalid URL. Please use a valid domain.')
-    }
-  }
-
-  const handleUploadComplete = (res: { url: string }[]) => {
-    const uploadedUrl = res?.[0]?.url
-    if (uploadedUrl) {
-      onChange(uploadedUrl)
-      setIsUrlConfirmed(true)
-      toast.success('Image uploaded and confirmed.')
-    }
-  }
   return (
     <div className="flex flex-col gap-4">
-      {value && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={value}
-          alt="Upload"
-          className="aspect-square w-[200px] object-cover"
+      <div className="flex items-center font-medium">
+        <Button
+          onClick={toggleEdit}
+          variant="ghost"
+          type="button"
+          className="ml-auto"
+        >
+          {isEditing && <>Cancel</>}
+          {!isEditing && !value && (
+            <>
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Add an Image
+            </>
+          )}
+          {!isEditing && value && (
+            <>
+              <Pencil className="mr-2 h-4 w-4" />
+              Edit Image
+            </>
+          )}
+        </Button>
+      </div>
+      {!isEditing &&
+        (!value ? (
+          <div className="flex size-[200px] items-center justify-center rounded-none bg-slate-200">
+            <ImageIcon className="h-10 w-10 text-slate-500" />
+          </div>
+        ) : (
+          <div className="relative mt-2">
+            <Image
+              src={value}
+              alt="Upload"
+              width={200}
+              height={200}
+              className="aspect-square rounded-md object-cover"
+            />
+          </div>
+        ))}
+      {isEditing && (
+        <UploadDropzone
+          endpoint={endpoint}
+          onClientUploadComplete={res => onChange(res?.[0].url)}
+          onUploadError={(error: Error) => {
+            toast.error(`${error.message}`)
+          }}
         />
       )}
-
-      <UploadDropzone
-        endpoint={endpoint}
-        onClientUploadComplete={res => onChange(res?.[0].url)}
-        // onUploadError={(error: Error) => toast.error(`${error?.message}`)}
-      />
     </div>
   )
 }
