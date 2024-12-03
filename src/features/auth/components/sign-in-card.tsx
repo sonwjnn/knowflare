@@ -2,11 +2,11 @@
 
 import { Button } from '@/components/ui/button'
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
@@ -22,152 +22,161 @@ import { setErrorMap } from 'zod'
 import { useSignIn } from '../api/use-sign-in'
 
 export const SignInCard = () => {
-  // Loading
-  const { mutate: signInMutate, isPending: signInLoading } = useSignIn()
+    // Loading
+    const { mutate: signInMutate, isPending: signInLoading } = useSignIn()
 
-  const [loading, setLoading] = useState(false)
-  const [loadingGithub, setLoadingGithub] = useState(false)
-  const [loadingGoogle, setLoadingGoogle] = useState(false)
+    const [loading, setLoading] = useState(false)
+    const [loadingGithub, setLoadingGithub] = useState(false)
+    const [loadingGoogle, setLoadingGoogle] = useState(false)
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
 
-  const params = useSearchParams()
-  const error = params.get('error')
-  const callbackUrl = params.get('callbackUrl') || '/'
+    const params = useSearchParams()
+    const error = params.get('error')
+    const callbackUrl = params.get('callbackUrl') || '/'
 
-  const popupCenter = (url: string, title: string) => {
-    const dualScreenLeft = window.screenLeft ?? window.screenX
-    const dualScreenTop = window.screenTop ?? window.screenY
+    const popupCenter = (url: string, title: string) => {
+        const dualScreenLeft = window.screenLeft ?? window.screenX
+        const dualScreenTop = window.screenTop ?? window.screenY
 
-    const width =
-      window.innerWidth ?? document.documentElement.clientWidth ?? screen.width
+        const width =
+            window.innerWidth ?? document.documentElement.clientWidth ?? screen.width
 
-    const height =
-      window.innerHeight ??
-      document.documentElement.clientHeight ??
-      screen.height
+        const height =
+            window.innerHeight ??
+            document.documentElement.clientHeight ??
+            screen.height
 
-    const systemZoom = width / window.screen.availWidth
+        const systemZoom = width / window.screen.availWidth
 
-    const left = (width - 500) / 2 / systemZoom + dualScreenLeft
-    const top = (height - 550) / 2 / systemZoom + dualScreenTop
+        const left = (width - 500) / 2 / systemZoom + dualScreenLeft
+        const top = (height - 550) / 2 / systemZoom + dualScreenTop
 
-    const newWindow = window.open(
-      url,
-      title,
-      `width=${500 / systemZoom},height=${
-        550 / systemZoom
-      },top=${top},left=${left}`
+        const newWindow = window.open(
+            url,
+            title,
+            `width=${500 / systemZoom},height=${550 / systemZoom
+            },top=${top},left=${left}`
+        )
+
+        newWindow?.focus()
+    }
+
+    const onCredentialSignIn = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+
+        setLoading(true)
+
+        signInMutate({
+            email: email,
+            password: password,
+            callbackUrl,
+        })
+    }
+
+    const onProviderSignIn = (provider: 'github' | 'google') => {
+        setLoading(true)
+        setLoadingGithub(provider === 'github')
+        setLoadingGoogle(provider === 'google')
+        popupCenter(`/auth-signin/${provider}`, 'Sample Sign In')
+    }
+
+    return (
+        <Card className="w-full bg-white/95 backdrop-blur-sm rounded-xl shadow-xl p-8">
+            <CardHeader className="space-y-3">
+                <CardTitle className="text-3xl font-bold text-center bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    Welcome Back
+                </CardTitle>
+                <CardDescription className="text-center text-gray-600">
+                    Sign in to your account
+                </CardDescription>
+            </CardHeader>
+
+            <CardContent className="space-y-4">
+                <form onSubmit={onCredentialSignIn} className="space-y-4">
+                    <Input
+                        value={email}
+                        disabled={signInLoading}
+                        onChange={e => setEmail(e.target.value)}
+                        placeholder="Email"
+                        type="email"
+                        required
+                        className="h-12 rounded-lg border-gray-200 bg-white/50 backdrop-blur-sm focus:border-blue-500 focus:ring-blue-500"
+                    />
+                    <Input
+                        value={password}
+                        disabled={signInLoading}
+                        onChange={e => setPassword(e.target.value)}
+                        placeholder="Password"
+                        type="password"
+                        required
+                        className="h-12 rounded-lg border-gray-200 bg-white/50 backdrop-blur-sm focus:border-blue-500 focus:ring-blue-500"
+                    />
+                    <Button
+                        className="w-full h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90 transition-all duration-300 rounded-lg text-white font-semibold"
+                        type="submit"
+                        disabled={loading}
+                    >
+                        {signInLoading ? (
+                            <Loader2 className="mr-2 size-5 animate-spin" />
+                        ) : (
+                            'Continue'
+                        )}
+                    </Button>
+                </form>
+
+                <div className="flex items-center justify-center">
+                    <Link
+                        href="/reset"
+                        className="text-sm text-gray-600 hover:text-blue-600 transition-colors"
+                    >
+                        Forgot a password?
+                    </Link>
+                </div>
+
+                <Separator className="my-6" />
+
+                <div className="space-y-3">
+                    <Button
+                        onClick={() => onProviderSignIn('google')}
+                        variant="outline"
+                        className="w-full h-12 border-gray-200 hover:bg-gray-50 transition-colors rounded-lg"
+                        disabled={loading}
+                    >
+                        {loadingGoogle ? (
+                            <Loader2 className="mr-2 size-5 animate-spin" />
+                        ) : (
+                            <FcGoogle className="mr-2 size-5" />
+                        )}
+                        Continue with Google
+                    </Button>
+                    <Button
+                        onClick={() => onProviderSignIn('github')}
+                        variant="outline"
+                        disabled={loading}
+                        className="w-full h-12 border-gray-200 hover:bg-gray-50 transition-colors rounded-lg"
+                    >
+                        {loadingGithub ? (
+                            <Loader2 className="mr-2 size-5 animate-spin" />
+                        ) : (
+                            <FaGithub className="mr-2 size-5" />
+                        )}
+                        Continue with Github
+                    </Button>
+                </div>
+
+                <p className="text-sm text-center text-gray-600">
+                    Don&apos;t have an account?{' '}
+                    <Link
+                        href="/sign-up"
+                        onClick={() => setLoading(true)}
+                        className="text-blue-600 hover:underline"
+                    >
+                        Sign Up
+                    </Link>
+                </p>
+            </CardContent>
+        </Card>
     )
-
-    newWindow?.focus()
-  }
-
-  const onCredentialSignIn = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-
-    setLoading(true)
-
-    signInMutate({
-      email: email,
-      password: password,
-      callbackUrl,
-    })
-  }
-
-  const onProviderSignIn = (provider: 'github' | 'google') => {
-    setLoading(true)
-    setLoadingGithub(provider === 'github')
-    setLoadingGoogle(provider === 'google')
-    popupCenter(`/auth-signin/${provider}`, 'Sample Sign In')
-  }
-
-  return (
-    <Card className="h-full w-full p-8">
-      <CardHeader className="px-0 pt-0">
-        <CardTitle>Login to continue</CardTitle>
-        <CardDescription>
-          Use your email or another service to continue
-        </CardDescription>
-      </CardHeader>
-      {!!error && (
-        <div className="mb-6 flex items-center gap-x-2 rounded-none bg-destructive/15 p-3 text-sm text-destructive">
-          <TriangleAlert className="size-4" />
-          <p className="mx-2">Invalid email or password</p>
-        </div>
-      )}
-      <CardContent className="space-y-5 px-0 pb-0">
-        <form onSubmit={onCredentialSignIn} className="space-y-2.5">
-          <Input
-            value={email}
-            disabled={signInLoading}
-            onChange={e => setEmail(e.target.value)}
-            placeholder="Email"
-            type="email"
-            required
-          />
-          <Input
-            value={password}
-            disabled={signInLoading}
-            onChange={e => setPassword(e.target.value)}
-            placeholder="Password"
-            type="password"
-            required
-          />
-          <Button className="w-full" type="submit" size="lg" disabled={loading}>
-            {signInLoading ? (
-              <Loader2 className="left-2.5 top-2.5 mr-2 size-5 animate-spin" />
-            ) : (
-              'Continue'
-            )}
-          </Button>
-        </form>
-        <p className="text-xs text-muted-foreground">
-          <Link href="/reset">
-            <span className="text-sky-700 hover:underline">
-              Forgot a password?
-            </span>
-          </Link>
-        </p>
-        <Separator />
-        <div className="flex flex-col gap-y-2.5">
-          <Button
-            onClick={() => onProviderSignIn('google')}
-            size="lg"
-            variant="outline"
-            className="relative w-full"
-            disabled={loading}
-          >
-            {loadingGoogle ? (
-              <Loader2 className="absolute left-2.5 top-2.5 mr-2 size-5 animate-spin" />
-            ) : (
-              <FcGoogle className="absolute left-2.5 top-2.5 mr-2 size-5" />
-            )}
-            Continue with Google
-          </Button>
-          <Button
-            onClick={() => onProviderSignIn('github')}
-            size="lg"
-            variant="outline"
-            disabled={loading}
-            className="relative w-full"
-          >
-            {loadingGithub ? (
-              <Loader2 className="absolute left-2.5 top-2.5 mr-2 size-5 animate-spin" />
-            ) : (
-              <FaGithub className="absolute left-2.5 top-2.5 mr-2 size-5" />
-            )}
-            Continue with Github
-          </Button>
-        </div>
-        <p className="text-xs text-muted-foreground">
-          Don&apos;t have an account?{' '}
-          <Link href="/sign-up" onClick={() => setLoading(true)}>
-            <span className="text-sky-700 hover:underline">Sign Up</span>
-          </Link>
-        </p>
-      </CardContent>
-    </Card>
-  )
 }
