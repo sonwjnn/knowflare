@@ -13,54 +13,63 @@ interface FileUploadProps {
   endpoint: keyof typeof ourFileRouter
   page: string
 }
-
 export const FileUpload = ({
   value,
   onChange,
   endpoint,
   page,
 }: FileUploadProps) => {
-  const isValidUrl = value.startsWith('http') || value.startsWith('/')
+  const [isUrlConfirmed, setIsUrlConfirmed] = useState(false)
+  const allowedDomains = [
+    'utfs.io',
+    'images.unsplash.com',
+    'picsum.photos',
+    'i.ytimg.com',
+  ]
 
+  const isAllowedUrl = (url: string) => {
+    try {
+      const { hostname } = new URL(url)
+      return allowedDomains.some(domain => hostname.includes(domain))
+    } catch {
+      return false
+    }
+  }
+
+  const handleConfirmUrl = () => {
+    if (isAllowedUrl(value)) {
+      setIsUrlConfirmed(true)
+      toast.success('URL is valid and image will be used.')
+    } else {
+      setIsUrlConfirmed(false)
+      toast.error('Invalid URL. Please use a valid domain.')
+    }
+  }
+
+  const handleUploadComplete = (res: { url: string }[]) => {
+    const uploadedUrl = res?.[0]?.url
+    if (uploadedUrl) {
+      onChange(uploadedUrl)
+      setIsUrlConfirmed(true)
+      toast.success('Image uploaded and confirmed.')
+    }
+  }
   return (
     <div className="flex flex-col gap-4">
-      {page === 'Edit Course' && value !== '' && isValidUrl && (
-        <Image
+      {value && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
           src={value}
-          alt="image"
-          width={500}
-          height={500}
-          className="h-[200px] w-[280px] rounded-xl object-cover"
+          alt="Upload"
+          className="aspect-square w-[200px] object-cover"
         />
       )}
 
-      <Tabs defaultValue="url" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="url">Enter URL</TabsTrigger>
-          <TabsTrigger value="upload">Upload Image</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="url">
-          <Input
-            placeholder="Enter image URL (utfs.io, images.unsplash.com, picsum.photos, i.ytimg.com)"
-            value={value}
-            onChange={e => onChange(e.target.value)}
-            className="w-full"
-          />
-        </TabsContent>
-        <TabsContent value="upload">
-          <UploadDropzone
-            endpoint={endpoint}
-            onClientUploadComplete={res => {
-              onChange(res?.[0].url)
-            }}
-            onUploadError={(error: Error) => {
-              toast.error(error.message)
-            }}
-            className="h-[200px]"
-          />
-        </TabsContent>
-      </Tabs>
+      <UploadDropzone
+        endpoint={endpoint}
+        onClientUploadComplete={res => onChange(res?.[0].url)}
+        // onUploadError={(error: Error) => toast.error(`${error?.message}`)}
+      />
     </div>
   )
 }

@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button'
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -15,12 +14,11 @@ import { insertCoursesSchema } from '@/db/schema'
 import { useCreateCourse } from '@/features/admin/courses/api/use-create-course'
 import { useGetCategories } from '@/features/categories/api/use-get-categories'
 import { zodResolver } from '@hookform/resolvers/zod'
-import axios from 'axios'
-import { Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+import { useCreateCourseModal } from '../store/use-create-course-modal'
 import { CategoryOptions } from './category-options'
 
 const formSchema = insertCoursesSchema.pick({
@@ -29,11 +27,12 @@ const formSchema = insertCoursesSchema.pick({
 })
 
 type FormValues = z.input<typeof formSchema>
-export const CreateForm = () => {
+export const CreateCourseForm = () => {
   const { data: categories, isPending: categoriesLoading } = useGetCategories()
   const { mutate: createCourse, isPending: createCourseLoading } =
     useCreateCourse()
   const router = useRouter()
+  const [_, setOpen] = useCreateCourseModal()
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -48,7 +47,7 @@ export const CreateForm = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     createCourse(values, {
       onSuccess: () => {
-        router.push('/admin/courses')
+        setOpen(false)
       },
     })
   }
@@ -59,8 +58,8 @@ export const CreateForm = () => {
   }))
 
   return (
-    <div className="p-10">
-      <h1 className="text-xl font-bold">
+    <div>
+      <h1 className="text-base font-bold">
         Let give some basics for your course
       </h1>
       <p className="mt-3 text-sm">
@@ -104,9 +103,15 @@ export const CreateForm = () => {
             )}
           />
 
-          <Button type="submit" disabled={!isValid || createCourseLoading}>
-            Create
-          </Button>
+          <div className="flex items-center">
+            <Button
+              className="ml-auto"
+              type="submit"
+              disabled={!isValid || createCourseLoading}
+            >
+              Create
+            </Button>
+          </div>
         </form>
       </Form>
     </div>

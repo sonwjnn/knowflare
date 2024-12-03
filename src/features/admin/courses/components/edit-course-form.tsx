@@ -31,17 +31,18 @@ import { CategoryOptions } from './category-options'
 import { EditToolbar } from './edit-toolbar'
 
 const formSchema = z.object({
-  title: z.string().min(2, {
-    message: 'Title is required and must be at least 2 characters long',
-  }),
+  title: z.string().optional(),
   subtitle: z.string().optional(),
   description: z.string().optional(),
-  categoryId: z.string().min(1, {
-    message: 'Category is required',
-  }),
+  categoryId: z.string().optional(),
   level: z.string().optional(),
-  imageUrl: z.string().url().optional(),
-  price: z.coerce.number().optional(),
+  imageUrl: z.string().optional(),
+  price: z.coerce
+    .number()
+    .min(0, {
+      message: 'Price must be greater than or equal to 0',
+    })
+    .optional(),
 })
 
 type FormValues = z.input<typeof formSchema>
@@ -83,7 +84,7 @@ export const EditCourseForm = () => {
 
   // 2. Define a submit handler.
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    editCourse(values, { onSuccess: () => {} })
+    editCourse(values)
   }
 
   const categoryOptions = (categories ?? []).map(item => ({
@@ -152,7 +153,6 @@ export const EditCourseForm = () => {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="description"
@@ -172,7 +172,6 @@ export const EditCourseForm = () => {
               </FormItem>
             )}
           />
-
           <div className="flex flex-wrap gap-10">
             <FormField
               control={form.control}
@@ -214,11 +213,9 @@ export const EditCourseForm = () => {
               )}
             />
           </div>
-
           <FormField
             control={form.control}
             name="imageUrl"
-            disabled={editCourseLoading}
             render={({ field }) => (
               <FormItem className="flex flex-col">
                 <FormLabel>
@@ -227,7 +224,9 @@ export const EditCourseForm = () => {
                 <FormControl>
                   <FileUpload
                     value={field.value || ''}
-                    onChange={url => field.onChange(url)}
+                    onChange={url => {
+                      if (url) onSubmit({ imageUrl: url })
+                    }}
                     endpoint="courseImage"
                     page="Edit Course"
                   />
@@ -236,7 +235,6 @@ export const EditCourseForm = () => {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="price"
@@ -258,7 +256,6 @@ export const EditCourseForm = () => {
               </FormItem>
             )}
           />
-
           <div className="flex justify-between gap-5">
             <Link href="/admin/courses">
               <Button variant="outline" type="button">

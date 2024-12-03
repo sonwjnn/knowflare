@@ -1,5 +1,6 @@
 import { Button } from '@/components/custom/button'
 import { Input } from '@/components/ui/input'
+import { useCreateCourseModal } from '@/features/admin/courses/store/use-create-course-modal'
 import { useGetUsersHaveCourse } from '@/features/admin/users/api/use-get-users-have-course'
 import { useConfirm } from '@/hooks/use-confirm'
 import { Row, Table } from '@tanstack/react-table'
@@ -24,6 +25,7 @@ export function DataTableToolbar<TData>({
     'You are about to delete this selected user'
   )
   const { data: users, isPending: usersLoading } = useGetUsersHaveCourse()
+  const [_, setOpen] = useCreateCourseModal()
   const isFiltered = table.getState().columnFilters.length > 0
   const isSelected = table.getFilteredSelectedRowModel().rows.length > 0
 
@@ -108,11 +110,9 @@ export function DataTableToolbar<TData>({
           </Button>
         )}
 
-        <Link href="/admin/courses/create">
-          <Button size="sm" className="h-8">
-            Create Course
-          </Button>
-        </Link>
+        <Button size="sm" className="h-8" onClick={() => setOpen(true)}>
+          Create Course
+        </Button>
 
         <DataTableViewOptions table={table} />
       </div>

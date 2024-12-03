@@ -26,14 +26,13 @@ interface ChapterVideoFormProps {
   onChange: (url?: string) => void
   value: string | undefined
   chapterId: string
-  type: 'youtube' | 'upload'
+  // type: 'youtube' | 'upload'
 }
 
 export const VideoForm = ({
   onChange,
   value,
   chapterId,
-  type,
 }: ChapterVideoFormProps) => {
   const [isEditing, setIsEditing] = useState(false)
 
@@ -68,53 +67,43 @@ export const VideoForm = ({
           </div>
         ) : (
           <div className="relative mt-2 aspect-video">
-            {type === 'youtube' && (
+            {/* {type === 'youtube' && (
               <ReactPlayerYoutube
                 url={value || ''}
                 width="100%"
                 height="100%"
                 controls
               />
-            )}
-            {type === 'upload' && (
-              <ReactPlayerUpload
-                url={value || ''}
-                width="100%"
-                height="100%"
-                controls
-              />
-            )}
+            )} */}
+            {/* {type === 'upload' && ( */}
+            <ReactPlayerUpload
+              url={value || ''}
+              width="100%"
+              height="100%"
+              controls
+            />
+            {/* )} */}
           </div>
         ))}
       {isEditing && (
         <div>
-          <Tabs defaultValue="url" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="url">Enter URL</TabsTrigger>
-              <TabsTrigger value="upload">Upload Video</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="url">
-              <Input
-                placeholder="Enter video URL (youtube.com)"
-                value={value}
-                onChange={e => onChange(e.target.value)}
-                className="w-full"
-              />
-            </TabsContent>
-            <TabsContent value="upload">
-              <UploadDropzone
-                endpoint="lessonVideo"
-                onClientUploadComplete={res => {
-                  onChange(res?.[0].url)
-                }}
-                onUploadError={(error: Error) => {
-                  toast.error(error.message)
-                }}
-                className="h-[200px]"
-              />
-            </TabsContent>
-          </Tabs>
+          {/* <Input
+            placeholder="Enter video URL (youtube.com)"
+            value={value}
+            onChange={e => onChange(e.target.value)}
+            className="w-full"
+          /> */}
+          <UploadDropzone
+            endpoint="lessonVideo"
+            onClientUploadComplete={res => {
+              onChange(res?.[0].url)
+              setIsEditing(false)
+            }}
+            onUploadError={(error: Error) => {
+              toast.error(error.message)
+            }}
+            className="h-[200px]"
+          />
 
           <div className="mt-4 text-xs text-muted-foreground">
             Upload this lesson&apos;s video

@@ -20,7 +20,10 @@ import { useMedia } from 'react-use'
 import { ProgressButton } from './progress-button'
 import QuizComponent from './quiz'
 
-const ReactPlayer = dynamic(() => import('react-player/youtube'), {
+const ReactPlayerYoutube = dynamic(() => import('react-player/youtube'), {
+  ssr: false,
+})
+const ReactPlayer = dynamic(() => import('react-player'), {
   ssr: false,
 })
 
@@ -78,12 +81,23 @@ export default function CourseInterface() {
                 </div>
               )}
               {!isLocked && (
-                <ReactPlayer
-                  url={lesson?.videoUrl || ''}
-                  width="100%"
-                  height="100%"
-                  controls
-                />
+                <>
+                  {lesson?.videoUrl?.includes('youtube.com') ? (
+                    <ReactPlayerYoutube
+                      url={lesson?.videoUrl || ''}
+                      width="100%"
+                      height="100%"
+                      controls
+                    />
+                  ) : (
+                    <ReactPlayer
+                      url={lesson?.videoUrl || ''}
+                      width="100%"
+                      height="100%"
+                      controls
+                    />
+                  )}
+                </>
               )}
             </div>
           </div>

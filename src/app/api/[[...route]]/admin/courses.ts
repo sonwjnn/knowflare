@@ -1,5 +1,6 @@
 import { db } from '@/db/drizzle'
 import {
+  CourseLevel,
   categories,
   chapters,
   courses,
@@ -147,6 +148,7 @@ const app = new Hono()
         description: z.string().optional().nullable(),
         imageUrl: z.string().optional().nullable(),
         price: z.number().optional(),
+        level: z.string().optional(),
         isPublished: z.boolean().optional(),
       })
     ),
@@ -166,7 +168,10 @@ const app = new Hono()
 
       const [data] = await db
         .update(courses)
-        .set(values)
+        .set({
+          ...values,
+          level: values.level ? (values.level as CourseLevel) : undefined,
+        })
         .where(eq(courses.id, id))
 
       if (!data) {
