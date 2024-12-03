@@ -196,13 +196,15 @@ export const EditLessonForm = () => {
                 <FormControl>
                   <VideoForm
                     value={field.value}
-                    onChange={field.onChange}
+                    onChange={url => {
+                      if (url) onSubmit({ videoUrl: url })
+                    }}
                     chapterId={chapterId}
-                    type={
-                      field.value?.includes('youtube.com')
-                        ? 'youtube'
-                        : 'upload'
-                    }
+                    // type={
+                    //   field.value?.includes('youtube.com')
+                    //     ? 'youtube'
+                    //     : 'upload'
+                    // }
                   />
                 </FormControl>
               </FormItem>
