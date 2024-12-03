@@ -6,13 +6,17 @@ import {
   purchases,
   subscriptions,
 } from '@/db/schema'
+import OrderConfirmationEmail from '@/emails/order-confirmation'
 import { stripe } from '@/lib/stripe'
 import { verifyAuth } from '@hono/auth-js'
 import { zValidator } from '@hono/zod-validator'
 import { and, eq, isNotNull } from 'drizzle-orm'
 import { Hono } from 'hono'
+import { Resend } from 'resend'
 import Stripe from 'stripe'
 import { z } from 'zod'
+
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 const app = new Hono()
   .post('/billing', verifyAuth(), async c => {
@@ -136,9 +140,17 @@ const app = new Hono()
         metadata: {
           productIds: JSON.stringify(courses.map(item => item.id)),
           userId: auth.token.id,
+          userEmail: auth.token.email as string,
           total_amount: courses.reduce(
             (acc, item) => acc + (item.price || 0),
             0
+          ),
+          products: JSON.stringify(
+            courses.map(item => ({
+              imageUrl: item.imageUrl,
+              title: item.title,
+              price: item.price || 0,
+            }))
           ),
         },
       })
@@ -188,6 +200,11 @@ const app = new Hono()
       })
 
       const courseIds = JSON.parse(session?.metadata?.productIds) as string[]
+      const courses = JSON.parse(session?.metadata?.products) as {
+        imageUrl: string
+        title: string
+        price: number
+      }[]
 
       // insert owner courses
       const purchasesData = courseIds
@@ -202,6 +219,18 @@ const app = new Hono()
 
       // clear cart
       await db.delete(carts).where(eq(carts.userId, session?.metadata?.userId!))
+
+      // send email checkout successfully
+      await resend.emails.send({
+        from: 'mail@knowflare.click',
+        to: session?.metadata?.userEmail,
+        subject: 'Your Order Confirmation',
+        react: OrderConfirmationEmail({
+          customerName: payment.customer as string,
+          orderId: payment.id,
+          data: courses,
+        }),
+      })
     }
 
     if (event.type === 'invoice.payment_succeeded') {

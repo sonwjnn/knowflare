@@ -27,7 +27,7 @@ const ReactPlayer = dynamic(() => import('react-player'), {
   ssr: false,
 })
 
-export default function CourseInterface() {
+export default function LessonIdPage() {
   const isMobile = useMedia('(max-width: 1024px)', false)
   const courseId = useCourseId()
   const lessonId = useLessonId()
@@ -56,6 +56,10 @@ export default function CourseInterface() {
     )
   }
 
+  if (!lesson) return null
+
+  const isYoutubeVideoUrl = lesson?.videoUrl?.includes('youtube.com')
+
   return (
     <ScrollArea className="flex-1 pr-2">
       <div className="relative mx-auto w-full">
@@ -82,7 +86,7 @@ export default function CourseInterface() {
               )}
               {!isLocked && (
                 <>
-                  {lesson?.videoUrl?.includes('youtube.com') ? (
+                  {isYoutubeVideoUrl ? (
                     <ReactPlayerYoutube
                       url={lesson?.videoUrl || ''}
                       width="100%"

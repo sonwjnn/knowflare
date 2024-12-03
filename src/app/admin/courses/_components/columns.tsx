@@ -171,15 +171,13 @@ export const columns: ColumnDef<Course>[] = [
     ),
     cell: ({ row }) => {
       const rowValue = !!row.getValue('isPublished')
+      const formattedValue = rowValue ? '1' : '0'
 
-      const isPublished = publishedOptions.find(item => {
-        if (rowValue) {
-          return item.value === 'published'
-        }
-        return item.value === 'unpublished'
+      const isValid = publishedOptions.some(item => {
+        return item.value === formattedValue
       })
 
-      if (!isPublished) {
+      if (!isValid) {
         return null
       }
 
@@ -188,19 +186,20 @@ export const columns: ColumnDef<Course>[] = [
           <Badge
             className={cn(
               'py-1 text-xs font-semibold',
-              isPublished &&
+              rowValue &&
                 'bg-emerald-200 text-emerald-700 hover:bg-emerald-200 hover:text-emerald-700',
-              !isPublished &&
+              !rowValue &&
                 'bg-rose-200 text-rose-700 hover:bg-rose-200 hover:text-rose-700'
             )}
           >
-            {isPublished ? 'Published' : 'Unpublished'}
+            {rowValue ? 'Published' : 'Unpublished'}
           </Badge>
         </div>
       )
     },
     filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id))
+      const formattedValue = row.getValue(id) ? '1' : '0'
+      return value.includes(formattedValue)
     },
   },
 
