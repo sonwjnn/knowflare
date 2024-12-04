@@ -47,6 +47,14 @@ const Navbar = () => {
             </div>
           </div>
           <div className="hidden items-center space-x-4 md:flex">
+            <Link
+              href="/about"
+              className={`hover:opacity-80 transition-opacity ${
+                shouldBeTransparent ? 'text-white' : 'text-gray-900'
+              }`}
+            >
+              About
+            </Link>
             <SearchInput
               className={shouldBeTransparent ? 'text-white' : 'text-gray-900'}
             />
@@ -109,6 +117,11 @@ const Navbar = () => {
           <div className="space-y-1 px-2 pb-3 pt-2 sm:px-3">
             <Categories />
             <SearchInput />
+            <Link href="/about">
+              <div className="block px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-50">
+                About
+              </div>
+            </Link>
             <Cart />
             {!currentUser && (
               <>
