@@ -6,7 +6,7 @@ import { useInView } from 'react-intersection-observer'
 import { ChevronDown, Users, BookOpen, Award, Clock } from 'lucide-react'
 
 export default function AboutPage() {
-    const { ref, inView } = useInView({
+    const { ref: inViewRef, inView } = useInView({
         triggerOnce: true,
         threshold: 0.1,
     })
@@ -18,42 +18,28 @@ export default function AboutPage() {
 
     return (
         <div className="min-h-screen">
-            {/* Hero Section with Parallax */}
-            <section className="relative h-screen flex items-center justify-center overflow-hidden">
+            {/* Hero Section with Video Background */}
+            <section className="relative h-[60vh] flex items-center justify-center overflow-hidden">
                 <div className="absolute inset-0">
-                    <Image
-                        src="/hero-background.jpg"
-                        alt="Hero Background"
-                        fill
-                        className="object-cover"
-                        priority
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-b from-black/70 to-black/30" />
+                    <video
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        className="absolute inset-0 w-full h-full object-cover"
+                    >
+                        <source src="/hero-home.mp4" type="video/mp4" />
+                    </video>
+                    {/* Overlay to ensure text readability */}
+                    <div className="absolute inset-0 bg-black/50" />
                 </div>
-                <div className="relative z-10 text-center text-white">
-                    <motion.h1
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8 }}
-                        className="text-6xl font-bold mb-6"
-                    >
-                        Transforming Education
-                    </motion.h1>
-                    <motion.p
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.5, duration: 0.8 }}
-                        className="text-xl mb-8 max-w-2xl mx-auto"
-                    >
-                        Empowering learners worldwide through innovative online education
-                    </motion.p>
-                    <motion.div
-                        animate={{ y: [0, 10, 0] }}
-                        transition={{ duration: 1.5, repeat: Infinity }}
-                        className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
-                    >
-                        <ChevronDown className="w-8 h-8" />
-                    </motion.div>
+                <div className="relative z-10 text-center text-white max-w-4xl mx-auto px-4">
+                    <h1 className="text-5xl md:text-6xl font-bold mb-6 animate-fade-in">
+                        Transforming Education Through Technology
+                    </h1>
+                    <p className="text-xl md:text-2xl opacity-90">
+                        Empowering learners worldwide with innovative online education
+                    </p>
                 </div>
             </section>
 
@@ -89,7 +75,7 @@ export default function AboutPage() {
             <section className="py-20 bg-gray-50">
                 <div className="container mx-auto px-6">
                     <motion.div
-                        ref={ref}
+                        ref={inViewRef as any}
                         initial="hidden"
                         animate={inView ? "visible" : "hidden"}
                         variants={fadeIn}
@@ -101,7 +87,7 @@ export default function AboutPage() {
                                     <h2 className="text-4xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
                                         Our Mission
                                     </h2>
-                                    <p className="text-gray-600 leading-relaxed">
+                                    <p className="text-gray-800 leading-relaxed text-2xl">
                                         We are dedicated to revolutionizing online education through cutting-edge
                                         technology and expert instruction. Our platform combines innovation with
                                         accessibility to create an unparalleled learning experience.
@@ -122,51 +108,42 @@ export default function AboutPage() {
             </section>
 
             {/* Team Section with Hover Effects */}
-            <section className="py-20">
-                <div className="container mx-auto px-6">
-                    <h2 className="text-4xl font-bold text-center mb-12">Meet Our Team</h2>
-                    <div className="grid md:grid-cols-3 gap-8">
+            <section className="py-16 bg-gray-50">
+                <div className="container mx-auto px-4">
+                    <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Meet Our Team</h2>
+                    <div className="grid md:grid-cols-3 gap-12 max-w-5xl mx-auto">
                         {[
                             {
                                 name: 'Nguyen Le Hoang Son',
                                 role: 'Fullstack Developer',
                                 image: '/son.png',
-                                links: { github: '#', linkedin: '#' }
                             },
                             {
                                 name: 'Do Cong Ton Sach',
-                                role: 'Information System & Frontend Developer',
+                                role: 'Frontend Developer',
                                 image: '/sach.png',
-                                links: { github: '#', linkedin: '#' }
                             },
                             {
                                 name: 'Nguyen Nhat Hao',
                                 role: 'Information System Engineer',
                                 image: '/hao.png',
-                                links: { github: '#', linkedin: '#' }
                             }
                         ].map((member, index) => (
-                            <motion.div
-                                key={index}
-                                whileHover={{ y: -10 }}
-                                className="relative group"
-                            >
-                                <div className="relative overflow-hidden rounded-xl bg-white shadow-lg">
-                                    <div className="relative h-64">
+                            <div key={index} className="text-center group">
+                                <div className="relative w-48 h-48 mx-auto mb-6">
+                                    <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 animate-pulse group-hover:opacity-100 opacity-0 transition-opacity" />
+                                    <div className="absolute inset-1 rounded-full overflow-hidden bg-white">
                                         <Image
                                             src={member.image}
                                             alt={member.name}
                                             fill
-                                            className="object-cover transition-transform duration-500 group-hover:scale-110"
+                                            className="object-cover hover:scale-110 transition-transform duration-300"
                                         />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                    </div>
-                                    <div className="p-6">
-                                        <h3 className="text-xl font-semibold mb-2">{member.name}</h3>
-                                        <p className="text-gray-600">{member.role}</p>
                                     </div>
                                 </div>
-                            </motion.div>
+                                <h3 className="text-xl font-semibold mb-2">{member.name}</h3>
+                                <p className="text-gray-600">{member.role}</p>
+                            </div>
                         ))}
                     </div>
                 </div>
