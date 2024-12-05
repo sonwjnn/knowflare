@@ -125,7 +125,7 @@ export default function BlogPage() {
             {/* Hero Section */}
             <section className="relative h-[60vh] flex items-center justify-center overflow-hidden">
                 <div className="absolute inset-0">
-                    <Image src="/blog.jpg" alt="Hero" fill className="object-cover" />
+                    <Image src="" alt="Hero" fill className="object-cover" />
                     <div className="absolute inset-0 bg-black/50" />
                 </div>
                 <div className="relative z-10 text-center text-white max-w-4xl mx-auto px-4">
