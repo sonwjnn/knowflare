@@ -95,7 +95,7 @@ export default function AboutPage() {
                                 </div>
                                 <div className="relative h-[400px] rounded-xl overflow-hidden">
                                     <Image
-                                        src="/mission-image.jpg"
+                                        src="/blog.jpg"
                                         alt="Our Mission"
                                         fill
                                         className="object-cover transition-transform duration-500 group-hover:scale-110"
