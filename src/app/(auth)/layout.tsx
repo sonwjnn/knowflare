@@ -4,7 +4,7 @@ interface AuthLayoutProps {
 
 const AuthLayout = async ({ children }: AuthLayoutProps) => {
   return (
-    <div className="flex h-full flex-col bg-[url(/bg.jpg)] bg-cover bg-top">
+    <div className="flex h-full flex-col bg-cover bg-top">
       <div className="z-[4] flex h-full w-full flex-col items-center justify-center">
         <div className="h-full w-full md:h-auto md:w-[420px]">{children}</div>
       </div>

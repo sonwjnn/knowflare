@@ -13,11 +13,6 @@ import { usePathname } from 'next/navigation'
 
 const sidebarItems = [
   {
-    label: 'Overview',
-    icon: LayoutDashboard,
-    href: '/my-profile',
-  },
-  {
     label: 'Personal Information',
     icon: CircleUser,
     href: '/my-profile/settings',

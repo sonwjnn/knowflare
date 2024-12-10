@@ -13,8 +13,7 @@ export const Hero = () => {
         <Image
           src="/homepage-poster.jpg"
           alt="Learning Background"
-          layout="fill"
-          objectFit="cover"
+          fill
           priority
           className="absolute left-0 top-0 h-full w-full object-cover"
         />

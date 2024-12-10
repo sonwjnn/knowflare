@@ -65,7 +65,7 @@ export const UserButton = () => {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <div className="space-y-1">
-          <Link href="/my-profile">
+          <Link href="/my-profile/settings">
             <DropdownMenuItem className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent">
               <UserCircle className="size-4" />
               My Profile

@@ -5,5 +5,9 @@ export type CustomUserSession = {
   name: string
   email: string
   image: string
+  bio: string
+  fullName: string
   role: UserRole
+  isTwoFactorEnabled: boolean
+  isOAuth: boolean
 }
