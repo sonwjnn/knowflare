@@ -5,6 +5,7 @@ import { CreateChapterModal } from '@/features/admin/chapters/components/create-
 import { CreateCouponModal } from '@/features/admin/coupons/components/create-coupon-modal'
 import { CreateCourseModal } from '@/features/admin/courses/components/create-course-modal'
 import { CreateLessonModal } from '@/features/admin/lessons/components/create-lesson-modal'
+import { ChangePasswordModal } from '@/features/auth/components/change-password-modal'
 import { useEffect, useState } from 'react'
 
 export const Modals = () => {
@@ -23,6 +24,7 @@ export const Modals = () => {
       <CreateLessonModal />
       <CreateCategoryModal />
       <CreateCourseModal />
+      <ChangePasswordModal />
     </>
   )
 }

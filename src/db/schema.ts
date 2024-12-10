@@ -44,6 +44,9 @@ export const users = mysqlTable('user', {
   role: roleEnum.default(UserRole.USER).notNull(),
   image: varchar('image', { length: 255 }),
   password: varchar('password', { length: 255 }),
+  bio: varchar('bio', { length: 255 }),
+  fullName: varchar('full_name', { length: 255 }),
+  isTwoFactorEnabled: boolean('is_two_factor_enabled').default(false).notNull(),
 })
 
 export const insertUsersSchema = createInsertSchema(users)
@@ -134,6 +137,31 @@ export const passwordResetTokens = mysqlTable(
     }),
   })
 )
+
+export const twoFactorTokens = mysqlTable(
+  'two_factor_token',
+  {
+    email: varchar('email', { length: 255 }).notNull(),
+    token: varchar('token', { length: 255 }).notNull(),
+    expires: timestamp('expires', { mode: 'date' }).notNull(),
+  },
+  twoFactorToken => ({
+    compositePk: primaryKey({
+      columns: [twoFactorToken.email, twoFactorToken.token],
+    }),
+  })
+)
+
+export const twoFactorConfirmations = mysqlTable('two_factor_confirmation', {
+  id: varchar('id', { length: 255 })
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: varchar('user_id', { length: 255 })
+    .notNull()
+    .references(() => users.id, {
+      onDelete: 'cascade',
+    }),
+})
 
 export enum CourseLevel {
   BEGINNER = 'beginner',

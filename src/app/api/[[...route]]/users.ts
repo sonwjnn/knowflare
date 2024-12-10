@@ -1,24 +1,34 @@
 import { db } from '@/db/drizzle'
-import { getVerificationTokenByToken } from '@/db/queries'
 import {
-  UserRole,
+  getTwoFactorTokenByEmail,
+  getVerificationTokenByToken,
+} from '@/db/queries'
+import {
   accounts,
-  insertUsersSchema,
   passwordResetTokens,
+  twoFactorConfirmations,
+  twoFactorTokens,
   users,
   verificationTokens,
 } from '@/db/schema'
-import { isAdmin } from '@/features/admin/utils'
-import { sendPasswordResetEmail, sendVerificationEmail } from '@/lib/mail'
+import {
+  sendPasswordResetEmail,
+  sendTwoFactorEmail,
+  sendVerificationEmail,
+} from '@/lib/mail'
 import {
   generatePasswordResetToken,
+  generateTwoFactorToken,
   generateVerificationToken,
 } from '@/lib/tokens'
+import { DEFAULT_LOGIN_REDIRECT } from '@/routes'
 import { verifyAuth } from '@hono/auth-js'
 import { zValidator } from '@hono/zod-validator'
 import bcrypt from 'bcryptjs'
-import { and, eq, inArray } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { Hono } from 'hono'
+import { AuthError } from 'next-auth'
+import { signIn } from 'next-auth/react'
 import { z } from 'zod'
 
 const app = new Hono()
@@ -62,6 +72,9 @@ const app = new Hono()
           role: users.role,
           emailVerified: users.emailVerified,
           image: users.image,
+          bio: users.bio,
+          fullName: users.fullName,
+          isTwoFactorEnabled: users.isTwoFactorEnabled,
         })
         .from(users)
         .where(eq(users.id, id))
@@ -127,7 +140,7 @@ const app = new Hono()
       })
     ),
     async c => {
-      const { email } = c.req.valid('json')
+      const { email, code, password, callbackUrl } = c.req.valid('json')
 
       const [existingUser] = await db
         .select()
@@ -135,13 +148,23 @@ const app = new Hono()
         .where(eq(users.email, email))
 
       if (!existingUser || !existingUser.password || !existingUser.email) {
-        return c.json({ error: 'Email is not exist!' }, 400)
+        return c.json({ error: 'Email is not exist!' }, 401)
       }
 
       const [existingAccount] = await db
         .select()
         .from(accounts)
         .where(eq(accounts.userId, existingUser.id))
+
+      const handleSuccess = (
+        message: string,
+        twoFactor: boolean = false,
+        canLogin: boolean = false
+      ) => {
+        return c.json({
+          data: { success: message, twoFactor, canLogin },
+        })
+      }
 
       // is provider account, dont need to verify
       if (!existingUser.emailVerified && existingAccount) {
@@ -152,7 +175,7 @@ const app = new Hono()
           })
           .where(eq(users.id, existingUser.id))
 
-        return c.json(null, 200)
+        return handleSuccess('Is provider account, login successfully')
       }
 
       if (!existingUser.emailVerified && !existingAccount) {
@@ -163,7 +186,7 @@ const app = new Hono()
         if (!verificationToken) {
           return c.json(
             { error: 'Error when generate verification token!' },
-            400
+            401
           )
         }
 
@@ -172,10 +195,71 @@ const app = new Hono()
           verificationToken.token
         )
 
-        return c.json({ success: 'Confirmation email sent!' }, 200)
+        return handleSuccess('Confirmation email sent!')
       }
 
-      return c.json(null, 200)
+      if (existingUser.isTwoFactorEnabled && existingUser.email) {
+        if (code) {
+          const twoFactorToken = await getTwoFactorTokenByEmail(
+            existingUser.email
+          )
+
+          if (!twoFactorToken) {
+            return c.json({ error: 'Invalid code!' }, 401)
+          }
+
+          if (twoFactorToken.token !== code) {
+            return c.json({ error: 'Invalid code!' }, 401)
+          }
+
+          const hasExpired = new Date(twoFactorToken.expires) < new Date()
+
+          if (hasExpired) {
+            return c.json({ error: 'Code expired!' }, 401)
+          }
+
+          await db
+            .delete(twoFactorTokens)
+            .where(
+              and(
+                eq(twoFactorTokens.email, twoFactorToken.email),
+                eq(twoFactorTokens.token, twoFactorToken.token)
+              )
+            )
+
+          const [existingConfirmation] = await db
+            .select()
+            .from(twoFactorConfirmations)
+            .where(eq(twoFactorConfirmations.userId, existingUser.id))
+
+          if (existingConfirmation) {
+            await db
+              .delete(twoFactorConfirmations)
+              .where(eq(twoFactorConfirmations.id, existingConfirmation.id))
+          }
+
+          await db.insert(twoFactorConfirmations).values({
+            userId: existingUser.id,
+          })
+        } else {
+          const twoFactorToken = await generateTwoFactorToken(
+            existingUser.email
+          )
+
+          if (!twoFactorToken) {
+            return c.json(
+              { error: 'Error when generate two factor token!' },
+              401
+            )
+          }
+
+          await sendTwoFactorEmail(existingUser.email, twoFactorToken)
+
+          return handleSuccess('Two-factor email sent!', true)
+        }
+      }
+
+      return handleSuccess('Login successful!', false, true)
     }
   )
   .post(
@@ -323,8 +407,63 @@ const app = new Hono()
       return c.json(null, 200)
     }
   )
+  .post(
+    '/change-password',
+    verifyAuth(),
+    zValidator(
+      'json',
+      z.object({
+        password: z.string(),
+        newPassword: z.string(),
+      })
+    ),
+    async c => {
+      try {
+        const auth = c.get('authUser')
+        if (!auth.token?.id) {
+          return c.json({ error: 'Unauthorized' }, 401)
+        }
+
+        const { password, newPassword } = c.req.valid('json')
+
+        const [existingUser] = await db
+          .select()
+          .from(users)
+          .where(eq(users.id, auth.token?.id))
+
+        if (!existingUser) {
+          return c.json({ error: 'User does not exist!' }, 400)
+        }
+
+        if (!existingUser.password) {
+          return c.json({ error: 'User does not have password!' }, 400)
+        }
+
+        const isPasswordValid = await bcrypt.compare(
+          password,
+          existingUser.password
+        )
+        if (!isPasswordValid) {
+          return c.json({ error: 'Current password is incorrect!' }, 400)
+        }
+
+        const hashedNewPassword = await bcrypt.hash(newPassword, 12)
+
+        await db
+          .update(users)
+          .set({ password: hashedNewPassword })
+          .where(eq(users.id, existingUser.id))
+
+        return c.json({ message: 'Password changed successfully!' }, 200)
+      } catch (error) {
+        console.error('Error changing password:', error)
+        return c.json({ error: 'An unexpected error occurred' }, 500)
+      }
+    }
+  )
   .patch(
     '/:id',
+    verifyAuth(),
     zValidator(
       'param',
       z.object({
@@ -335,13 +474,20 @@ const app = new Hono()
       'json',
       z.object({
         name: z.string().optional(),
-        role: z.string().optional(),
         image: z.string().optional(),
-        emailVerified: z.string().optional(),
+        fullName: z.string().optional(),
+        bio: z.string().optional(),
+        isTwoFactorEnabled: z.boolean().optional(),
       })
     ),
     async c => {
-      const values = c.req.valid('json')
+      const auth = c.get('authUser')
+      if (!auth.token?.id) {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
+      const { name, image, bio, fullName, isTwoFactorEnabled } =
+        c.req.valid('json')
       const { id } = c.req.valid('param')
 
       if (!id) {
@@ -360,11 +506,11 @@ const app = new Hono()
       const [data] = await db
         .update(users)
         .set({
-          ...values,
-          role: values.role ? (values.role as UserRole) : undefined,
-          emailVerified: values.emailVerified
-            ? new Date(values.emailVerified)
-            : null,
+          name,
+          image,
+          bio,
+          fullName,
+          isTwoFactorEnabled,
         })
         .where(eq(users.id, id))
 

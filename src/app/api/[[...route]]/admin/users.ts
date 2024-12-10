@@ -1,5 +1,5 @@
 import { db } from '@/db/drizzle'
-import { courses, users } from '@/db/schema'
+import { UserRole, courses, users } from '@/db/schema'
 import { verifyAuth } from '@hono/auth-js'
 import { zValidator } from '@hono/zod-validator'
 import bcrypt from 'bcryptjs'
@@ -153,6 +153,58 @@ const app = new Hono()
         password: hashedPassword,
         emailVerified: new Date(),
       })
+
+      return c.json({ data })
+    }
+  )
+  .patch(
+    '/:id',
+    zValidator(
+      'param',
+      z.object({
+        id: z.string(),
+      })
+    ),
+    zValidator(
+      'json',
+      z.object({
+        name: z.string().optional(),
+        role: z.string().optional(),
+        image: z.string().optional(),
+        emailVerified: z.string().optional(),
+      })
+    ),
+    async c => {
+      const values = c.req.valid('json')
+      const { id } = c.req.valid('param')
+
+      if (!id) {
+        return c.json({ error: 'Id is required!' }, 400)
+      }
+
+      const [existingUser] = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, id))
+
+      if (!existingUser) {
+        return c.json({ error: 'User does not exist!' }, 400)
+      }
+
+      const [data] = await db
+        .update(users)
+        .set({
+          ...values,
+          role: values.role ? (values.role as UserRole) : undefined,
+          emailVerified: values.emailVerified
+            ? new Date(values.emailVerified)
+            : null,
+        })
+        .where(eq(users.id, id))
+
+      if (!data) {
+        return c.json({ error: 'Error when update user' }, 404)
+      }
 
       return c.json({ data })
     }

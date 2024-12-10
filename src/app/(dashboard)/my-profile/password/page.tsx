@@ -1,9 +1,13 @@
+'use client'
+
+import { Button } from '@/components/ui/button'
+import { TwoFactorForm } from '@/features/auth/components/two-factor-form'
+import { useChangePasswordModal } from '@/features/auth/store/use-change-password-modal'
 import { Shield } from 'lucide-react'
 
-import { PasswordDialog } from './password-dialog'
-import { TwoFactorDialog } from './two-factor-dialog'
-
 export default function PasswordPage() {
+  const [_, setOpen] = useChangePasswordModal()
+
   return (
     <div className="container mx-auto max-w-screen-lg p-6">
       <div className="mb-8">
@@ -23,19 +27,16 @@ export default function PasswordPage() {
             Change your password to protect your account. Use a strong password
             that you haven&apos;t used for other accounts.
           </p>
-          <PasswordDialog />
+          <Button
+            onClick={() => setOpen(true)}
+            variant="outline"
+            className="w-full"
+          >
+            Change Password
+          </Button>
         </div>
 
-        <div className="rounded-lg border p-6">
-          <h2 className="mb-4 text-xl font-semibold">
-            Two-Factor Authentication
-          </h2>
-          <p className="mb-6 text-sm text-muted-foreground">
-            Add an extra layer of security to your account by requiring a
-            verification code when signing in from a new device.
-          </p>
-          <TwoFactorDialog />
-        </div>
+        <TwoFactorForm />
       </div>
     </div>
   )

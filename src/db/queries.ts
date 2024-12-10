@@ -17,6 +17,7 @@ import { db } from './drizzle'
 import {
   CouponType,
   CourseLevel,
+  accounts,
   categories,
   chapters,
   coupons,
@@ -24,7 +25,7 @@ import {
   lessons,
   passwordResetTokens,
   purchases,
-  reviews,
+  twoFactorTokens,
   userLessonProgress,
   users,
   verificationTokens,
@@ -386,6 +387,32 @@ export const getVerificationTokenByEmail = async (email: string) => {
       .select()
       .from(verificationTokens)
       .where(eq(verificationTokens.email, email))
+
+    return data
+  } catch {
+    return null
+  }
+}
+
+export const getTwoFactorTokenByEmail = async (email: string) => {
+  try {
+    const [data] = await db
+      .select()
+      .from(twoFactorTokens)
+      .where(eq(twoFactorTokens.email, email))
+
+    return data
+  } catch {
+    return null
+  }
+}
+
+export const getAccountByUserId = async (userId: string) => {
+  try {
+    const [data] = await db
+      .select()
+      .from(accounts)
+      .where(eq(accounts.userId, userId))
 
     return data
   } catch {

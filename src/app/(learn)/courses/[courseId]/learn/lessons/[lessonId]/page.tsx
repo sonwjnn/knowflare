@@ -121,6 +121,7 @@ export default function LessonIdPage() {
                   lessonId={lessonId}
                   isCompleted={!!userLessonProgress?.isCompleted}
                   disabled={userLessonProgressLoading}
+                  nextLessonId={lesson?.nextLesson?.id}
                 />
               </div>
             )}

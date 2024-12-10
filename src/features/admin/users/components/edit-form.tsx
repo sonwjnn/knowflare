@@ -18,8 +18,8 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { UserRole } from '@/db/schema'
+import { useEditUser } from '@/features/admin/users/api/use-edit-user'
 import { useUserId } from '@/features/admin/users/hooks/use-user-id'
-import { useEditUser } from '@/features/auth/api/use-edit-user'
 import { useGetUser } from '@/features/auth/api/use-get-user'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
