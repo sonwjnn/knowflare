@@ -20,6 +20,7 @@ import {
   accounts,
   categories,
   chapters,
+  conversations,
   coupons,
   courses,
   lessons,
@@ -415,6 +416,60 @@ export const getAccountByUserId = async (userId: string) => {
       .where(eq(accounts.userId, userId))
 
     return data
+  } catch {
+    return null
+  }
+}
+
+export const findConversation = async (
+  userOneId: string,
+  userTwoId: string
+) => {
+  try {
+    const [conversation] = await db
+      .select({
+        id: conversations.id,
+        userOneId: conversations.userOneId,
+        userTwoId: conversations.userTwoId,
+      })
+      .from(conversations)
+      .where(
+        and(
+          eq(conversations.userOneId, userOneId),
+          eq(conversations.userTwoId, userTwoId)
+        )
+      )
+      .limit(1)
+
+    if (!conversation) return null
+
+    const userOne = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        image: users.image,
+      })
+      .from(users)
+      .where(eq(users.id, conversation.userOneId))
+      .then(result => result[0])
+
+    const userTwo = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        image: users.image,
+      })
+      .from(users)
+      .where(eq(users.id, conversation.userTwoId))
+      .then(result => result[0])
+
+    return {
+      ...conversation,
+      userOne,
+      userTwo,
+    }
   } catch {
     return null
   }

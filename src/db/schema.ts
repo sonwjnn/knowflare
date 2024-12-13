@@ -568,3 +568,44 @@ export const backups = mysqlTable('backup', {
 })
 
 export const insertBackupsSchema = createInsertSchema(backups)
+
+export const conversations = mysqlTable('conversation', {
+  id: varchar('id', { length: 255 })
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userOneId: varchar('user_one_id', { length: 255 })
+    .notNull()
+    .references(() => users.id, {
+      onDelete: 'cascade',
+    }),
+  userTwoId: varchar('user_two_id', { length: 255 })
+    .notNull()
+    .references(() => users.id, {
+      onDelete: 'cascade',
+    }),
+})
+
+export const directMessages = mysqlTable('direct_message', {
+  id: varchar('id', { length: 255 })
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: varchar('user_id', { length: 255 })
+    .notNull()
+    .references(() => users.id, {
+      onDelete: 'cascade',
+    }),
+  conversationId: varchar('conversation_id', { length: 255 })
+    .notNull()
+    .references(() => users.id, {
+      onDelete: 'cascade',
+    }),
+  content: varchar('content', { length: 255 }),
+  fileUrl: varchar('file_url', { length: 255 }),
+
+  createdAt: timestamp('created_at', { mode: 'date' }).default(
+    sql`CURRENT_TIMESTAMP`
+  ),
+  updatedAt: timestamp('updated_at', { mode: 'date' }).default(
+    sql`CURRENT_TIMESTAMP`
+  ),
+})
