@@ -21,6 +21,9 @@ const app = new Hono()
         role: users.role,
         emailVerified: users.emailVerified,
         image: users.image,
+        fullName: users.fullName,
+        bio: users.bio,
+        isTwoFactorEnabled: users.isTwoFactorEnabled,
       })
       .from(users)
 
