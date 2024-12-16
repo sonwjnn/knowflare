@@ -481,11 +481,6 @@ const app = new Hono()
       })
     ),
     async c => {
-      const auth = c.get('authUser')
-      if (!auth.token?.id) {
-        return c.json({ error: 'Unauthorized' }, 401)
-      }
-
       const { name, image, bio, fullName, isTwoFactorEnabled, emailVerified } =
         c.req.valid('json')
       const { id } = c.req.valid('param')
