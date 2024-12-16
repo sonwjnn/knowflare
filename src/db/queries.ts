@@ -202,6 +202,7 @@ export const getCourses = async ({
           SELECT MAX(discount_amount) 
           FROM coupon 
           WHERE coupon.category_id = ${courses.categoryId} 
+          AND coupon.type = ${CouponType.PUBLIC}
         ) 
         ORDER BY id DESC 
         LIMIT 1
@@ -216,6 +217,7 @@ export const getCourses = async ({
           SELECT MAX(discount_amount) 
           FROM coupon 
           WHERE coupon.category_id = ${courses.categoryId} 
+          AND coupon.type = ${CouponType.PUBLIC}
         ) 
         ORDER BY id DESC 
         LIMIT 1
