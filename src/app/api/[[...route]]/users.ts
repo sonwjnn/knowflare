@@ -463,7 +463,6 @@ const app = new Hono()
   )
   .patch(
     '/:id',
-    verifyAuth(),
     zValidator(
       'param',
       z.object({
