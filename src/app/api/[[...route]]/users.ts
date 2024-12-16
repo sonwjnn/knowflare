@@ -478,6 +478,7 @@ const app = new Hono()
         fullName: z.string().optional(),
         bio: z.string().optional(),
         isTwoFactorEnabled: z.boolean().optional(),
+        emailVerified: z.string().optional(),
       })
     ),
     async c => {
@@ -486,7 +487,7 @@ const app = new Hono()
         return c.json({ error: 'Unauthorized' }, 401)
       }
 
-      const { name, image, bio, fullName, isTwoFactorEnabled } =
+      const { name, image, bio, fullName, isTwoFactorEnabled, emailVerified } =
         c.req.valid('json')
       const { id } = c.req.valid('param')
 
@@ -511,6 +512,7 @@ const app = new Hono()
           bio,
           fullName,
           isTwoFactorEnabled,
+          emailVerified: emailVerified ? new Date(emailVerified) : null,
         })
         .where(eq(users.id, id))
 
