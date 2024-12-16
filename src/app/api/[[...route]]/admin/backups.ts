@@ -152,7 +152,7 @@ const app = new Hono()
 
     await connection.end()
 
-    const tmpDir = path.resolve('./tmp')
+    const tmpDir = path.resolve('/tmp')
     if (!fs.existsSync(tmpDir)) {
       await mkdir(tmpDir)
     }
