@@ -197,6 +197,7 @@ export const getCourses = async ({
         SELECT id 
         FROM coupon 
         WHERE coupon.category_id = ${courses.categoryId} 
+        AND coupon.type = ${CouponType.PUBLIC}
         AND coupon.discount_amount = (
           SELECT MAX(discount_amount) 
           FROM coupon 
@@ -210,6 +211,7 @@ export const getCourses = async ({
         SELECT discount_amount 
         FROM coupon 
         WHERE coupon.category_id = ${courses.categoryId} 
+        AND coupon.type = ${CouponType.PUBLIC}
         AND coupon.discount_amount = (
           SELECT MAX(discount_amount) 
           FROM coupon 
@@ -224,6 +226,7 @@ export const getCourses = async ({
           SELECT MAX(discount_amount) 
           FROM coupon 
           WHERE coupon.category_id = ${courses.categoryId} 
+          AND coupon.type = ${CouponType.PUBLIC}
         ) / 100)
       )`,
     })
