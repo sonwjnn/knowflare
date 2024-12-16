@@ -506,7 +506,9 @@ const app = new Hono()
           bio,
           fullName,
           isTwoFactorEnabled,
-          emailVerified: emailVerified ? new Date(emailVerified) : null,
+          emailVerified: emailVerified
+            ? new Date(emailVerified)
+            : existingUser.emailVerified,
         })
         .where(eq(users.id, id))
 

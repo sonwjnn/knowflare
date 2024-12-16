@@ -300,7 +300,7 @@ export const getTenLatestCourses = async () => {
 export const getFiveTopCoursesLastThreeWeek = async () => {
   const today = new Date()
   const lastWeek = new Date(today)
-  lastWeek.setDate(today.getDate() - 7 * 3)
+  lastWeek.setDate(today.getDate() - 7 * 6)
 
   const coursesData = await db
     .select({

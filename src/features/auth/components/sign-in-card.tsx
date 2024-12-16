@@ -42,10 +42,12 @@ export const SignInCard = () => {
   const [success, setSuccess] = useState('')
 
   const callbackUrl = searchParams.get('callbackUrl') || '/'
-  const urlError =
+  const urlError1 =
     searchParams.get('error') === 'OAuthAccountNotLinked'
       ? 'Email already in use with different provider!'
-      : 'Invalid password!'
+      : ''
+  const urlError2 =
+    searchParams.get('error') === 'Configuration' ? 'Invalid password!' : ''
 
   const popupCenter = (url: string, title: string) => {
     const dualScreenLeft = window.screenLeft ?? window.screenX
@@ -95,12 +97,16 @@ export const SignInCard = () => {
           } else if ('data' in data) {
             if (data.data.success) {
               setCode('')
+              setError('')
+
               setSuccess(data.data.success)
             }
             if (data.data.twoFactor) {
+              setError('')
               setShowTwoFactor(true)
             }
             if (data.data.canLogin) {
+              setError('')
               signIn('credentials', {
                 email: email,
                 password: password,
@@ -199,7 +205,7 @@ export const SignInCard = () => {
           </Link>
         </div>
 
-        <FormError message={error || urlError} />
+        <FormError message={error || urlError1 || urlError2} />
 
         <Separator className="my-6" />
 
