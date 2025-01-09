@@ -1,6 +1,4 @@
 import {
-  LessonType,
-  QuestionType,
   attachments,
   carts,
   categories,
@@ -13,35 +11,17 @@ import {
   quizAnswers,
   reviews,
   subscriptions,
-  users,
   wishlists,
 } from '@/db/schema'
-import { CourseLevel } from '@/db/schema'
+import * as schema from '@/db/schema'
+import { neon } from '@neondatabase/serverless'
 import { config } from 'dotenv'
-import { drizzle } from 'drizzle-orm/mysql2'
-import mysql from 'mysql2/promise'
-import { v4 as uuidv4 } from 'uuid'
+import { drizzle } from 'drizzle-orm/neon-http'
 
 config({ path: '.env.local' })
 
-const connection = mysql.createPool({
-  host: process.env.DATABASE_HOST!,
-  user: process.env.DATABASE_USER!,
-  password: process.env.DATABASE_PASSWORD!,
-  database: process.env.DATABASE_NAME!,
-})
-
-const db = drizzle(connection)
-
-function getRandomImageUrl(): string {
-  const randomId = Math.floor(Math.random() * 1000)
-  return `https://picsum.photos/id/${randomId}/200/200`
-}
-
-function getRandomLevel() {
-  const levels = Object.values(CourseLevel)
-  return levels[Math.floor(Math.random() * levels.length)]
-}
+const sql = neon(process.env.DATABASE_URL!)
+const db = drizzle(sql, { schema })
 
 async function main() {
   try {
@@ -61,10 +41,6 @@ async function main() {
     await db.delete(courses).execute()
   } catch (error) {
     console.log('Error during seed:', error)
-    await connection.end()
-    process.exit(1)
-  } finally {
-    await connection.end()
   }
 }
 

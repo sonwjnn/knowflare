@@ -20,7 +20,6 @@ import * as schema from '@/db/schema'
 import { neon } from '@neondatabase/serverless'
 import { config } from 'dotenv'
 import { drizzle } from 'drizzle-orm/neon-http'
-import { Pool } from 'pg'
 
 import { SEED_CATEGORIES } from './categories'
 import { SEED_CHAPTERS } from './chapters'
