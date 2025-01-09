@@ -81,9 +81,13 @@ const app = new Hono()
         return c.json({ error: 'Not found' }, 404)
       }
 
-      const [deletedChapter] = await db.delete(users).where(eq(users.id, id))
+      const data = await db.delete(users).where(eq(users.id, id))
 
-      return c.json({ data: deletedChapter })
+      if (!data) {
+        return c.json({ error: 'Not found' }, 404)
+      }
+
+      return c.json({ data })
     }
   )
   .post(
@@ -155,6 +159,7 @@ const app = new Hono()
         name,
         password: hashedPassword,
         emailVerified: new Date(),
+        role: UserRole.USER,
       })
 
       return c.json({ data })
@@ -194,7 +199,7 @@ const app = new Hono()
         return c.json({ error: 'User does not exist!' }, 400)
       }
 
-      const [data] = await db
+      const data = await db
         .update(users)
         .set({
           ...values,

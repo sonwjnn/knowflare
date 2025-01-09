@@ -247,13 +247,6 @@ export const ChangePasswordForm = () => {
           )}
         />
 
-        <div className="flex items-center gap-2">
-          <Checkbox id="logout" className="rounded-[4px] border-gray-300" />
-          <label htmlFor="logout" className="select-none text-sm text-gray-600">
-            Sign out from other devices
-          </label>
-        </div>
-
         <Button
           type="submit"
           disabled={isPending}

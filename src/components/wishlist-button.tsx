@@ -17,8 +17,9 @@ export const WishlistButton = ({ courseId, isInWishlist }: Props) => {
 
   const isPending = createWishlistLoading || deleteWishlistLoading
 
-  const onClick = (e: any) => {
+  const onClick = (e: React.MouseEvent) => {
     e.preventDefault()
+    e.stopPropagation()
 
     if (isInWishlist) {
       deleteWishlist()

@@ -281,9 +281,9 @@ const app = new Hono()
         }
       }
 
-      const [deletedBackup] = await db.delete(backups).where(eq(backups.id, id))
+      const data = await db.delete(backups).where(eq(backups.id, id))
 
-      return c.json({ data: deletedBackup })
+      return c.json({ data })
     }
   )
   .post(

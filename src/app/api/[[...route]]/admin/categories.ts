@@ -23,7 +23,7 @@ const app = new Hono()
       }
       const values = c.req.valid('json')
 
-      const [data] = await db.insert(categories).values({
+      const data = await db.insert(categories).values({
         ...values,
       })
 
@@ -65,7 +65,7 @@ const app = new Hono()
         return c.json({ error: 'User does not exist!' }, 400)
       }
 
-      const [data] = await db
+      const data = await db
         .update(categories)
         .set({
           ...values,
@@ -114,11 +114,13 @@ const app = new Hono()
         return c.json({ error: 'Not found' }, 404)
       }
 
-      const [deletedChapter] = await db
-        .delete(categories)
-        .where(eq(categories.id, id))
+      const data = await db.delete(categories).where(eq(categories.id, id))
 
-      return c.json({ data: deletedChapter })
+      if (!data) {
+        return c.json({ error: 'Error when delete category' }, 404)
+      }
+
+      return c.json({ data })
     }
   )
   .post(
@@ -150,6 +152,10 @@ const app = new Hono()
       const data = await db
         .delete(categories)
         .where(inArray(categories.id, values.ids))
+
+      if (!data) {
+        return c.json({ error: 'Error when delete categories' }, 404)
+      }
 
       return c.json({ data })
     }

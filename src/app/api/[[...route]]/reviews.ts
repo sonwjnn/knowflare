@@ -9,14 +9,8 @@ import { z } from 'zod'
 const app = new Hono()
   .get(
     '/',
-    verifyAuth(),
     zValidator('query', z.object({ courseId: z.string() })),
     async c => {
-      const auth = c.get('authUser')
-      if (!auth.token?.id) {
-        return c.json({ error: 'Unauthorized' }, 401)
-      }
-
       const { courseId } = c.req.valid('query')
 
       const data = await db
@@ -32,9 +26,7 @@ const app = new Hono()
         })
         .from(reviews)
         .innerJoin(users, eq(users.id, reviews.userId))
-        .where(
-          and(eq(reviews.courseId, courseId), eq(reviews.userId, auth.token.id))
-        )
+        .where(and(eq(reviews.courseId, courseId)))
         .orderBy(desc(reviews.date))
 
       return c.json({ data })
@@ -74,7 +66,7 @@ const app = new Hono()
         return c.json({ error: 'Review exist!' }, 401)
       }
 
-      const [data] = await db.insert(reviews).values({
+      const data = await db.insert(reviews).values({
         ...values,
         userId: auth.token.id,
       })
@@ -135,6 +127,10 @@ const app = new Hono()
       const data = await db
         .delete(reviews)
         .where(eq(reviews.courseId, existingReview.courseId))
+
+      if (!data) {
+        return c.json({ error: 'Error when delete review' }, 404)
+      }
 
       //calculate average rating
       const [reviewData] = await db

@@ -4,18 +4,10 @@ import {
   getFiveTopCoursesLastThreeWeek,
   getTenLatestCourses,
 } from '@/db/queries'
-import {
-  CouponType,
-  categories,
-  chapters,
-  coupons,
-  courses,
-  purchases,
-  users,
-} from '@/db/schema'
+import { CouponType, chapters, coupons, courses, users } from '@/db/schema'
 import { verifyAuth } from '@hono/auth-js'
 import { zValidator } from '@hono/zod-validator'
-import { count, desc, eq, sql } from 'drizzle-orm'
+import { desc, eq, sql } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { z } from 'zod'
 

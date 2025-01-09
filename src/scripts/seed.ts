@@ -16,9 +16,11 @@ import {
   users,
   wishlists,
 } from '@/db/schema'
+import * as schema from '@/db/schema'
+import { neon } from '@neondatabase/serverless'
 import { config } from 'dotenv'
-import { drizzle } from 'drizzle-orm/mysql2'
-import mysql from 'mysql2/promise'
+import { drizzle } from 'drizzle-orm/neon-http'
+import { Pool } from 'pg'
 
 import { SEED_CATEGORIES } from './categories'
 import { SEED_CHAPTERS } from './chapters'
@@ -29,14 +31,8 @@ import { SEED_USERS } from './users'
 
 config({ path: '.env.local' })
 
-const connection = mysql.createPool({
-  host: process.env.DATABASE_HOST!,
-  user: process.env.DATABASE_USER!,
-  password: process.env.DATABASE_PASSWORD!,
-  database: process.env.DATABASE_NAME!,
-})
-
-const db = drizzle(connection)
+const sql = neon(process.env.DATABASE_URL!)
+const db = drizzle(sql, { schema })
 
 async function main() {
   try {
@@ -68,17 +64,14 @@ async function main() {
     // Seed lessons
     const NORMALIZE_SEED_LESSONS = SEED_LESSONS.map(item => ({
       ...item,
-      lessonType: item.lessonType as LessonType,
+      lessonType: item.lessonType.toLowerCase() as LessonType,
     }))
     await db.insert(lessons).values(NORMALIZE_SEED_LESSONS).execute()
 
     console.log('Seeding completed successfully!')
   } catch (error) {
-    console.log('Error during seed:', error)
-    await connection.end()
-    process.exit(1)
-  } finally {
-    await connection.end()
+    console.error(error)
+    throw new Error('Failed to seed database')
   }
 }
 

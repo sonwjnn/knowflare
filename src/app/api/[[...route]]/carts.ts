@@ -1,5 +1,5 @@
 import { db } from '@/db/drizzle'
-import { carts, coupons, courses, insertCartsSchema } from '@/db/schema'
+import { carts, coupons, courses } from '@/db/schema'
 import { verifyAuth } from '@hono/auth-js'
 import { zValidator } from '@hono/zod-validator'
 import { and, desc, eq, sql } from 'drizzle-orm'
@@ -108,7 +108,7 @@ const app = new Hono()
         return c.json({ error: 'This course already exist in your cart!' }, 401)
       }
 
-      const [data] = await db.insert(carts).values({
+      const data = await db.insert(carts).values({
         ...values,
         userId: auth.token.id,
         date: new Date(),
@@ -132,7 +132,7 @@ const app = new Hono()
       }
 
       const { id } = c.req.valid('param')
-      const [data] = await db
+      const data = await db
         .delete(carts)
         .where(and(eq(carts.courseId, id), eq(carts.userId, auth.token?.id)))
 

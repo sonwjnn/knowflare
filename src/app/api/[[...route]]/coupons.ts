@@ -1,15 +1,9 @@
 import { db } from '@/db/drizzle'
-import {
-  CouponType,
-  categories,
-  coupons,
-  insertCouponsSchema,
-} from '@/db/schema'
+import { CouponType, categories, coupons } from '@/db/schema'
 import { verifyAuth } from '@hono/auth-js'
 import { zValidator } from '@hono/zod-validator'
-import { and, desc, eq, inArray } from 'drizzle-orm'
+import { and, desc, eq } from 'drizzle-orm'
 import { Hono } from 'hono'
-import { v4 as uuidv4 } from 'uuid'
 import { z } from 'zod'
 
 const app = new Hono()

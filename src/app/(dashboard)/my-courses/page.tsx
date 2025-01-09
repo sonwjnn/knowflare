@@ -6,6 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useGetPurchases } from '@/features/purchases/api/use-get-purchases'
 import { BookOpen, Clock, GraduationCap, Trophy } from 'lucide-react'
+import Link from 'next/link'
 
 import { Item } from './item'
 
@@ -19,7 +20,7 @@ export default function EnhancedPurchasedCourses() {
   if (!courses || courses?.length === 0) {
     return (
       <div className="flex h-[80vh] items-center justify-center">
-        <div className="flex w-full max-w-md flex-col items-center justify-center rounded-xl bg-gradient-to-b from-primary/5 to-primary/10 p-8 shadow-lg">
+        <div className="flex w-full max-w-md flex-col items-center justify-center rounded-xl bg-transparent p-8">
           <div className="rounded-full bg-primary/10 p-4">
             <BookOpen className="h-12 w-12 text-primary" />
           </div>
@@ -30,9 +31,12 @@ export default function EnhancedPurchasedCourses() {
             Ready to start learning? Explore our course catalog and begin your
             educational journey today!
           </p>
-          <button className="mt-6 rounded-full bg-primary px-6 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
+          <Link
+            href="/courses"
+            className="mt-6 rounded-full bg-primary px-6 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+          >
             Browse Courses
-          </button>
+          </Link>
         </div>
       </div>
     )

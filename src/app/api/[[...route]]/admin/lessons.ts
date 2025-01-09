@@ -111,11 +111,12 @@ const app = new Hono()
 
       const newPosition = lastLesson ? lastLesson.position + 1 : 1
 
-      const [data] = await db.insert(lessons).values({
+      const data = await db.insert(lessons).values({
         chapterId,
         courseId,
         title,
         position: newPosition,
+        lessonType: LessonType.VIDEO,
       })
 
       if (!data) {
@@ -160,7 +161,7 @@ const app = new Hono()
         return c.json({ error: 'Missing id' }, 400)
       }
 
-      const [data] = await db
+      const data = await db
         .update(lessons)
         .set({
           ...values,
@@ -224,7 +225,7 @@ const app = new Hono()
         return c.json({ error: 'Missing required fields!' }, 400)
       }
 
-      const [data] = await db
+      const data = await db
         .update(lessons)
         .set({ isPublished: true })
         .where(eq(lessons.id, id))
@@ -275,7 +276,7 @@ const app = new Hono()
         return c.json({ error: 'Not found' }, 404)
       }
 
-      const [data] = await db
+      const data = await db
         .update(lessons)
         .set({ isPublished: false })
         .where(eq(lessons.id, id))
@@ -373,9 +374,13 @@ const app = new Hono()
         return c.json({ error: 'Not found' }, 404)
       }
 
-      const [deletedLesson] = await db.delete(lessons).where(eq(lessons.id, id))
+      const data = await db.delete(lessons).where(eq(lessons.id, id))
 
-      return c.json({ data: deletedLesson })
+      if (!data) {
+        return c.json({ error: 'Not found' }, 404)
+      }
+
+      return c.json({ data })
     }
   )
 

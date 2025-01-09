@@ -26,7 +26,7 @@ export const generatePasswordResetToken = async (email: string) => {
         .where(eq(passwordResetTokens.token, existingToken.token))
     }
 
-    const [data] = await db.insert(passwordResetTokens).values({
+    const data = await db.insert(passwordResetTokens).values({
       email,
       token,
       expires,
@@ -55,7 +55,7 @@ export const generateVerificationToken = async (email: string) => {
         .where(eq(verificationTokens.token, existingToken.token))
     }
 
-    const [data] = await db.insert(verificationTokens).values({
+    const data = await db.insert(verificationTokens).values({
       email,
       token,
       expires,
@@ -84,7 +84,7 @@ export const generateTwoFactorToken = async (
       await db.delete(twoFactorTokens).where(eq(twoFactorTokens.email, email))
     }
 
-    const [twoFactorToken] = await db
+    const twoFactorToken = await db
       .insert(twoFactorTokens)
       .values({ email, token, expires })
 

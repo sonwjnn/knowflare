@@ -97,25 +97,22 @@ const app = new Hono()
       const { lessonId } = c.req.valid('param')
       const { isCompleted } = c.req.valid('json')
 
-      let data
-
-      if (!data) {
-        const data = await db
-          .insert(userLessonProgress)
-          .values({
-            userId: auth.token?.id,
-            lessonId,
-            isCompleted,
-          })
-          .onDuplicateKeyUpdate({ set: { isCompleted } })
-
-        return c.json({
-          data: data ?? null,
+      // PostgreSQL upsert using Drizzle
+      const data = await db
+        .insert(userLessonProgress)
+        .values({
+          userId: auth.token.id,
+          lessonId,
+          isCompleted,
         })
-      }
+        .onConflictDoUpdate({
+          target: [userLessonProgress.userId, userLessonProgress.lessonId],
+          set: { isCompleted },
+        })
+        .returning()
 
       return c.json({
-        data,
+        data: data[0] ?? null,
       })
     }
   )

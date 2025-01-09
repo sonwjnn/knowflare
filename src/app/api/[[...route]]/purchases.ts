@@ -1,9 +1,9 @@
 import { db } from '@/db/drizzle'
 import { getProgress } from '@/db/queries'
-import { categories, courses, purchases, users } from '@/db/schema'
+import { courses, purchases, users } from '@/db/schema'
 import { verifyAuth } from '@hono/auth-js'
 import { zValidator } from '@hono/zod-validator'
-import { and, desc, eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { z } from 'zod'
 

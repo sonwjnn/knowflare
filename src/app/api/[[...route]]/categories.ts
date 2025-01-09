@@ -1,13 +1,7 @@
 import { db } from '@/db/drizzle'
-import {
-  categories,
-  courses,
-  insertCategoriesSchema,
-  purchases,
-} from '@/db/schema'
-import { verifyAuth } from '@hono/auth-js'
+import { categories, courses, purchases } from '@/db/schema'
 import { zValidator } from '@hono/zod-validator'
-import { desc, eq, inArray, sql } from 'drizzle-orm'
+import { desc, eq, sql } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { z } from 'zod'
 

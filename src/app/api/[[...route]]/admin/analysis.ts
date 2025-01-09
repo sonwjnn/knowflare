@@ -1,9 +1,9 @@
 import { db } from '@/db/drizzle'
-import { categories, courses, orders, purchases } from '@/db/schema'
+import { categories, courses, purchases } from '@/db/schema'
 import { verifyAuth } from '@hono/auth-js'
 import { zValidator } from '@hono/zod-validator'
-import { differenceInDays, isAfter, isBefore, parse, subDays } from 'date-fns'
-import { and, desc, eq, gte, lt, lte, sql } from 'drizzle-orm'
+import { parse, subDays } from 'date-fns'
+import { and, desc, eq, gte, lte, sql } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { z } from 'zod'
 

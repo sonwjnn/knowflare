@@ -16,7 +16,7 @@ import { useGetReviews } from '@/features/reviews/api/use-get-reviews'
 import { useCourseId } from '@/hooks/use-course-id'
 import { useCurrentUser } from '@/hooks/use-current-user'
 import { format } from 'date-fns'
-import { Star } from 'lucide-react'
+import { Loader2, Star } from 'lucide-react'
 import { useState } from 'react'
 
 import { ReviewItem } from './review-item'
@@ -61,25 +61,9 @@ export const Reviews = () => {
 
   if (reviewsLoading) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Student Reviews</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {[...Array(3)].map((_, index) => (
-            <div key={index} className="mb-4 border-b pb-4 last:border-b-0">
-              <div className="mb-2 flex items-center">
-                <Skeleton className="mr-2 h-10 w-10" />
-                <div className="flex-1">
-                  <Skeleton className="mb-2 h-4 w-1/2" />
-                  <Skeleton className="h-4 w-1/4" />
-                </div>
-              </div>
-              <Skeleton className="h-4 w-full" />
-            </div>
-          ))}
-        </CardContent>
-      </Card>
+      <div className="flex h-full min-h-48 w-full items-center justify-center">
+        <Loader2 className="h-6 w-6 animate-spin" />
+      </div>
     )
   }
 

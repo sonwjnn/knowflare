@@ -4,6 +4,7 @@ import {
   getVerificationTokenByToken,
 } from '@/db/queries'
 import {
+  UserRole,
   accounts,
   passwordResetTokens,
   twoFactorConfirmations,
@@ -112,6 +113,7 @@ const app = new Hono()
         name,
         password: hashedPassword,
         emailVerified: null,
+        role: UserRole.USER,
       })
 
       const verificationToken = await generateVerificationToken(email)
@@ -498,7 +500,7 @@ const app = new Hono()
         return c.json({ error: 'User does not exist!' }, 400)
       }
 
-      const [data] = await db
+      const data = await db
         .update(users)
         .set({
           name,

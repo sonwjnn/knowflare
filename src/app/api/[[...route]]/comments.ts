@@ -57,7 +57,7 @@ const app = new Hono()
 
       const values = c.req.valid('json')
 
-      const [data] = await db.insert(comments).values({
+      const data = await db.insert(comments).values({
         ...values,
         userId: auth.token.id,
       })

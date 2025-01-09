@@ -77,7 +77,7 @@ const app = new Hono()
       }
       const values = c.req.valid('json')
 
-      const [data] = await db.insert(coupons).values({
+      const data = await db.insert(coupons).values({
         ...values,
         type: values.type as CouponType,
         expires: new Date(values.expires),
@@ -126,7 +126,7 @@ const app = new Hono()
         return c.json({ error: 'User does not exist!' }, 400)
       }
 
-      const [data] = await db
+      const data = await db
         .update(coupons)
         .set({
           ...values,
@@ -176,9 +176,13 @@ const app = new Hono()
         return c.json({ error: 'Not found' }, 404)
       }
 
-      const [deletedData] = await db.delete(coupons).where(eq(coupons.id, id))
+      const data = await db.delete(coupons).where(eq(coupons.id, id))
 
-      return c.json({ data: deletedData })
+      if (!data) {
+        return c.json({ error: 'Not found' }, 404)
+      }
+
+      return c.json({ data })
     }
   )
   .post(

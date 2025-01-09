@@ -71,7 +71,7 @@ const app = new Hono()
 
       const newPosition = lastChapter ? lastChapter.position + 1 : 1
 
-      const [data] = await db.insert(chapters).values({
+      const data = await db.insert(chapters).values({
         courseId,
         title,
         position: newPosition,
@@ -194,7 +194,7 @@ const app = new Hono()
         return c.json({ error: 'Missing id' }, 400)
       }
 
-      const [data] = await db
+      const data = await db
         .update(chapters)
         .set(values)
         .where(eq(chapters.id, id))
@@ -254,7 +254,7 @@ const app = new Hono()
         return c.json({ error: 'Missing required fields!' }, 400)
       }
 
-      const [data] = await db
+      const data = await db
         .update(chapters)
         .set({ isPublished: true })
         .where(eq(chapters.id, id))
@@ -305,10 +305,14 @@ const app = new Hono()
         return c.json({ error: 'Not found' }, 404)
       }
 
-      const [data] = await db
+      const data = await db
         .update(chapters)
         .set({ isPublished: false })
         .where(eq(chapters.id, id))
+
+      if (!data) {
+        return c.json({ error: 'Error when update chapter' }, 404)
+      }
 
       const publishedChaptersInCourse = await db
         .select()
@@ -362,11 +366,13 @@ const app = new Hono()
         return c.json({ error: 'Not found' }, 404)
       }
 
-      const [deletedChapter] = await db
-        .delete(chapters)
-        .where(eq(chapters.id, id))
+      const data = await db.delete(chapters).where(eq(chapters.id, id))
 
-      return c.json({ data: deletedChapter })
+      if (!data) {
+        return c.json({ error: 'Error when delete chapter' }, 404)
+      }
+
+      return c.json({ data })
     }
   )
 

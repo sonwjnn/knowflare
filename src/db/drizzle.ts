@@ -1,5 +1,5 @@
-import { drizzle } from 'drizzle-orm/mysql2'
-import mysql from 'mysql2/promise'
+import { neon } from '@neondatabase/serverless'
+import { drizzle } from 'drizzle-orm/neon-http'
 
 import * as schema from './schema'
 
@@ -19,15 +19,9 @@ function singleton<Value>(name: string, value: () => Value): Value {
   return globalAny.__singletons[name]
 }
 
-// Function to create the database connection and apply migrations if needed
 function createDatabaseConnection() {
-  const poolConnection = mysql.createPool({
-    host: process.env.DATABASE_HOST!,
-    user: process.env.DATABASE_USER!,
-    password: process.env.DATABASE_PASSWORD!,
-    database: process.env.DATABASE_NAME!,
-  })
-  return drizzle(poolConnection)
+  const sql = neon(process.env.DATABASE_URL!)
+  return drizzle(sql, { schema })
 }
 
 const db = singleton('db', createDatabaseConnection)

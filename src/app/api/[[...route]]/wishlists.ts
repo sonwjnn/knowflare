@@ -119,7 +119,7 @@ const app = new Hono()
 
       const values = c.req.valid('json')
 
-      const [data] = await db.insert(wishlists).values({
+      const data = await db.insert(wishlists).values({
         ...values,
         userId: auth.token.id,
         date: new Date(),
@@ -170,7 +170,7 @@ const app = new Hono()
       }
 
       const { id } = c.req.valid('param')
-      const [data] = await db
+      const data = await db
         .delete(wishlists)
         .where(
           and(eq(wishlists.courseId, id), eq(wishlists.userId, auth.token?.id))

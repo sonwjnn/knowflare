@@ -2,18 +2,7 @@ import { db } from '@/db/drizzle'
 import { chapters, lessons, purchases } from '@/db/schema'
 import { verifyAuth } from '@hono/auth-js'
 import { zValidator } from '@hono/zod-validator'
-import {
-  and,
-  asc,
-  desc,
-  eq,
-  exists,
-  gt,
-  inArray,
-  lt,
-  or,
-  sql,
-} from 'drizzle-orm'
+import { and, asc, desc, eq, gt, lt } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { z } from 'zod'
 

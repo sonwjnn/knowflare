@@ -116,10 +116,11 @@ const app = new Hono()
 
       const values = c.req.valid('json')
 
-      const [data] = await db.insert(courses).values({
+      const data = await db.insert(courses).values({
         ...values,
         date: new Date(),
         userId: auth.token.id,
+        level: CourseLevel.ALL_LEVEL,
       })
 
       if (!data) {
@@ -166,7 +167,7 @@ const app = new Hono()
         return c.json({ error: 'Missing id' }, 400)
       }
 
-      const [data] = await db
+      const data = await db
         .update(courses)
         .set({
           ...values,
@@ -213,9 +214,12 @@ const app = new Hono()
         return c.json({ error: 'Not found' }, 404)
       }
 
-      const [deletedCourse] = await db.delete(courses).where(eq(courses.id, id))
+      const data = await db.delete(courses).where(eq(courses.id, id))
+      if (!data) {
+        return c.json({ error: 'Not found' }, 404)
+      }
 
-      return c.json({ data: deletedCourse })
+      return c.json({ data })
     }
   )
   .post(
@@ -299,7 +303,7 @@ const app = new Hono()
         return c.json({ error: 'Missing required fields!' }, 400)
       }
 
-      const [data] = await db
+      const data = await db
         .update(courses)
         .set({ isPublished: true })
         .where(eq(courses.id, id))
@@ -340,7 +344,7 @@ const app = new Hono()
         return c.json({ error: 'Not found' }, 404)
       }
 
-      const [data] = await db
+      const data = await db
         .update(courses)
         .set({ isPublished: false })
         .where(eq(courses.id, id))

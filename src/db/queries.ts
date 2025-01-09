@@ -5,6 +5,7 @@ import {
   desc,
   eq,
   gte,
+  ilike,
   inArray,
   isNull,
   like,
@@ -44,7 +45,21 @@ export const getProgress = async (userId: string | null, courseId: string) => {
           .select()
           .from(lessons)
           .where(eq(lessons.chapterId, chapter.id))
-          .groupBy(lessons.id)
+          .groupBy(
+            lessons.id,
+            lessons.chapterId,
+            lessons.courseId,
+            lessons.title,
+            lessons.description,
+            lessons.lessonType,
+            lessons.position,
+            lessons.isPublished,
+            lessons.isFree,
+            lessons.videoUrl,
+            lessons.duration,
+            lessons.question,
+            lessons.questionType
+          )
 
         return {
           ...chapter,
@@ -86,6 +101,7 @@ export const getProgress = async (userId: string | null, courseId: string) => {
     }
   }
 }
+
 export const getChapters = async (userId: string | null, courseId: string) => {
   const data = await db
     .select()
@@ -123,7 +139,22 @@ export const getChapters = async (userId: string | null, courseId: string) => {
         .where(
           and(eq(lessons.chapterId, chapter.id), eq(lessons.isPublished, true))
         )
-        .groupBy(lessons.id)
+        .groupBy(
+          lessons.id,
+          lessons.chapterId,
+          lessons.courseId,
+          lessons.title,
+          lessons.description,
+          lessons.lessonType,
+          lessons.position,
+          lessons.isPublished,
+          lessons.isFree,
+          lessons.videoUrl,
+          lessons.duration,
+          lessons.question,
+          lessons.questionType,
+          userLessonProgress.isCompleted
+        )
         .orderBy(asc(lessons.position))
 
       return {
@@ -192,43 +223,40 @@ export const getCourses = async ({
         WHERE purchases.course_id = ${courses.id} 
         AND purchases.user_id = ${userId}
       )`,
-
       couponId: sql`(
         SELECT id 
         FROM coupon 
         WHERE coupon.category_id = ${courses.categoryId} 
-        AND coupon.type = ${CouponType.PUBLIC}
+        AND coupon.coupon_type = ${CouponType.PUBLIC}
         AND coupon.discount_amount = (
           SELECT MAX(discount_amount) 
           FROM coupon 
           WHERE coupon.category_id = ${courses.categoryId} 
-          AND coupon.type = ${CouponType.PUBLIC}
+          AND coupon.coupon_type = ${CouponType.PUBLIC}
         ) 
         ORDER BY id DESC 
         LIMIT 1
       )`,
-
       discountAmount: sql`(
         SELECT discount_amount 
         FROM coupon 
         WHERE coupon.category_id = ${courses.categoryId} 
-        AND coupon.type = ${CouponType.PUBLIC}
+        AND coupon.coupon_type = ${CouponType.PUBLIC}
         AND coupon.discount_amount = (
           SELECT MAX(discount_amount) 
           FROM coupon 
           WHERE coupon.category_id = ${courses.categoryId} 
-          AND coupon.type = ${CouponType.PUBLIC}
+          AND coupon.coupon_type = ${CouponType.PUBLIC}
         ) 
         ORDER BY id DESC 
         LIMIT 1
       )`,
-
       discountPrice: sql<number>`(
         course.price - (course.price * (
           SELECT MAX(discount_amount) 
           FROM coupon 
           WHERE coupon.category_id = ${courses.categoryId} 
-          AND coupon.type = ${CouponType.PUBLIC}
+          AND coupon.coupon_type = ${CouponType.PUBLIC}
         ) / 100)
       )`,
     })
@@ -251,13 +279,27 @@ export const getCourses = async ({
     .where(
       and(
         eq(courses.isPublished, true),
-        title ? like(courses.title, `%${title}%`) : undefined,
+        title ? ilike(courses.title, `%${title}%`) : undefined,
         categoryId ? eq(courses.categoryId, categoryId) : undefined,
         level ? eq(courses.level, level as CourseLevel) : undefined,
         rating ? gte(courses.avgRating, rating) : undefined
       )
     )
-    .groupBy(courses.id)
+    .groupBy(
+      courses.id,
+      courses.title,
+      courses.description,
+      courses.imageUrl,
+      courses.price,
+      courses.level,
+      courses.isPublished,
+      courses.date,
+      courses.avgRating,
+      categories.id,
+      categories.name,
+      users.id,
+      users.name
+    )
     .orderBy(desc(courses.date))
     .limit(PAGE_SIZE)
     .offset(offset)
@@ -295,7 +337,21 @@ export const getTenLatestCourses = async () => {
     .innerJoin(users, eq(users.id, courses.userId))
     .leftJoin(chapters, eq(chapters.courseId, courses.id))
     .where(and(eq(courses.isPublished, true)))
-    .groupBy(courses.id)
+    .groupBy(
+      courses.id,
+      courses.title,
+      courses.description,
+      courses.imageUrl,
+      courses.price,
+      courses.level,
+      courses.isPublished,
+      courses.date,
+      courses.avgRating,
+      categories.id,
+      categories.name,
+      users.id,
+      users.name
+    )
     .orderBy(desc(courses.date))
     .limit(10)
 
@@ -340,7 +396,21 @@ export const getFiveTopCoursesLastThreeWeek = async () => {
         eq(courses.isPublished, true)
       )
     )
-    .groupBy(courses.id)
+    .groupBy(
+      courses.id,
+      courses.title,
+      courses.description,
+      courses.imageUrl,
+      courses.price,
+      courses.level,
+      courses.isPublished,
+      courses.date,
+      courses.avgRating,
+      categories.id,
+      categories.name,
+      users.id,
+      users.name
+    )
     .orderBy(sql`purchases_count DESC`)
     .limit(5)
 
