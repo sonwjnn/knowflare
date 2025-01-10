@@ -50,7 +50,7 @@ const app = new Hono()
       })
     )
 
-    return c.json({ data: dataWithAuthor })
+    return c.json({ data: dataWithAuthor ?? [] })
   })
   .get(
     '/:id',

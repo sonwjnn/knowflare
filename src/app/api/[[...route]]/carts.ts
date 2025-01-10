@@ -33,7 +33,7 @@ const app = new Hono()
       .where(eq(carts.userId, auth.token.id))
       .orderBy(desc(carts.date))
 
-    return c.json({ data })
+    return c.json({ data: data ?? [] })
   })
   .get(
     '/:id',

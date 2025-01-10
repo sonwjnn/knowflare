@@ -9,10 +9,7 @@ const SignInPage = () => {
   const { data: session, status } = useSession()
 
   useEffect(() => {
-    if (!(status === 'loading') && !session)
-      void signIn('google', {
-        callbackUrl: DEFAULT_LOGIN_REDIRECT || '/',
-      })
+    if (!(status === 'loading') && !session) void signIn('google')
     if (session) {
       window.close()
     }
