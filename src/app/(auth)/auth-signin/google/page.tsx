@@ -2,18 +2,24 @@
 
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes'
 import { signIn, useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
 const SignInPage = () => {
+  const pathname = usePathname()
   const { data: session, status } = useSession()
 
   useEffect(() => {
-    if (!(status === 'loading') && !session) void signIn('google')
+    if (!(status === 'loading') && !session)
+      void signIn('google', {
+        callbackUrl: pathname.includes('auth-signin')
+          ? undefined
+          : DEFAULT_LOGIN_REDIRECT || '/',
+      })
     if (session) {
       window.close()
     }
-  }, [session, status])
+  }, [session, status, pathname])
 
   return (
     <div
