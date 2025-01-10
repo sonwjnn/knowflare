@@ -8,7 +8,7 @@ const SignInPage = () => {
   const { data: session, status } = useSession()
 
   useEffect(() => {
-    if (status === 'authenticated') window.location.href = '/'
+    if (status === 'authenticated' || session) window.location.href = '/'
   }, [session, status])
 
   return <SignInCard />
