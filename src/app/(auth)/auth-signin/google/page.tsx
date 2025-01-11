@@ -1,14 +1,21 @@
 'use client'
 
+import { DEFAULT_LOGIN_REDIRECT } from '@/routes'
+import { BroadcastChannel } from 'broadcast-channel'
 import { signIn, useSession } from 'next-auth/react'
 import { useEffect } from 'react'
+
+const channel = new BroadcastChannel('auth_channel')
 
 const SignInPage = () => {
   const { data: session, status } = useSession()
 
   useEffect(() => {
     if (!(status === 'loading') && !session) void signIn('google')
+
     if (session) {
+      // Gửi tín hiệu cập nhật session đến cửa sổ chính
+      channel.postMessage({ event: 'session_update', data: session })
       window.close()
     }
   }, [session, status])
