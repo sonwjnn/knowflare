@@ -137,12 +137,11 @@ const app = new Hono()
       z.object({
         email: z.string().email(),
         password: z.string().min(3).max(20),
-        callbackUrl: z.string().optional(),
         code: z.string().optional(),
       })
     ),
     async c => {
-      const { email, code, password, callbackUrl } = c.req.valid('json')
+      const { email, code } = c.req.valid('json')
 
       const [existingUser] = await db
         .select()

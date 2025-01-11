@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/input-otp'
 import { Separator } from '@/components/ui/separator'
 import { useSignIn } from '@/features/auth/api/use-sign-in'
+import { DEFAULT_LOGIN_REDIRECT } from '@/routes'
 import { errorMonitor } from 'events'
 import { Loader2 } from 'lucide-react'
 import { signIn } from 'next-auth/react'
@@ -41,7 +42,8 @@ export const SignInCard = () => {
   const [code, setCode] = useState('')
   const [success, setSuccess] = useState('')
 
-  const callbackUrl = searchParams.get('callbackUrl') || '/'
+  const callbackUrl = searchParams.get('callbackUrl')
+  const decodedCallbackUrl = callbackUrl ? decodeURIComponent(callbackUrl) : '/'
   const urlError1 =
     searchParams.get('error') === 'OAuthAccountNotLinked'
       ? 'Email already in use with different provider!'
@@ -84,7 +86,6 @@ export const SignInCard = () => {
       {
         email: email,
         password: password,
-        callbackUrl,
         code,
       },
       {
@@ -110,7 +111,7 @@ export const SignInCard = () => {
               signIn('credentials', {
                 email: email,
                 password: password,
-                callbackUrl: '/',
+                callbackUrl: decodedCallbackUrl || DEFAULT_LOGIN_REDIRECT,
               })
             }
           }

@@ -6,7 +6,8 @@
 
 export const publicRoutes = [
   '/',
-  '/courses',
+  '/about',
+  '/blog',
   '/auth-signin/google',
   '/auth-signin/github',
 ] as string[]
