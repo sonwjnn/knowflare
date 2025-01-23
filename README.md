@@ -16,7 +16,7 @@ This project aims to deliver a comprehensive technological solution while optimi
 
 ## Features
 
-- 🔒 **Authentication:** Login, logout, and password change.  
+- 🔒 **Authentication:** Login, logout, change password, reset password, 2FA.  
 - 👥 **User Administration:** Manage user accounts and permissions.  
 - 📚 **Course Management:** Create, update, delete, and view detailed course information.  
 - 🧑‍🏫 **Instructor and Learner Management:** Register, update information, and manage accounts.  
@@ -47,6 +47,8 @@ git clone https://github.com/sonwjnn/knowflare.git
 
 ```sh
 bun install
+# or
+npm install
 ```
 
 ## Setup .env.local file
@@ -84,6 +86,7 @@ RESEND_API_KEY=
 ```sh
 # Run project
 bun dev
+
 # Also run this command in new terminal to listen stripe event
 stripe listen --forward-to localhost:3000/api/subscriptions/webhook
 
@@ -91,4 +94,5 @@ stripe listen --forward-to localhost:3000/api/subscriptions/webhook
 bun db:generate
 bun db:push
 bun db:studio
+
 ```
