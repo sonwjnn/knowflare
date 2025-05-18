@@ -35,7 +35,7 @@ This project aims to deliver a comprehensive technological solution while optimi
 - **Database Management:** PostgreSQL managed using NeonDB and Drizzle.  
 - **Browsers:** Google Chrome and Microsoft Edge Dev.  
 - **Back-end:** HonoJS, Drizzle ORM, TypeScript.  
-- **Front-end:** ReactJS, TypeScript, TailwindCSS, ShadcnUI, AuthJS.  
+- **Front-end:** NextJS, ReactJS, TypeScript, TailwindCSS, ShadcnUI, AuthJS.  
 
 ## Cloning the repository
 
