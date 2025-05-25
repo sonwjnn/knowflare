@@ -36,7 +36,7 @@ export const CartItem = ({
         />
       </div>
       <div className="flex-1">
-        <h5 className="font-medium">{title}</h5>
+        <h5 className="line-clamp-2 font-medium">{title}</h5>
         {!hasDiscount && (
           <span className="text-sm font-semibold">${price.toFixed(2)}</span>
         )}

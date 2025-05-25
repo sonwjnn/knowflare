@@ -249,8 +249,9 @@ export const ChangePasswordForm = () => {
 
         <Button
           type="submit"
-          disabled={isPending}
-          className="w-full font-medium"
+          variant="success"
+          disabled={isPending || !form.formState.isValid}
+          className="w-full rounded-md font-medium"
         >
           Change Password
         </Button>

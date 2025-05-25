@@ -55,13 +55,16 @@ export const TwoFactorForm = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-8 border-none bg-white shadow-sm"
+      >
         {currentUser?.isOAuth === false && (
           <FormField
             control={form.control}
             name="isTwoFactorEnabled"
             render={({ field }) => (
-              <FormItem className="flex flex-col rounded-lg border p-6">
+              <FormItem className="flex flex-col rounded-lg p-6">
                 <div>
                   <FormLabel className="mb-4 text-xl font-semibold">
                     Two Factor Authentication

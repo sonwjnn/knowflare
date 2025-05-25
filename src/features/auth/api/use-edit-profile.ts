@@ -23,7 +23,6 @@ export const useEditProfile = (id?: string) => {
       return await response.json()
     },
     onSuccess: () => {
-      toast.success('User updated')
       queryClient.invalidateQueries({ queryKey: ['user', { id }] })
       queryClient.invalidateQueries({ queryKey: ['users'] })
     },

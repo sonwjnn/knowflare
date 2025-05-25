@@ -119,7 +119,7 @@ export const AccountSettingsForm = () => {
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 py-6">
-      <Card className="p-6">
+      <Card className="rounded-xl border-none p-6 shadow-sm">
         <div className="flex items-center gap-8">
           <div className="group relative">
             <Avatar className="size-24 ring-4 ring-blue-50 transition-all group-hover:ring-blue-100">
@@ -177,7 +177,7 @@ export const AccountSettingsForm = () => {
       </Card>
 
       {/* Personal Information */}
-      <Card className="p-6">
+      <Card className="rounded-xl border-none p-6 shadow-sm">
         <h3 className="mb-4 text-lg font-medium">Personal Information</h3>
         <div className="space-y-4">
           <div className="grid gap-6 md:grid-cols-2">
@@ -225,7 +225,7 @@ export const AccountSettingsForm = () => {
         </div>
       </Card>
 
-      <Card className="p-6">
+      <Card className="rounded-xl border-none p-6 shadow-sm">
         <div className="mb-2 flex items-center justify-between">
           <h3 className="text-lg font-medium">Bio</h3>
           <p className="text-sm text-muted-foreground">
@@ -258,7 +258,8 @@ export const AccountSettingsForm = () => {
         <div className="ml-auto flex gap-2">
           <Button
             type="submit"
-            className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
+            variant="success"
+            className="rounded-md"
             disabled={updateProfileLoading}
           >
             Save Changes

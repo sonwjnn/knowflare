@@ -73,19 +73,13 @@ export const Item = ({
               In Cart
             </span>
           </div>
-
           <Button
             size="icon"
             onClick={() => deleteCart()}
-            className="relative h-10 w-10 overflow-hidden rounded-full border border-gray-200 bg-white text-gray-600 transition-all hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600 disabled:opacity-50"
+            className="rounded-full bg-slate-200 text-muted-foreground hover:bg-rose-500 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-transparent focus-visible:ring-offset-2"
             disabled={deleteCartLoading}
           >
-            <Trash2 className="size-4" />
-            {deleteCartLoading && (
-              <div className="absolute inset-0 flex items-center justify-center bg-white/80">
-                <div className="size-4 animate-spin rounded-full border-2 border-gray-300 border-t-rose-500" />
-              </div>
-            )}
+            <Trash className="size-4" />
           </Button>
         </div>
       </div>

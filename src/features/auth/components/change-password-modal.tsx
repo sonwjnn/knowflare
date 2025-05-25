@@ -14,8 +14,8 @@ export const ChangePasswordModal = () => {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent>
-        <div className="px-6 pt-6">
+      <DialogContent className="!rounded-xl border-none bg-white p-4 py-6 shadow-sm">
+        <div className="px-4">
           <h2 className="text-xl font-semibold">Change Password</h2>
           <p className="mt-2 text-sm text-muted-foreground">
             Your password must be at least 8 characters and include numbers,

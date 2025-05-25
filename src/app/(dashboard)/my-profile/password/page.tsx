@@ -21,7 +21,7 @@ export default function PasswordPage() {
       </div>
 
       <div className="max-w-2xl space-y-6">
-        <div className="rounded-lg border p-6">
+        <div className="rounded-xl bg-white p-6 shadow-sm">
           <h2 className="mb-4 text-xl font-semibold">Password</h2>
           <p className="mb-6 text-sm text-muted-foreground">
             Change your password to protect your account. Use a strong password

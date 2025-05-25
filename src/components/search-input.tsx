@@ -74,9 +74,7 @@ const AnimatedSearchInput = ({ className }: AnimatedSearchInputProps) => {
         <motion.button
           type="button"
           className={cn(
-            `group absolute left-0 z-10 flex h-11 w-11 items-center justify-center rounded-full 
-            ${isExpanded ? 'pointer-events-none' : 'bg-white/10 hover:bg-white/20'} 
-            transition-all duration-300`,
+            `group absolute left-0 z-10 flex h-11 w-11 items-center justify-center rounded-full ${isExpanded ? 'pointer-events-none' : 'bg-white/10 hover:bg-white/20'} transition-all duration-300`,
             className
           )}
           onClick={() => setIsExpanded(true)}
@@ -103,10 +101,7 @@ const AnimatedSearchInput = ({ className }: AnimatedSearchInputProps) => {
                   onBlur={handleBlur}
                   value={value}
                   className={cn(
-                    `h-11 w-full rounded-full border-0 bg-white/10 pl-12 pr-12
-                    text-sm placeholder:text-gray-400 focus:bg-white/15
-                    focus-visible:ring-1 focus-visible:ring-white/30
-                    focus-visible:ring-offset-0`,
+                    `h-11 w-full rounded-full border-0 bg-white/10 pl-12 pr-12 text-sm placeholder:text-gray-300 focus:bg-white/15 focus-visible:ring-1 focus-visible:ring-white/30 focus-visible:ring-offset-0`,
                     className
                   )}
                   placeholder="Search courses..."
@@ -116,8 +111,7 @@ const AnimatedSearchInput = ({ className }: AnimatedSearchInputProps) => {
                 {value && (
                   <motion.button
                     type="button"
-                    className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center 
-                             rounded-full p-1 hover:bg-white/10"
+                    className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center rounded-full p-1 hover:bg-white/10"
                     onClick={onClear}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
