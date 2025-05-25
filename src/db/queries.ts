@@ -361,7 +361,7 @@ export const getTenLatestCourses = async () => {
 export const getFiveTopCoursesLastThreeWeek = async () => {
   const today = new Date()
   const lastWeek = new Date(today)
-  lastWeek.setDate(today.getDate() - 7 * 6)
+  lastWeek.setDate(today.getDate() - 7 * 12)
 
   const coursesData = await db
     .select({
@@ -390,12 +390,7 @@ export const getFiveTopCoursesLastThreeWeek = async () => {
     .innerJoin(categories, eq(categories.id, courses.categoryId))
     .innerJoin(users, eq(users.id, courses.userId))
     .leftJoin(chapters, eq(chapters.courseId, courses.id))
-    .where(
-      and(
-        sql`DATE(${purchases.date}) >= ${lastWeek}`,
-        eq(courses.isPublished, true)
-      )
-    )
+    .where(and(gte(purchases.date, lastWeek), eq(courses.isPublished, true)))
     .groupBy(
       courses.id,
       courses.title,
